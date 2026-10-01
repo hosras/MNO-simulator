@@ -217,5 +217,3 @@ while writers are active.
   `python telecom_net_sim.py` first if they skip.
 
 ---
-
-*Generated 2026-10-01 by `generate_readme.py`.*
