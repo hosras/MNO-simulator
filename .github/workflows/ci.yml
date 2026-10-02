@@ -38,6 +38,10 @@ jobs:
           python -c "from admin.main import main; print('admin OK')"
           python -c "from radar.main import main; print('radar OK')"
 
+      - name: Generate a minimal dataset for DB-dependent tests
+        run: |
+          python telecom_net_sim.py --seed 42 --subs 200 --cdrs 500
+
       - name: Run fast tests
         run: pytest -m "not slow" --tb=short
 
