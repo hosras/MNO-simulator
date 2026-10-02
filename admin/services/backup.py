@@ -79,7 +79,10 @@ def restore_backup(backup_filename: str) -> str:
     # ---- 1) Path safety: never trust caller-supplied filenames ----
     if not isinstance(backup_filename, str) or not backup_filename:
         raise RuntimeError("Invalid backup filename.")
-    if os.path.basename(backup_filename) != backup_filename:
+    # Reject BOTH '/' and '\\' explicitly. os.path.basename() alone is
+    # platform-dependent: on Linux '\\' is not a separator, so a name
+    # like 'sub\\dir\\file.db' would slip through.
+    if "/" in backup_filename or "\\" in backup_filename:
         raise RuntimeError("Backup filename must not contain path separators.")
 
     backup_path = os.path.join(BACKUP_DIR, backup_filename)
