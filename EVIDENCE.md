@@ -1,7 +1,7 @@
 # EVIDENCE — Fully Local Operation
 
 **Project:** TELECOM-NET-SIM  
-**Generated:** 2026-10-02 19:16:32  
+**Generated:** 2026-10-02 23:09:48  
 **Purpose:** Prove the simulator runs entirely offline — no network calls, no telemetry, no LAN exposure.
 
 ---
@@ -58,81 +58,81 @@ Tokens searched: `requests`, `urllib`, `http.client`, `aiohttp`, `httpx`, `urlop
 
 ## 5. Source Modules
 
-Total: **71** Python modules (7,552 lines).
+Total: **71** Python modules (9,377 lines).
 
 | Module | Lines |
 |---|---:|
-| `telecom_admin.py` | 21 |
-| `telecom_attack.py` | 603 |
-| `telecom_common.py` | 152 |
-| `telecom_dashboard.py` | 21 |
-| `telecom_net_sim.py` | 1,400 |
-| `telecom_radar.py` | 21 |
-| `telecom_ui_common.py` | 136 |
-| `attack_core.py` | 404 |
-| `dashboard/__init__.py` | 10 |
-| `dashboard/_config.py` | 9 |
-| `dashboard/main.py` | 131 |
+| `telecom_admin.py` | 22 |
+| `telecom_attack.py` | 716 |
+| `telecom_common.py` | 235 |
+| `telecom_dashboard.py` | 22 |
+| `telecom_net_sim.py` | 1,733 |
+| `telecom_radar.py` | 22 |
+| `telecom_ui_common.py` | 141 |
+| `attack_core.py` | 490 |
+| `dashboard/__init__.py` | 11 |
+| `dashboard/_config.py` | 13 |
+| `dashboard/main.py` | 164 |
 | `dashboard/services/__init__.py` | 2 |
-| `dashboard/services/data.py` | 54 |
-| `dashboard/services/styles.py` | 25 |
-| `dashboard/services/ui.py` | 40 |
+| `dashboard/services/data.py` | 55 |
+| `dashboard/services/styles.py` | 29 |
+| `dashboard/services/ui.py` | 48 |
 | `dashboard/views/__init__.py` | 2 |
-| `dashboard/views/alerts.py` | 130 |
-| `dashboard/views/attacks.py` | 72 |
-| `dashboard/views/encryption.py` | 98 |
-| `dashboard/views/network.py` | 41 |
-| `dashboard/views/osint.py` | 83 |
-| `dashboard/views/overview.py` | 57 |
-| `dashboard/views/report.py` | 31 |
-| `dashboard/views/sigint.py` | 96 |
-| `dashboard/views/signal.py` | 54 |
-| `dashboard/views/special_lines.py` | 178 |
-| `dashboard/views/subscribers.py` | 47 |
-| `dashboard/views/traffic.py` | 68 |
-| `dashboard/views/voice_messaging.py` | 198 |
+| `dashboard/views/alerts.py` | 182 |
+| `dashboard/views/attacks.py` | 94 |
+| `dashboard/views/encryption.py` | 128 |
+| `dashboard/views/network.py` | 56 |
+| `dashboard/views/osint.py` | 101 |
+| `dashboard/views/overview.py` | 88 |
+| `dashboard/views/report.py` | 33 |
+| `dashboard/views/sigint.py` | 120 |
+| `dashboard/views/signal.py` | 73 |
+| `dashboard/views/special_lines.py` | 244 |
+| `dashboard/views/subscribers.py` | 62 |
+| `dashboard/views/traffic.py` | 91 |
+| `dashboard/views/voice_messaging.py` | 256 |
 | `admin/__init__.py` | 10 |
-| `admin/_config.py` | 17 |
-| `admin/main.py` | 207 |
+| `admin/_config.py` | 23 |
+| `admin/main.py` | 243 |
 | `admin/services/__init__.py` | 2 |
-| `admin/services/audit.py` | 21 |
-| `admin/services/auth.py` | 19 |
-| `admin/services/backup.py` | 126 |
-| `admin/services/db.py` | 7 |
-| `admin/services/rate_limit.py` | 49 |
+| `admin/services/audit.py` | 27 |
+| `admin/services/auth.py` | 20 |
+| `admin/services/backup.py` | 127 |
+| `admin/services/db.py` | 12 |
+| `admin/services/rate_limit.py` | 47 |
 | `admin/views/__init__.py` | 2 |
-| `admin/views/alerts.py` | 95 |
-| `admin/views/audit.py` | 49 |
-| `admin/views/backup.py` | 78 |
-| `admin/views/cells.py` | 119 |
-| `admin/views/cores.py` | 90 |
-| `admin/views/dashboard.py` | 38 |
-| `admin/views/encryption.py` | 88 |
-| `admin/views/special_lines.py` | 102 |
-| `admin/views/subscribers.py` | 213 |
-| `radar/__init__.py` | 10 |
-| `radar/_config.py` | 17 |
-| `radar/main.py` | 352 |
+| `admin/views/alerts.py` | 105 |
+| `admin/views/audit.py` | 48 |
+| `admin/views/backup.py` | 85 |
+| `admin/views/cells.py` | 151 |
+| `admin/views/cores.py` | 113 |
+| `admin/views/dashboard.py` | 41 |
+| `admin/views/encryption.py` | 94 |
+| `admin/views/special_lines.py` | 108 |
+| `admin/views/subscribers.py` | 266 |
+| `radar/__init__.py` | 11 |
+| `radar/_config.py` | 18 |
+| `radar/main.py` | 393 |
 | `radar/services/__init__.py` | 2 |
-| `radar/services/anomaly.py` | 141 |
-| `radar/services/pdf.py` | 94 |
-| `radar/services/period.py` | 46 |
-| `radar/services/ui.py` | 101 |
+| `radar/services/anomaly.py` | 154 |
+| `radar/services/pdf.py` | 113 |
+| `radar/services/period.py` | 54 |
+| `radar/services/ui.py` | 127 |
 | `radar/views/__init__.py` | 2 |
-| `radar/views/anomalies.py` | 89 |
-| `radar/views/attack_radar.py` | 100 |
-| `radar/views/encryption.py` | 92 |
-| `radar/views/geography.py` | 109 |
-| `radar/views/messaging.py` | 86 |
-| `radar/views/osint.py` | 74 |
-| `radar/views/overview.py` | 111 |
-| `radar/views/period_compare.py` | 132 |
-| `radar/views/special_lines.py` | 79 |
-| `radar/views/technology.py` | 77 |
-| `radar/views/threat_radar.py` | 106 |
-| `radar/views/time_series.py` | 68 |
-| `radar/views/traffic_mix.py` | 62 |
-| `radar/views/voice.py` | 86 |
+| `radar/views/anomalies.py` | 111 |
+| `radar/views/attack_radar.py` | 135 |
+| `radar/views/encryption.py` | 125 |
+| `radar/views/geography.py` | 145 |
+| `radar/views/messaging.py` | 117 |
+| `radar/views/osint.py` | 97 |
+| `radar/views/overview.py` | 154 |
+| `radar/views/period_compare.py` | 210 |
+| `radar/views/special_lines.py` | 114 |
+| `radar/views/technology.py` | 106 |
+| `radar/views/threat_radar.py` | 136 |
+| `radar/views/time_series.py` | 96 |
+| `radar/views/traffic_mix.py` | 91 |
+| `radar/views/voice.py` | 109 |
 
 ## 6. Import Smoke Test
 
@@ -341,4 +341,4 @@ Recommended entries present in `.gitignore`:
 
 ---
 
-*Auto-generated 2026-10-02 19:16:32 by `generate_evidence.py`.*
+*Auto-generated 2026-10-02 23:09:48 by `generate_evidence.py`.*
