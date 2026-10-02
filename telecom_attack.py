@@ -296,7 +296,24 @@ def _pick_target(attack_type: str, idx: dict) -> str:
 # SCENARIO GENERATOR
 # ------------------------------------------------------------------
 def generate_attack_scenarios(n: int = 25) -> List[dict]:
-    """Generate n random attack scenarios with plausible timings."""
+    """Generate n random attack scenarios with plausible timings.
+
+    Picks attack types from ATTACK_CATALOG, resolves a target node
+    from the DB (via _build_target_index), and assigns:
+      - realistic start/end timestamps within the last 24h,
+      - a rate (pps) drawn from the attack family's typical range,
+      - a status in {BLOCKED, DETECTED, SUCCESS, ONGOING}.
+
+    Guarantees a share of 6G scenarios (RIS_PHASE_POISON, AI_RAN_POISON,
+    THZ_JAMMING, QUIC_FLOOD_6G) so 6G is always represented.
+
+    Args:
+        n: Number of scenarios to generate. Default 25.
+
+    Returns:
+        List of dicts, each with the schema of the `attack_scenarios`
+        table (see init_attack_tables()).
+    """
     init_attack_tables()
     _target_idx = _build_target_index()   # one DB read
     scenarios = []
@@ -413,7 +430,21 @@ def expand_events(scenarios: List[dict], samples_per_scenario: int = 20) -> List
 # ALERT GENERATION FROM ATTACKS
 # ------------------------------------------------------------------
 def attacks_to_alerts(scenarios: List[dict], events: List[dict]) -> List[dict]:
-    """Generate alerts in the standard alerts table format."""
+    """Convert attack scenarios into alert rows for the alerts table.
+
+    Only scenarios that are DETECTED, SUCCESS, or ONGOING — or that
+    carry CRITICAL severity — become alerts. Each alert routes to one
+    of SOC_RECIPIENTS and includes an SMS body preview.
+
+    Args:
+        scenarios: List of scenario dicts.
+        events:    List of event dicts (currently unused; kept for
+                   future KPI enrichment).
+
+    Returns:
+        List of dicts matching the `alerts` table schema
+        (alert_id, timestamp, severity, alert_type, msisdn, ...).
+    """
     alerts = []
     ts_now = datetime.now()
     ts_suffix = ts_now.strftime("%H%M%S")  # avoid collisions across runs
@@ -515,6 +546,30 @@ def inject_attack_alerts(alerts: List[dict]) -> None:
 def run_attack_simulation(n_scenarios: int = 25,
                           samples_per_scenario: int = 20,
                           inject_alerts: bool = True) -> dict:
+    """End-to-end attack simulation: generate → persist → alert.
+
+    Pipeline:
+        1. generate_attack_scenarios(n_scenarios)
+        2. expand_events(...) → time-series
+        3. persist_attacks(...) → attack_scenarios + attack_events tables
+        4. attacks_to_alerts(...) → alert rows
+        5. inject_attack_alerts(...) → merge into alerts + sms_alerts
+
+    Args:
+        n_scenarios:         Number of attack scenarios to generate.
+        samples_per_scenario: Event samples per scenario.
+        inject_alerts:       If True, merge into alerts/sms_alerts tables.
+
+    Returns:
+        Summary dict:
+            {
+              "scenarios": int,
+              "events":    int,
+              "alerts":    int,
+              "by_status":   {status: count, ...},
+              "by_severity": {severity: count, ...},
+            }
+    """
     print(f"[ATTACK] Generating {n_scenarios} scenarios...")
     scenarios = generate_attack_scenarios(n_scenarios)
     print(f"[ATTACK] Expanding to event time-series...")

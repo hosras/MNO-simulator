@@ -13,7 +13,7 @@
  Fully local data generation - no external calls
 ================================================================
 """
-import os, json, math, random, sqlite3, hashlib
+import os, json, math, random, sqlite3, hashlib, argparse
 from datetime import datetime, timedelta
 from dataclasses import dataclass, field, asdict
 from collections import defaultdict, Counter
@@ -132,6 +132,27 @@ RCS_TYPES = ["chat", "file-transfer", "location-share", "rich-card", "group-chat
 # ------------------------------------------------------------------
 # UTILS
 # ------------------------------------------------------------------
+# ------------------------------------------------------------------
+# CLI
+# ------------------------------------------------------------------
+def parse_args(argv=None):
+    """Parse CLI arguments.
+
+    Returns Namespace with: seed, random_seed, subs, cdrs.
+    """
+    p = argparse.ArgumentParser(
+        description="TELECOM-NET-SIM v3.0 — Local network simulator",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
+    p.add_argument("--seed", type=int, default=1403,
+                   help="Random seed for reproducibility")
+    p.add_argument("--random-seed", action="store_true",
+                   help="Ignore --seed and use a random seed instead")
+    p.add_argument("--subs", type=int, default=5000,
+                   help="Number of subscribers")
+    p.add_argument("--cdrs", type=int, default=60_000,
+                   help="Number of CDR records")
+    return p.parse_args(argv)
 def luhn(number: str) -> str:
     d = [int(x) for x in number]
     for i in range(len(d)-1, -1, -2):
@@ -167,26 +188,38 @@ def haversine(lat1, lon1, lat2, lon2) -> float:
 # ------------------------------------------------------------------
 @dataclass
 class CellSite:
+    """A radio cell site (BTS/NodeB/eNodeB/gNodeB).
+
+    Attributes:
+        cell_id:       Unique cell identifier, e.g. "4G-TEH-0021".
+        name:          Human-readable name, e.g. "Tehran-4G-5".
+        tech:          Radio access technology: "2G", "3G", "4G", "5G", or "6G".
+        city:          City name where the site is deployed.
+        lat:           Latitude in decimal degrees.
+        lon:           Longitude in decimal degrees.
+        band:          Frequency band, e.g. "LTE-B3", "NR-n78", "THz-140".
+        azimuth:       Antenna azimuth in degrees (0-359).
+        tilt:          Antenna electrical tilt in degrees (0-15).
+        tx_dbm:        Transmit power in dBm (20-46).
+        backhaul_gbps: Backhaul capacity in Gbps.
+    """
     cell_id: str
-    name: str
-    tech: str
-    city: str
-    lat: float
-    lon: float
-    band: str
-    azimuth: int
-    tilt: int
-    tx_dbm: float
-    backhaul_gbps: float
 
 @dataclass
 class CoreNode:
+    """A core network node (MSC, MME, AMF, UPF, NWDAF, ...).
+
+    Attributes:
+        node_id:       Unique node identifier, e.g. "AMF-01".
+        name:          Human-readable name, e.g. "TELECOM-AMF-TEH-01".
+        role:          Functional role: "MSC", "BSC", "RNC", "MME", "SGW",
+                       "PGW", "HSS", "PCRF", "AMF", "SMF", "UPF", "IMS",
+                       "MMSC", "RCS-AS", "NWDAF", "RIS-C", "ISAC", or "AI-RAN".
+        tech:          Technology scope, e.g. "4G/5G" or "6G".
+        city:          City where the node is deployed.
+        capacity_tps:  Peak throughput capacity in transactions per second.
+    """
     node_id: str
-    name: str
-    role: str
-    tech: str
-    city: str
-    capacity_tps: int
 
 BANDS = {
     "2G": ["GSM-900", "GSM-1800"],
@@ -253,30 +286,36 @@ def build_topology():
 # ------------------------------------------------------------------
 @dataclass
 class Subscriber:
+    """A mobile subscriber with line-class, QoS, and encryption attributes.
+
+    Line classes ("Normal", "VIP", "Government", "Corporate",
+    "Emergency", "Test") determine default privileges and QoS range.
+
+    Attributes:
+        msisdn:              Mobile number in E.164-ish form ("98" + 10 digits).
+        imsi:                International Mobile Subscriber Identity (15 digits).
+        imei:                15-digit device identity (Luhn-valid).
+        city:                Home city.
+        plan:                Tariff plan, e.g. "Prepaid-Basic".
+        kyc_age_days:        Days since KYC was last refreshed.
+        roaming_enabled:     True if roaming is allowed.
+        risk_score:          Fraud risk score in [0, 1].
+        line_class:          One of LINE_CLASSES.
+        international_access: True if international calls/data allowed.
+        filter_bypass:       True if content filtering is bypassed.
+        clir_enabled:        True if caller-ID suppression is authorized.
+        clir_override:       True if caller-ID can be spoofed.
+        priority_qos:        QoS class in [0, 9] (higher = better).
+        lawful_intercept:    True if the line is under LI.
+        direct_routing:      True if the line uses direct routing.
+        whitelisted_asns:    ASNs whitelisted for unfiltered access.
+        encryption_required: True if E2E encryption is mandatory.
+        cipher_suite:        Cipher suite name, or "None".
+        key_id:              Key identifier for E2E crypto.
+        key_rotation_days:   Key rotation interval in days.
+        e2e_enabled:         True if E2E encryption is active.
+    """
     msisdn: str
-    imsi: str
-    imei: str
-    city: str
-    plan: str
-    kyc_age_days: int
-    roaming_enabled: bool
-    risk_score: float
-    # Special line attributes
-    line_class: str
-    international_access: bool
-    filter_bypass: bool
-    clir_enabled: bool
-    clir_override: bool
-    priority_qos: int
-    lawful_intercept: bool
-    direct_routing: bool
-    whitelisted_asns: List[str] = field(default_factory=list)
-    # Encryption attributes
-    encryption_required: bool = False
-    cipher_suite: str = "None"
-    key_id: str = ""
-    key_rotation_days: int = 0
-    e2e_enabled: bool = False
 
 PLANS = ["Prepaid-Basic", "Prepaid-Plus", "Postpaid-Silver",
          "Postpaid-Gold", "Postpaid-Business", "IoT-M2M"]
@@ -1262,7 +1301,15 @@ def build_report(cells, cores, subs, cdrs, osint_r, sigint_r, alerts):
 # ------------------------------------------------------------------
 # MAIN
 # ------------------------------------------------------------------
-def main():
+def main(argv=None):
+    global SEED
+    args = parse_args(argv)
+    if args.random_seed:
+        SEED = random.randint(1, 10**9)
+    else:
+        SEED = args.seed
+    random.seed(SEED)
+
     print("=" * 78)
     print(f" {OPERATOR}-NET-SIM v3.0 | LOCAL-ONLY | Seed={SEED}")
     print("=" * 78)
@@ -1272,10 +1319,10 @@ def main():
     print(f"      Cells: {len(cells)} | Core nodes: {len(cores)}")
 
     print("[2/7] Generating subscribers...")
-    subs = build_subscribers(5000)
+    subs = build_subscribers(args.subs)
 
     print("[3/7] Generating CDR records...")
-    cdrs = gen_cdrs(subs, cells, n=60_000)
+    cdrs = gen_cdrs(subs, cells, n=args.cdrs)
     print(f"      {len(cdrs)} records generated.")
 
     print("[4/7] Running OSINT analysis...")
