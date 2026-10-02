@@ -35,3 +35,9 @@ telecom_sim_output/
 # OS
 .DS_Store
 Thumbs.db
+# Backups
+*.bak
+*.v1_backup
+*.v2_backup
+*.v3_backup
+_admin_auth_backup/
