@@ -258,7 +258,7 @@ hold 2 PB.
 
 ## Testing
 
-**154 tests** collected across 11 files.
+**262 tests** collected across 16 files.
 
 ```bash
 pytest              # fast tests (unit + smoke + db + attack_core)
@@ -267,19 +267,24 @@ pytest --run-slow   # also runs the full simulator end-to-end
 
 | File | Test functions | Test classes |
 |---|---:|---:|
+| `tests/test_admin_audit.py` | 13 | 3 |
 | `tests/test_admin_auth.py` | 13 | 3 |
 | `tests/test_admin_backup.py` | 19 | 3 |
 | `tests/test_admin_rate_limit.py` | 17 | 3 |
 | `tests/test_attack_core.py` | 34 | 4 |
+| `tests/test_common.py` | 31 | 6 |
+| `tests/test_coverage_extra.py` | 24 | 10 |
 | `tests/test_db.py` | 5 | 2 |
 | `tests/test_integration.py` | 1 | 0 |
+| `tests/test_make_coverage_badge.py` | 21 | 3 |
 | `tests/test_radar_anomaly.py` | 16 | 7 |
 | `tests/test_radar_pdf.py` | 7 | 3 |
 | `tests/test_radar_period.py` | 17 | 3 |
 | `tests/test_smoke.py` | 2 | 0 |
+| `tests/test_telecom_attack_db.py` | 19 | 6 |
 | `tests/test_unit.py` | 19 | 6 |
 
-_Note: parametrized tests are counted once by the AST scanner but expand to multiple cases at collect time (`pytest --collect-only` reports 154 total)._
+_Note: parametrized tests are counted once by the AST scanner but expand to multiple cases at collect time (`pytest --collect-only` reports 262 total)._
 
 ---
 
@@ -551,4 +556,4 @@ This makes the core testable in <0.5 s without spinning up SQLite.
 
 ---
 
-*Generated 2026-10-02 by `generate_readme.py`.*
+*Generated 2026-10-03 by `generate_readme.py`.*
