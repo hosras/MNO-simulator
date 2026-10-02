@@ -36,7 +36,20 @@ def test_import_cleanly(mod):
         timeout=30,
     )
     assert proc.returncode == 0, f"import {mod} failed:\n{proc.stderr}"
-    assert proc.stderr.strip() == "", (
+
+    # Streamlit emits non-fatal warnings when imported outside a runtime
+    # (bare mode). These are expected and unrelated to real errors.
+    _IGNORED_STDERR_SUBSTRINGS = (
+        "streamlit.runtime.caching.cache_data_api",
+        "missing ScriptRunContext",
+    )
+    stderr_lines = [
+        line for line in proc.stderr.splitlines()
+        if not any(s in line for s in _IGNORED_STDERR_SUBSTRINGS)
+    ]
+    cleaned_stderr = "\n".join(stderr_lines).strip()
+
+    assert cleaned_stderr == "", (
         f"import {mod} produced stderr output:\n{proc.stderr}"
     )
 

@@ -204,6 +204,16 @@ class CellSite:
         backhaul_gbps: Backhaul capacity in Gbps.
     """
     cell_id: str
+    name: str
+    tech: str
+    city: str
+    lat: float
+    lon: float
+    band: str
+    azimuth: int
+    tilt: int
+    tx_dbm: float
+    backhaul_gbps: float
 
 @dataclass
 class CoreNode:
@@ -220,6 +230,11 @@ class CoreNode:
         capacity_tps:  Peak throughput capacity in transactions per second.
     """
     node_id: str
+    name: str
+    role: str
+    tech: str
+    city: str
+    capacity_tps: int
 
 BANDS = {
     "2G": ["GSM-900", "GSM-1800"],
@@ -316,6 +331,27 @@ class Subscriber:
         e2e_enabled:         True if E2E encryption is active.
     """
     msisdn: str
+    imsi: str
+    imei: str
+    city: str
+    plan: str
+    kyc_age_days: int
+    roaming_enabled: bool
+    risk_score: float
+    line_class: str
+    international_access: bool
+    filter_bypass: bool
+    clir_enabled: bool
+    clir_override: bool
+    priority_qos: int
+    lawful_intercept: bool
+    direct_routing: bool
+    whitelisted_asns: List[str] = field(default_factory=list)
+    encryption_required: bool = False
+    cipher_suite: str = "None"
+    key_id: str = ""
+    key_rotation_days: int = 0
+    e2e_enabled: bool = False
 
 PLANS = ["Prepaid-Basic", "Prepaid-Plus", "Postpaid-Silver",
          "Postpaid-Gold", "Postpaid-Business", "IoT-M2M"]
