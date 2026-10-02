@@ -1,33 +1,91 @@
 # -*- coding: utf-8 -*-
 """Auto-generate README.md from the project's live structure.
 
-Reads the actual source files and produces a README that reflects:
-  - Python modules       (docstring, public/private function counts)
-  - Test files           (test function counts per file)
+Reflects the current package-based layout:
+  - Top-level modules (telecom_*.py, attack_core.py)
+  - Packages        (dashboard/, admin/, radar/)
+  - Tests           (tests/*.py)
   - Windows batch files
-  - requirements.txt     (version-constrained dependency list)
+  - requirements.txt + requirements-ci.txt
+  - CI badge (auto-linked to GitHub Actions)
 
 Usage:
     python generate_readme.py
 """
 import ast
+import re
+import subprocess
+import sys
 from datetime import datetime
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 
+# --- GitHub slug (edit if your repo moves) ---
+GITHUB_USER = "hosras"
+GITHUB_REPO = "MNO-simulator"
+CI_BADGE_URL = (
+    f"https://github.com/{GITHUB_USER}/{GITHUB_REPO}/actions/"
+    f"workflows/ci.yml/badge.svg"
+)
+CI_LINK_URL = (
+    f"https://github.com/{GITHUB_USER}/{GITHUB_REPO}/actions/"
+    f"workflows/ci.yml"
+)
+REPO_URL = f"https://github.com/{GITHUB_USER}/{GITHUB_REPO}"
+
+PACKAGES = ["dashboard", "admin", "radar"]
+
+
+# ================================================================
+# File iteration helpers
+# ================================================================
+def iter_project_py_files():
+    """Yield all project .py files: top-level + package modules.
+
+    Excludes: __pycache__, tests/, .venv/, generate_*.py, restore_*.py,
+              check_*.py, main.py (launcher), and anything in sub-packages
+              that is not part of the runtime surface.
+    """
+    skip_names = {
+        "generate_readme.py", "generate_evidence.py",
+        "restore_2pb.py", "check_6g_now.py", "main.py",
+    }
+    # Top-level runtime modules
+    for p in sorted(ROOT.glob("telecom_*.py")):
+        yield p
+    p = ROOT / "attack_core.py"
+    if p.exists():
+        yield p
+    # Package modules
+    for pkg in PACKAGES:
+        pkg_dir = ROOT / pkg
+        if not pkg_dir.is_dir():
+            continue
+        for p in sorted(pkg_dir.rglob("*.py")):
+            if "__pycache__" in p.parts:
+                continue
+            yield p
+
+
+def rel_path(p: Path) -> str:
+    """Return path relative to ROOT with forward slashes."""
+    try:
+        return p.relative_to(ROOT).as_posix()
+    except ValueError:
+        return p.name
+
 
 # ================================================================
 # Scanners
 # ================================================================
-def scan_python_module(path):
+def scan_python_module(path: Path):
     try:
         src = path.read_text(encoding="utf-8")
         tree = ast.parse(src, filename=str(path))
     except (SyntaxError, UnicodeDecodeError):
         return None
 
-    # --- Extract a meaningful description from the docstring ---
     raw_doc = (ast.get_docstring(tree) or "").strip()
     docstring = "(no docstring)"
     for line in raw_doc.split("\n"):
@@ -39,10 +97,7 @@ def scan_python_module(path):
         docstring = s
         break
 
-    # --- Count public / private functions and classes ---
-    public = 0
-    private = 0
-    classes = 0
+    public = private = classes = 0
     for node in tree.body:
         if isinstance(node, ast.FunctionDef):
             if node.name.startswith("_"):
@@ -53,16 +108,27 @@ def scan_python_module(path):
             classes += 1
 
     return {
-        "file":      path.name,
+        "file":      rel_path(path),
+        "name":      path.stem,
         "docstring": docstring,
         "n_public":  public,
         "n_private": private,
         "n_classes": classes,
         "n_lines":   src.count("\n") + 1,
+        "package":   _detect_package(path),
     }
 
 
-def scan_test_file(path):
+def _detect_package(path: Path) -> str:
+    """Return the top-level package name or '—'."""
+    try:
+        first = path.relative_to(ROOT).parts[0]
+    except ValueError:
+        return "—"
+    return first if first in PACKAGES else "—"
+
+
+def scan_test_file(path: Path):
     try:
         src = path.read_text(encoding="utf-8")
         tree = ast.parse(src, filename=str(path))
@@ -80,12 +146,29 @@ def scan_test_file(path):
     return {"file": path.name, "n_tests": n_tests, "n_classes": n_classes}
 
 
+def count_collected_tests():
+    """Run pytest --collect-only and return the total count (or None)."""
+    try:
+        r = subprocess.run(
+            [sys.executable, "-m", "pytest", "--collect-only", "-q",
+             "--no-header", "-o", "addopts="],
+            cwd=str(ROOT), capture_output=True, text=True, timeout=90,
+        )
+        for line in reversed(r.stdout.splitlines()):
+            m = re.search(r"(\d+)\s+tests?\s+collected", line)
+            if m:
+                return int(m.group(1))
+    except Exception:
+        pass
+    return None
+
+
 def scan_batch_files():
     return sorted(p.name for p in ROOT.glob("*.bat"))
 
 
-def read_requirements():
-    p = ROOT / "requirements.txt"
+def read_requirements(fname="requirements.txt"):
+    p = ROOT / fname
     if not p.exists():
         return []
     out = []
@@ -101,6 +184,8 @@ def read_requirements():
 # ================================================================
 HEADER = "\n".join([
     "# TELECOM-NET-SIM",
+    "",
+    f"[![CI]({CI_BADGE_URL})]({CI_LINK_URL})",
     "",
     "> Fully local mobile network simulator with OSINT/SIGINT analytics,",
     "> attack scenario generation, and three Streamlit dashboards.",
@@ -118,16 +203,66 @@ HEADER = "\n".join([
 ])
 
 
+ARCHITECTURE = "\n".join([
+    "## Architecture",
+    "",
+    "The project is split into thin **entry-point shims** at the repo root",
+    "and the actual implementation lives in three self-contained packages.",
+    "This keeps diffs small, enables isolated testing, and lets each",
+    "dashboard ship independently.",
+    "",
+    "```",
+    "MNO-simulator/",
+    "├── telecom_net_sim.py       # CLI simulator   (top-level module)",
+    "├── telecom_attack.py        # attack orchestrator (DB layer)",
+    "├── attack_core.py           # pure attack logic (no DB, unit-testable)",
+    "├── telecom_common.py        # shared utilities + schema",
+    "├── telecom_ui_common.py     # Streamlit + Plotly helpers",
+    "│",
+    "├── telecom_dashboard.py     # shim -> dashboard.main",
+    "├── telecom_admin.py         # shim -> admin.main",
+    "├── telecom_radar.py         # shim -> radar.main",
+    "│",
+    "├── dashboard/               # operations dashboard",
+    "│   ├── main.py",
+    "│   ├── services/  (data, styles, ui)",
+    "│   └── views/     (13 tabs)",
+    "│",
+    "├── admin/                   # CRUD + audit + backup",
+    "│   ├── main.py",
+    "│   ├── services/  (auth, audit, backup, db, rate_limit)",
+    "│   └── views/     (9 tabs)",
+    "│",
+    "├── radar/                   # statistical analytics",
+    "│   ├── main.py",
+    "│   ├── services/  (anomaly, pdf, period, ui)",
+    "│   └── views/     (14 tabs)",
+    "│",
+    "├── tests/                   # pytest suite",
+    "└── .github/workflows/ci.yml # CI (runs pytest --run-slow)",
+    "```",
+    "",
+    "### Why this split?",
+    "",
+    "- **Small diffs**: editing one tab changes one small file, not a 1,300-line one.",
+    "- **Testable**: services (`anomaly`, `backup`, `pdf`, `period`) have no",
+    "  Streamlit import — they can be unit-tested without a runtime.",
+    "- **Backward compatible**: `streamlit run telecom_dashboard.py` still",
+    "  works exactly as before.",
+    "",
+])
+
+
 FEATURES = "\n".join([
     "## Features",
     "",
     "### Simulation",
     "- Multi-technology topology: **2G / 3G / 4G / 5G / 6G** (sub-THz + mmWave)",
     "- 10 Iranian cities weighted by population",
-    "- 5,000 subscribers with special-line classes "
-    "(VIP / Government / Corporate / Emergency / Test)",
-    "- 60,000 CDRs across voice / SMS / MMS / data / USSD / RCS",
+    "- Configurable subscriber count (default 5,000) and CDR count (default 60,000)",
+    "- Special-line classes: VIP / Government / Corporate / Emergency / Test",
     "- Voice bearers: VoLTE / VoWiFi / VoNR / Vo6G / CSFB",
+    "- Messaging: SMS / MMS / RCS",
     "- End-to-end encryption simulation (5 cipher suites, incl. Kyber-1024)",
     "",
     "### Analysis",
@@ -138,17 +273,22 @@ FEATURES = "\n".join([
     "- **Alert engine** with 9 rule classes -> SMS dispatch to SOC",
     "",
     "### Attack Simulator",
-    "- 23 attack types across SS7 / Diameter / GTP / PFCP / SIP / "
-    "HTTP2 / O-RAN / 6G",
+    "- 24 attack types across SS7 / Diameter / GTP / PFCP / SIP / HTTP2",
+    "  / O-RAN / 6G (RIS, ISAC, AI-RAN, THz, QUIC)",
     "- MTTD / MTTR simulation",
     "- Persists scenarios + events + alerts to the same DB",
+    "- **Pure core** (`attack_core.py`) usable without a DB",
     "",
     "### Dashboards",
-    "1. `telecom_dashboard.py` - operations dashboard",
-    "2. `telecom_radar.py`     - statistical analytics + PDF export",
-    "3. `telecom_admin.py`     - CRUD + audit log + backup / restore",
+    "1. `telecom_dashboard.py` - operations dashboard (13 tabs)",
+    "2. `telecom_radar.py`     - statistical analytics + anomaly detection",
+    "                            + PDF export (14 tabs)",
+    "3. `telecom_admin.py`     - CRUD + audit log + backup / restore (9 tabs)",
     "",
-    "Shared helpers: `telecom_ui_common.py` (Streamlit + Plotly).",
+    "### Quality",
+    "- **CI** on GitHub Actions (Python 3.11 + 3.12, Linux)",
+    "- **~65 unit + smoke + integration tests**, runs in <10 s",
+    "- **Hermetic**: seeded RNG, no external calls, no telemetry",
     "",
 ])
 
@@ -164,6 +304,9 @@ INSTALL = "\n".join([
     "pip install -r requirements.txt",
     "```",
     "",
+    "For CI or a minimal dev environment, use `requirements-ci.txt`",
+    "instead — it only pulls the packages the project actually imports.",
+    "",
 ])
 
 
@@ -173,16 +316,28 @@ USAGE = "\n".join([
     "### 1. Generate the dataset",
     "",
     "```bash",
-    "python telecom_net_sim.py",
+    "python telecom_net_sim.py                    # defaults: seed=1403, 5k subs, 60k CDRs",
+    "python telecom_net_sim.py --seed 42          # reproducible, different scenario",
+    "python telecom_net_sim.py --random-seed      # non-reproducible, fresh every run",
+    "python telecom_net_sim.py --subs 500 --cdrs 2000   # fast smoke run",
     "```",
     "",
-    "Outputs `telecom_sim_output/telecom_sim.db`, `report.txt`, "
-    "and 10 PNG charts.",
+    "Outputs `telecom_sim_output/telecom_sim.db`, `report.txt`, and 10 PNG charts.",
     "",
     "### 2. Run the attack simulator (optional)",
     "",
     "```bash",
     "python telecom_attack.py",
+    "```",
+    "",
+    "Or from Python (pure functions, no DB required):",
+    "",
+    "```python",
+    "from attack_core import generate_scenarios, expand_events",
+    "idx = {\"cores\": {\"HSS\": [\"HSS-01\"]}, \"all_cores\": [],",
+    "       \"cells_5g\": [], \"cells_6g\": [\"6G-001\"]}",
+    "scenarios = generate_scenarios(10, idx)   # no DB, no I/O",
+    "events    = expand_events(scenarios, samples_per_scenario=20)",
     "```",
     "",
     "### 3. Open a dashboard",
@@ -193,8 +348,8 @@ USAGE = "\n".join([
     "streamlit run telecom_admin.py",
     "```",
     "",
-    "All three bind to `127.0.0.1` by default "
-    "(see `.streamlit/config.toml`).",
+    "All three bind to `127.0.0.1` by default (see `.streamlit/config.toml`).",
+    "If a port is busy, pass `--server.port 8502`.",
     "",
     "### 4. Restore the 2 PB traffic figure (display only)",
     "",
@@ -230,6 +385,11 @@ DATA_ARTIFACTS = "\n".join([
     ".venv/",
     "__pycache__/",
     "telecom_sim_output/",
+    "*.bak",
+    "*.v1_backup",
+    "*.v2_backup",
+    "*.v3_backup",
+    "_admin_auth_backup/",
     "*.zip",
     "*.pdf",
     "*.pyc",
@@ -243,24 +403,37 @@ DESIGN_NOTES = "\n".join([
     "",
     "### Why local-only?",
     "No network calls anywhere. All data comes from a seeded RNG",
-    "(`SEED = 1403` in `telecom_net_sim.py`). Runs are reproducible and",
-    "tests are hermetic. Streamlit telemetry is disabled.",
+    "(default `SEED = 1403`, overridable via `--seed` / `--random-seed`).",
+    "Runs are reproducible by default, tests are hermetic, and Streamlit",
+    "telemetry is disabled.",
     "",
     "### Why SQLite?",
     "Single-file DB, zero setup, easy backup / restore, portable.",
     "",
-    "### Why `main()` guards in every Streamlit module?",
+    "### Why shims at the root?",
+    "`telecom_dashboard.py`, `telecom_admin.py` and `telecom_radar.py`",
+    "are 22-line shims that call `dashboard.main()`, `admin.main()`,",
+    "`radar.main()` respectively. This keeps the historical command",
+    "`streamlit run telecom_dashboard.py` working while the actual code",
+    "lives in a small, focused package.",
+    "",
+    "### Why `main()` guards everywhere?",
     "Streamlit scripts execute top-to-bottom on every rerun. Without a",
-    "guard, `import telecom_*` would run the whole UI. Each module",
-    "defines a `main()` and ends with a guard that runs it only when",
-    "executed under `streamlit run` or as `__main__`. This makes every",
-    "module both a script and a library.",
+    "guard, `import telecom_*` would run the whole UI. Each entry point",
+    "defines `main()` and calls it only under `__main__`. This makes",
+    "every module importable and testable.",
     "",
     "### Why SQLite's online backup API?",
     "`shutil.copy2` on a WAL-mode DB copies only `.db`, not the pending",
-    "`-wal`. The backup can be inconsistent. "
+    "`-wal`. The backup can be inconsistent.",
     "`sqlite3.Connection.backup()` produces a consistent snapshot even",
     "while writers are active.",
+    "",
+    "### Why split `attack_core.py` from `telecom_attack.py`?",
+    "All simulation logic (scenario generation, event expansion, alert",
+    "conversion) is DB-free and lives in `attack_core.py`. The DB layer,",
+    "target indexing and CLI orchestration live in `telecom_attack.py`.",
+    "This makes the core testable in <0.5 s without spinning up SQLite.",
     "",
 ])
 
@@ -272,18 +445,47 @@ LIMITATIONS_HEAD = "\n".join([
     "- `restore_2pb.py` scales `SUM(bytes)` for display only; the DB does",
     "  **not** physically hold 2 PB.",
     "- Streamlit dashboards are read-only; all writes go through the admin panel.",
-    "- No CI configured. Add `.github/workflows/ci.yml` running",
-    "  `pytest --run-slow` to enable.",
-    "- `test_db.py` and `test_unit.py::TestPickTarget` require",
-    "  `telecom_sim_output/telecom_sim.db` to exist; run",
-    "  `python telecom_net_sim.py` first if they skip.",
+    "- GitHub Actions currently tests on Python 3.11 and 3.12. Python 3.13+",
+    "  may work but is untested in CI.",
+    "- `test_db.py`, `test_smoke.py` and `test_integration.py` require",
+    "  `telecom_sim_output/telecom_sim.db` to exist (or generate one on",
+    "  the fly); run `python telecom_net_sim.py --subs 500 --cdrs 2000`",
+    "  first if they fail locally.",
     "",
 ])
 
 
 # ================================================================
-# Renderers for dynamic tables
+# Renderers
 # ================================================================
+def render_architecture(modules):
+    """Summarise packages with file counts and total lines."""
+    by_pkg = {}
+    for m in modules:
+        by_pkg.setdefault(m["package"], []).append(m)
+
+    out = ["### Package Layout", "",
+           "| Package | Files | Lines | Purpose |",
+           "|---|---:|---:|---|"]
+    purpose = {
+        "dashboard": "Operations dashboard + OSINT/SIGINT views",
+        "admin":     "CRUD, audit log, backup / restore",
+        "radar":     "Statistical analytics + anomaly detection + PDF",
+        "—":         "Top-level modules (simulator, attack, common)",
+    }
+    order = ["—"] + PACKAGES
+    for pkg in order:
+        if pkg not in by_pkg:
+            continue
+        files = by_pkg[pkg]
+        total = sum(f["n_lines"] for f in files)
+        label = "*(top-level)*" if pkg == "—" else f"`{pkg}/`"
+        out.append(f"| {label} | {len(files)} | {total:,} | "
+                   f"{purpose.get(pkg, '')} |")
+    out.append("")
+    return "\n".join(out)
+
+
 def render_modules(modules):
     out = ["## Modules", "",
            "| Module | Lines | Public | Private | Classes | Description |",
@@ -297,27 +499,44 @@ def render_modules(modules):
     return "\n".join(out)
 
 
-def render_tests(test_files):
-    total = sum(t["n_tests"] for t in test_files)
-    out = ["## Testing", "",
-           f"**{total} tests** across {len(test_files)} files.", "",
+def render_tests(test_files, collected):
+    ast_total = sum(t["n_tests"] for t in test_files)
+    if collected is not None:
+        title = f"**{collected} tests** collected across {len(test_files)} files."
+    else:
+        title = (f"**~{ast_total} test functions** across "
+                 f"{len(test_files)} files (AST count).")
+    out = ["## Testing", "", title, "",
            "```bash",
-           "pytest              # fast tests (unit + smoke + db)",
+           "pytest              # fast tests (unit + smoke + db + attack_core)",
            "pytest --run-slow   # also runs the full simulator end-to-end",
            "```", "",
-           "| File | Tests | Test classes |",
+           "| File | Test functions | Test classes |",
            "|---|---:|---:|"]
     for t in test_files:
-        out.append(f"| `tests/{t['file']}` | {t['n_tests']} | {t['n_classes']} |")
+        out.append(f"| `tests/{t['file']}` | {t['n_tests']} | "
+                   f"{t['n_classes']} |")
     out.append("")
+    if collected is not None:
+        out.append(f"_Note: parametrized tests are counted once by the "
+                   f"AST scanner but expand to multiple cases at collect "
+                   f"time (`pytest --collect-only` reports "
+                   f"{collected} total)._")
+        out.append("")
     return "\n".join(out)
 
 
-def render_dependencies(deps):
+def render_dependencies(deps, ci_deps):
     out = ["## Dependencies", "",
-           "Version-constrained in `requirements.txt`:", "", "```"]
+           "Version-constrained in `requirements.txt`:",
+           "", "```"]
     out.extend(deps)
     out.extend(["```", ""])
+    if ci_deps:
+        out.extend(["Minimal CI set in `requirements-ci.txt`:",
+                    "", "```"])
+        out.extend(ci_deps)
+        out.extend(["```", ""])
     return "\n".join(out)
 
 
@@ -345,7 +564,7 @@ def render_batch(files):
 # ================================================================
 def build_readme():
     modules = []
-    for p in sorted(ROOT.glob("telecom_*.py")):
+    for p in iter_project_py_files():
         info = scan_python_module(p)
         if info:
             modules.append(info)
@@ -358,22 +577,28 @@ def build_readme():
             if info:
                 tests.append(info)
 
-    deps = read_requirements()
+    collected = count_collected_tests()
+    deps = read_requirements("requirements.txt")
+    ci_deps = read_requirements("requirements-ci.txt")
     batch = scan_batch_files()
 
     parts = [
         HEADER,
+        ARCHITECTURE,
+        "---", "",
         FEATURES,
         "---", "",
         INSTALL,
         "---", "",
         USAGE,
         "---", "",
+        render_architecture(modules),
+        "---", "",
         render_modules(modules),
         "---", "",
-        render_tests(tests),
+        render_tests(tests, collected),
         "---", "",
-        render_dependencies(deps),
+        render_dependencies(deps, ci_deps),
     ]
 
     b = render_batch(batch)

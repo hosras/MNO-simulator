@@ -2,18 +2,18 @@
 """Auto-generate EVIDENCE.md from the project's live state.
 
 Produces a delivery-ready evidence document that proves the project
-operates fully locally. Reads:
-  - .streamlit/config.toml   (verifies telemetry disabled + loopback bind)
-  - requirements.txt         (dependency snapshot)
-  - source tree              (static scan for network imports)
-  - Python module list       (import smoke test)
+operates fully locally. Scans:
+  - Top-level modules (telecom_*.py, attack_core.py)
+  - Package modules  (dashboard/, admin/, radar/)
+  - .streamlit/config.toml  (telemetry + loopback bind)
+  - requirements.txt + requirements-ci.txt
+  - Import smoke test across all project modules
 
 Usage:
     python generate_evidence.py
 Output:
     EVIDENCE.md
 """
-import ast
 import re
 import subprocess
 import sys
@@ -21,7 +21,10 @@ from datetime import datetime
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
-OUT  = ROOT / "EVIDENCE.md"
+OUT = ROOT / "EVIDENCE.md"
+
+PACKAGES = ["dashboard", "admin", "radar"]
+
 
 # ------------------------------------------------------------------
 # Network-related tokens to scan for in project source files
@@ -45,8 +48,45 @@ NETWORK_TOKENS = [
     "fastapi",
 ]
 
-# Files to scan for network imports (project source only)
-SCAN_GLOB = "telecom_*.py"
+
+# ------------------------------------------------------------------
+# File iteration
+# ------------------------------------------------------------------
+def iter_project_py_files():
+    """Yield every project .py file: top-level + packages."""
+    for p in sorted(ROOT.glob("telecom_*.py")):
+        yield p
+    p = ROOT / "attack_core.py"
+    if p.exists():
+        yield p
+    for pkg in PACKAGES:
+        pkg_dir = ROOT / pkg
+        if not pkg_dir.is_dir():
+            continue
+        for p in sorted(pkg_dir.rglob("*.py")):
+            if "__pycache__" in p.parts:
+                continue
+            yield p
+
+
+def rel(p: Path) -> str:
+    try:
+        return p.relative_to(ROOT).as_posix()
+    except ValueError:
+        return p.name
+
+
+def module_import_names():
+    """Return dotted import paths for the smoke test."""
+    names = []
+    for p in sorted(ROOT.glob("telecom_*.py")):
+        names.append(p.stem)
+    if (ROOT / "attack_core.py").exists():
+        names.append("attack_core")
+    for pkg in PACKAGES:
+        if (ROOT / pkg / "__init__.py").exists():
+            names.append(pkg)
+    return names
 
 
 # ------------------------------------------------------------------
@@ -55,18 +95,17 @@ SCAN_GLOB = "telecom_*.py"
 def scan_network_imports():
     """Return list of (file, line_no, line) for any suspicious import."""
     hits = []
-    for path in sorted(ROOT.glob(SCAN_GLOB)):
+    for path in iter_project_py_files():
         try:
             src = path.read_text(encoding="utf-8")
         except Exception:
             continue
         for i, line in enumerate(src.split("\n"), start=1):
             stripped = line.strip()
-            # only look at import statements and obvious calls
-            is_import = (
-                stripped.startswith("import ")
-                or stripped.startswith("from ")
-            )
+            if stripped.startswith("#"):
+                continue
+            is_import = (stripped.startswith("import ")
+                         or stripped.startswith("from "))
             is_call = any(
                 tok in stripped for tok in
                 ("socket.socket(", "urlopen(", "requests.get(",
@@ -76,21 +115,15 @@ def scan_network_imports():
                 continue
             for tok in NETWORK_TOKENS:
                 if tok in stripped:
-                    hits.append((path.name, i, stripped))
+                    hits.append((rel(path), i, stripped))
                     break
     return hits
 
 
 def scan_telemetry_config():
-    """Read .streamlit/config.toml and return key settings."""
     cfg = ROOT / ".streamlit" / "config.toml"
-    info = {
-        "exists": cfg.exists(),
-        "gatherUsageStats": None,
-        "address": None,
-        "cors": None,
-        "xsrf": None,
-    }
+    info = {"exists": cfg.exists(), "gatherUsageStats": None,
+            "address": None, "cors": None, "xsrf": None}
     if not cfg.exists():
         return info
     text = cfg.read_text(encoding="utf-8")
@@ -107,8 +140,8 @@ def scan_telemetry_config():
     return info
 
 
-def scan_requirements():
-    p = ROOT / "requirements.txt"
+def scan_requirements(fname):
+    p = ROOT / fname
     if not p.exists():
         return []
     out = []
@@ -120,27 +153,28 @@ def scan_requirements():
 
 
 def list_modules():
-    return sorted(p.name for p in ROOT.glob("telecom_*.py"))
+    """Return (rel_path, n_lines) for every project .py file."""
+    out = []
+    for p in iter_project_py_files():
+        try:
+            n = p.read_text(encoding="utf-8").count("\n") + 1
+        except Exception:
+            n = 0
+        out.append((rel(p), n))
+    return out
 
 
 def run_import_test():
-    """Attempt to import every telecom_* module in a subprocess.
-    Returns (ok: bool, stdout: str, stderr: str).
-    """
-    mods = [p.stem for p in sorted(ROOT.glob("telecom_*.py"))]
-    if not mods:
+    """Import every project module in a subprocess."""
+    names = module_import_names()
+    if not names:
         return False, "", "no modules found"
-    code = (
-        "import " + ", ".join(mods) + "; "
-        "print('OK: all modules imported cleanly')"
-    )
+    code = ("import " + ", ".join(names) +
+            "; print('OK: all modules imported cleanly')")
     try:
         r = subprocess.run(
             [sys.executable, "-c", code],
-            cwd=str(ROOT),
-            capture_output=True,
-            text=True,
-            timeout=60,
+            cwd=str(ROOT), capture_output=True, text=True, timeout=90,
         )
         return r.returncode == 0, r.stdout.strip(), r.stderr.strip()
     except Exception as e:
@@ -151,16 +185,11 @@ def check_gitignore():
     p = ROOT / ".gitignore"
     if not p.exists():
         return None
-    wanted = [
-        ".venv/", "__pycache__/", "telecom_sim_output/",
-        "*.zip", "*.pdf", "*.pyc",
-    ]
-    present = []
+    wanted = [".venv/", "__pycache__/", "telecom_sim_output/",
+              "*.zip", "*.pdf", "*.pyc"]
     text = p.read_text(encoding="utf-8")
-    for w in wanted:
-        if any(line.strip() == w for line in text.split("\n")):
-            present.append(w)
-    return present
+    return [w for w in wanted
+            if any(line.strip() == w for line in text.split("\n"))]
 
 
 # ------------------------------------------------------------------
@@ -173,7 +202,8 @@ def fence(lang, content):
 def build_evidence():
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     cfg = scan_telemetry_config()
-    reqs = scan_requirements()
+    reqs = scan_requirements("requirements.txt")
+    ci_reqs = scan_requirements("requirements-ci.txt")
     net_hits = scan_network_imports()
     modules = list_modules()
     import_ok, import_out, import_err = run_import_test()
@@ -181,18 +211,18 @@ def build_evidence():
 
     parts = []
 
-    # ---------------- Header ----------------
+    # Header
     parts.append("# EVIDENCE — Fully Local Operation")
     parts.append("")
-    parts.append(f"**Project:** TELECOM-NET-SIM  ")
+    parts.append("**Project:** TELECOM-NET-SIM  ")
     parts.append(f"**Generated:** {now}  ")
-    parts.append(f"**Purpose:** Prove the simulator runs entirely offline — "
-                 f"no network calls, no telemetry, no LAN exposure.")
+    parts.append("**Purpose:** Prove the simulator runs entirely offline — "
+                 "no network calls, no telemetry, no LAN exposure.")
     parts.append("")
     parts.append("---")
     parts.append("")
 
-    # ---------------- 1. Streamlit config ----------------
+    # 1. Streamlit config
     parts.append("## 1. Streamlit Telemetry Disabled")
     parts.append("")
     parts.append("File: `.streamlit/config.toml`")
@@ -202,10 +232,10 @@ def build_evidence():
         parts.append("> Streamlit will emit usage statistics to its servers.")
     else:
         rows = [
-            ("gatherUsageStats", cfg["gatherUsageStats"], "false"),
-            ("address",          cfg["address"],          '"127.0.0.1"'),
-            ("enableCORS",       cfg["cors"],             "true"),
-            ("enableXsrfProtection", cfg["xsrf"],         "true"),
+            ("gatherUsageStats",     cfg["gatherUsageStats"], "false"),
+            ("address",              cfg["address"],          '"127.0.0.1"'),
+            ("enableCORS",           cfg["cors"],             "true"),
+            ("enableXsrfProtection", cfg["xsrf"],             "true"),
         ]
         parts.append("| Setting | Value | Expected | Status |")
         parts.append("|---|---|---|---|")
@@ -214,7 +244,7 @@ def build_evidence():
             parts.append(f"| `{name}` | `{actual or '—'}` | `{expected}` | {ok} |")
     parts.append("")
 
-    # ---------------- 2. Runtime output ----------------
+    # 2. Runtime output
     parts.append("## 2. Runtime Binding (loopback only)")
     parts.append("")
     parts.append("Expected output when running a dashboard:")
@@ -224,14 +254,13 @@ def build_evidence():
         "\n"
         "  You can now view your Streamlit app in your browser.\n"
         "\n"
-        "  URL: http://127.0.0.1:8501"
-    ))
+        "  URL: http://127.0.0.1:8501"))
     parts.append("")
     parts.append("**Note:** There must be **no** `External URL` line and "
                  "**no** `Network URL` on a non-loopback address.")
     parts.append("")
 
-    # ---------------- 3. netstat ----------------
+    # 3. netstat
     parts.append("## 3. Socket Binding Verification")
     parts.append("")
     parts.append("Command:")
@@ -242,17 +271,18 @@ def build_evidence():
     parts.append("")
     parts.append(fence("text",
         "TCP    127.0.0.1:8501    0.0.0.0:0         LISTENING     <pid>\n"
-        "TCP    127.0.0.1:8501    127.0.0.1:XXXXX   ESTABLISHED   <pid>"
-    ))
+        "TCP    127.0.0.1:8501    127.0.0.1:XXXXX   ESTABLISHED   <pid>"))
     parts.append("")
     parts.append("**Red flags:** any line with `0.0.0.0:8501` or `[::]:8501` "
                  "means the port is exposed beyond loopback.")
     parts.append("")
 
-    # ---------------- 4. Static scan ----------------
+    # 4. Static scan
     parts.append("## 4. Static Code Analysis")
     parts.append("")
-    parts.append(f"Scanned files: `{SCAN_GLOB}`  ")
+    parts.append("Scanned: top-level modules (`telecom_*.py`, `attack_core.py`) "
+                 "and all package modules (`dashboard/`, `admin/`, `radar/`).")
+    parts.append("")
     parts.append(f"Tokens searched: {', '.join(f'`{t}`' for t in NETWORK_TOKENS)}")
     parts.append("")
     if net_hits:
@@ -265,35 +295,29 @@ def build_evidence():
             parts.append(f"| `{fname}` | {ln} | `{content_esc}` |")
     else:
         parts.append("✅ **No network imports or calls found.**")
-        parts.append("")
-        parts.append(fence("cmd",
-            'findstr /S /I /M "requests urllib socket http.client '
-            'aiohttp httpx urlopen" *.py'))
-        parts.append("")
-        parts.append("(no output)")
     parts.append("")
 
-    # ---------------- 5. Module list ----------------
+    # 5. Module list
     parts.append("## 5. Source Modules")
     parts.append("")
-    parts.append(f"Total: **{len(modules)}** Python modules")
+    total_lines = sum(n for _, n in modules)
+    parts.append(f"Total: **{len(modules)}** Python modules "
+                 f"({total_lines:,} lines).")
     parts.append("")
-    parts.append("| Module |")
-    parts.append("|---|")
-    for m in modules:
-        parts.append(f"| `{m}` |")
+    parts.append("| Module | Lines |")
+    parts.append("|---|---:|")
+    for name, n in modules:
+        parts.append(f"| `{name}` | {n:,} |")
     parts.append("")
 
-    # ---------------- 6. Import smoke test ----------------
+    # 6. Import smoke test
     parts.append("## 6. Import Smoke Test")
     parts.append("")
+    names = module_import_names()
     parts.append("Command:")
     parts.append("")
     parts.append(fence("cmd",
-        'python -c "import ' +
-        ", ".join(p.stem for p in sorted(ROOT.glob("telecom_*.py"))) +
-        '; print(\'OK\')"'
-    ))
+        'python -c "import ' + ", ".join(names) + '; print(\'OK\')"'))
     parts.append("")
     parts.append("Result:")
     parts.append("")
@@ -308,18 +332,24 @@ def build_evidence():
             parts.append(fence("text", import_err))
     parts.append("")
 
-    # ---------------- 7. Dependencies ----------------
+    # 7. Dependencies
     parts.append("## 7. Runtime Dependencies")
     parts.append("")
     if reqs:
-        parts.append("From `requirements.txt`:")
+        parts.append(f"From `requirements.txt` ({len(reqs)} packages):")
         parts.append("")
         parts.append(fence("text", "\n".join(reqs)))
     else:
         parts.append("_`requirements.txt` not found._")
     parts.append("")
+    if ci_reqs:
+        parts.append(f"From `requirements-ci.txt` ({len(ci_reqs)} packages, "
+                     f"used by CI):")
+        parts.append("")
+        parts.append(fence("text", "\n".join(ci_reqs)))
+        parts.append("")
 
-    # ---------------- 8. .gitignore ----------------
+    # 8. .gitignore
     parts.append("## 8. Artifact Hygiene")
     parts.append("")
     if gi is None:
@@ -333,7 +363,7 @@ def build_evidence():
             parts.append(f"- `{w}`")
     parts.append("")
 
-    # ---------------- Footer ----------------
+    # Footer
     parts.append("---")
     parts.append("")
     parts.append("## Verification Summary")
@@ -351,12 +381,11 @@ def build_evidence():
     for label, ok in checks:
         parts.append(f"| {label} | {'✅ PASS' if ok else '❌ FAIL'} |")
     parts.append("")
-
     all_ok = all(ok for _, ok in checks)
-    if all_ok:
-        parts.append("**Overall: ✅ Project operates fully locally.**")
-    else:
-        parts.append("**Overall: ❌ Some checks failed — see above.**")
+    parts.append("**Overall: " +
+                 ("✅ Project operates fully locally.**"
+                  if all_ok else
+                  "❌ Some checks failed — see above.**"))
     parts.append("")
     parts.append("---")
     parts.append("")

@@ -1,5 +1,7 @@
 # TELECOM-NET-SIM
 
+[![CI](https://github.com/hosras/MNO-simulator/actions/workflows/ci.yml/badge.svg)](https://github.com/hosras/MNO-simulator/actions/workflows/ci.yml)
+
 > Fully local mobile network simulator with OSINT/SIGINT analytics,
 > attack scenario generation, and three Streamlit dashboards.
 
@@ -12,14 +14,63 @@ bind to loopback only - no LAN or internet exposure.
 
 *This README is auto-generated. Regenerate with:* `python generate_readme.py`
 
+## Architecture
+
+The project is split into thin **entry-point shims** at the repo root
+and the actual implementation lives in three self-contained packages.
+This keeps diffs small, enables isolated testing, and lets each
+dashboard ship independently.
+
+```
+MNO-simulator/
+├── telecom_net_sim.py       # CLI simulator   (top-level module)
+├── telecom_attack.py        # attack orchestrator (DB layer)
+├── attack_core.py           # pure attack logic (no DB, unit-testable)
+├── telecom_common.py        # shared utilities + schema
+├── telecom_ui_common.py     # Streamlit + Plotly helpers
+│
+├── telecom_dashboard.py     # shim -> dashboard.main
+├── telecom_admin.py         # shim -> admin.main
+├── telecom_radar.py         # shim -> radar.main
+│
+├── dashboard/               # operations dashboard
+│   ├── main.py
+│   ├── services/  (data, styles, ui)
+│   └── views/     (13 tabs)
+│
+├── admin/                   # CRUD + audit + backup
+│   ├── main.py
+│   ├── services/  (auth, audit, backup, db, rate_limit)
+│   └── views/     (9 tabs)
+│
+├── radar/                   # statistical analytics
+│   ├── main.py
+│   ├── services/  (anomaly, pdf, period, ui)
+│   └── views/     (14 tabs)
+│
+├── tests/                   # pytest suite
+└── .github/workflows/ci.yml # CI (runs pytest --run-slow)
+```
+
+### Why this split?
+
+- **Small diffs**: editing one tab changes one small file, not a 1,300-line one.
+- **Testable**: services (`anomaly`, `backup`, `pdf`, `period`) have no
+  Streamlit import — they can be unit-tested without a runtime.
+- **Backward compatible**: `streamlit run telecom_dashboard.py` still
+  works exactly as before.
+
+---
+
 ## Features
 
 ### Simulation
 - Multi-technology topology: **2G / 3G / 4G / 5G / 6G** (sub-THz + mmWave)
 - 10 Iranian cities weighted by population
-- 5,000 subscribers with special-line classes (VIP / Government / Corporate / Emergency / Test)
-- 60,000 CDRs across voice / SMS / MMS / data / USSD / RCS
+- Configurable subscriber count (default 5,000) and CDR count (default 60,000)
+- Special-line classes: VIP / Government / Corporate / Emergency / Test
 - Voice bearers: VoLTE / VoWiFi / VoNR / Vo6G / CSFB
+- Messaging: SMS / MMS / RCS
 - End-to-end encryption simulation (5 cipher suites, incl. Kyber-1024)
 
 ### Analysis
@@ -30,16 +81,22 @@ bind to loopback only - no LAN or internet exposure.
 - **Alert engine** with 9 rule classes -> SMS dispatch to SOC
 
 ### Attack Simulator
-- 23 attack types across SS7 / Diameter / GTP / PFCP / SIP / HTTP2 / O-RAN / 6G
+- 24 attack types across SS7 / Diameter / GTP / PFCP / SIP / HTTP2
+  / O-RAN / 6G (RIS, ISAC, AI-RAN, THz, QUIC)
 - MTTD / MTTR simulation
 - Persists scenarios + events + alerts to the same DB
+- **Pure core** (`attack_core.py`) usable without a DB
 
 ### Dashboards
-1. `telecom_dashboard.py` - operations dashboard
-2. `telecom_radar.py`     - statistical analytics + PDF export
-3. `telecom_admin.py`     - CRUD + audit log + backup / restore
+1. `telecom_dashboard.py` - operations dashboard (13 tabs)
+2. `telecom_radar.py`     - statistical analytics + anomaly detection
+                            + PDF export (14 tabs)
+3. `telecom_admin.py`     - CRUD + audit log + backup / restore (9 tabs)
 
-Shared helpers: `telecom_ui_common.py` (Streamlit + Plotly).
+### Quality
+- **CI** on GitHub Actions (Python 3.11 + 3.12, Linux)
+- **~65 unit + smoke + integration tests**, runs in <10 s
+- **Hermetic**: seeded RNG, no external calls, no telemetry
 
 ---
 
@@ -53,6 +110,9 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
+For CI or a minimal dev environment, use `requirements-ci.txt`
+instead — it only pulls the packages the project actually imports.
+
 ---
 
 ## Usage
@@ -60,7 +120,10 @@ pip install -r requirements.txt
 ### 1. Generate the dataset
 
 ```bash
-python telecom_net_sim.py
+python telecom_net_sim.py                    # defaults: seed=1403, 5k subs, 60k CDRs
+python telecom_net_sim.py --seed 42          # reproducible, different scenario
+python telecom_net_sim.py --random-seed      # non-reproducible, fresh every run
+python telecom_net_sim.py --subs 500 --cdrs 2000   # fast smoke run
 ```
 
 Outputs `telecom_sim_output/telecom_sim.db`, `report.txt`, and 10 PNG charts.
@@ -69,6 +132,16 @@ Outputs `telecom_sim_output/telecom_sim.db`, `report.txt`, and 10 PNG charts.
 
 ```bash
 python telecom_attack.py
+```
+
+Or from Python (pure functions, no DB required):
+
+```python
+from attack_core import generate_scenarios, expand_events
+idx = {"cores": {"HSS": ["HSS-01"]}, "all_cores": [],
+       "cells_5g": [], "cells_6g": ["6G-001"]}
+scenarios = generate_scenarios(10, idx)   # no DB, no I/O
+events    = expand_events(scenarios, samples_per_scenario=20)
 ```
 
 ### 3. Open a dashboard
@@ -80,6 +153,7 @@ streamlit run telecom_admin.py
 ```
 
 All three bind to `127.0.0.1` by default (see `.streamlit/config.toml`).
+If a port is busy, pass `--server.port 8502`.
 
 ### 4. Restore the 2 PB traffic figure (display only)
 
@@ -92,35 +166,113 @@ hold 2 PB.
 
 ---
 
+### Package Layout
+
+| Package | Files | Lines | Purpose |
+|---|---:|---:|---|
+| *(top-level)* | 8 | 2,758 | Top-level modules (simulator, attack, common) |
+| `dashboard/` | 21 | 1,426 | Operations dashboard + OSINT/SIGINT views |
+| `admin/` | 19 | 1,332 | CRUD, audit log, backup / restore |
+| `radar/` | 23 | 2,036 | Statistical analytics + anomaly detection + PDF |
+
+---
+
 ## Modules
 
 | Module | Lines | Public | Private | Classes | Description |
 |---|---:|---:|---:|---:|---|
-| `telecom_admin.py` | 1,164 | 11 | 0 | 0 | TELECOM Admin Panel v2.0 — full CRUD + audit + backup (see common.py) |
-| `telecom_attack.py` | 548 | 7 | 2 | 0 | TELECOM-ATTACK-SIM v1.0 |
+| `telecom_admin.py` | 21 | 0 | 0 | 0 | Backwards-compatible shim. |
+| `telecom_attack.py` | 603 | 7 | 2 | 0 | TELECOM-ATTACK-SIM v1.0 |
 | `telecom_common.py` | 152 | 14 | 1 | 0 | TELECOM-NET-SIM | Common Utilities v1.0 (shared across modules) |
-| `telecom_dashboard.py` | 1,318 | 1 | 0 | 0 | TELECOM-NET-SIM | Dashboard v3.0 (Streamlit) |
-| `telecom_net_sim.py` | 1,317 | 17 | 0 | 3 | TELECOM-NET-SIM v3.0 |
-| `telecom_radar.py` | 1,640 | 1 | 0 | 0 | TELECOM RADAR v2.0 |
+| `telecom_dashboard.py` | 21 | 0 | 0 | 0 | Backwards-compatible shim. |
+| `telecom_net_sim.py` | 1,400 | 18 | 0 | 3 | TELECOM-NET-SIM v3.0 |
+| `telecom_radar.py` | 21 | 0 | 0 | 0 | Backwards-compatible shim. |
 | `telecom_ui_common.py` | 136 | 5 | 0 | 0 | Shared Streamlit + Plotly helpers used by dashboard and radar. |
+| `attack_core.py` | 404 | 5 | 0 | 0 | TELECOM-ATTACK-CORE v1.0 |
+| `dashboard/__init__.py` | 10 | 0 | 0 | 0 | TELECOM Network Dashboard package. |
+| `dashboard/_config.py` | 9 | 0 | 0 | 0 | Package-level constants shared by all dashboard modules. |
+| `dashboard/main.py` | 131 | 1 | 0 | 0 | Dashboard entry point — sets page config, sidebar, KPI row, tabs. |
+| `dashboard/services/__init__.py` | 2 | 0 | 0 | 0 | Non-Streamlit services: data access, filters, styles, UI helpers. |
+| `dashboard/services/data.py` | 54 | 3 | 0 | 0 | Data access — cached DB load + filter application. |
+| `dashboard/services/styles.py` | 25 | 1 | 0 | 0 | Global CSS — injected once by main(). |
+| `dashboard/services/ui.py` | 40 | 3 | 0 | 0 | Small Streamlit UI helpers (KPI card, formatter, page header). |
+| `dashboard/views/__init__.py` | 2 | 0 | 0 | 0 | One module per tab. Each exposes render(data, filtered). |
+| `dashboard/views/alerts.py` | 130 | 1 | 0 | 0 | Tab 9 — Alert Engine & SMS Notifications. |
+| `dashboard/views/attacks.py` | 72 | 1 | 0 | 0 | Tab 12 — Attack Simulation Results. |
+| `dashboard/views/encryption.py` | 98 | 1 | 0 | 0 | Tab 8 — End-to-End Encryption. |
+| `dashboard/views/network.py` | 41 | 1 | 0 | 0 | Tab 1 — Network Topology & Core Nodes. |
+| `dashboard/views/osint.py` | 83 | 1 | 0 | 0 | Tab 5 — OSINT Analysis. |
+| `dashboard/views/overview.py` | 57 | 1 | 0 | 0 | Tab 0 — Network Overview (map + tech share + cells per city). |
+| `dashboard/views/report.py` | 31 | 1 | 0 | 0 | Tab 11 — Management Report. |
+| `dashboard/views/sigint.py` | 96 | 1 | 0 | 0 | Tab 6 — SIGINT Analysis. |
+| `dashboard/views/signal.py` | 54 | 1 | 0 | 0 | Tab 3 — Signal Quality (RF layer). |
+| `dashboard/views/special_lines.py` | 178 | 1 | 0 | 0 | Tab 7 — Special Lines & Privileged Access. |
+| `dashboard/views/subscribers.py` | 47 | 1 | 0 | 0 | Tab 10 — Subscriber Analytics. |
+| `dashboard/views/traffic.py` | 68 | 1 | 0 | 0 | Tab 2 — Traffic Analysis (CDR). |
+| `dashboard/views/voice_messaging.py` | 198 | 1 | 0 | 0 | Tab 4 — Voice Bearers & Messaging (VoLTE/VoWiFi/VoNR/CSFB + MMS + RCS). |
+| `admin/__init__.py` | 10 | 0 | 0 | 0 | TELECOM Admin Panel package. |
+| `admin/_config.py` | 17 | 0 | 0 | 0 | Package-level constants shared across admin modules. |
+| `admin/main.py` | 207 | 1 | 4 | 0 | Admin panel entry point — login flow + tabs. |
+| `admin/services/__init__.py` | 2 | 0 | 0 | 0 | Non-Streamlit services for the admin panel. |
+| `admin/services/audit.py` | 21 | 2 | 0 | 0 | Audit log: schema init + append helper. |
+| `admin/services/auth.py` | 19 | 3 | 0 | 0 | Session-state helpers for authentication (Streamlit-based). |
+| `admin/services/backup.py` | 126 | 3 | 0 | 0 | SQLite backup / restore / list — free of Streamlit imports. |
+| `admin/services/db.py` | 7 | 0 | 0 | 0 | Thin wrappers re-exported so views import from one place. |
+| `admin/services/rate_limit.py` | 49 | 2 | 0 | 0 | Login rate-limit helpers. |
+| `admin/views/__init__.py` | 2 | 0 | 0 | 0 | One module per admin tab. Each exposes render(). |
+| `admin/views/alerts.py` | 95 | 1 | 0 | 0 | Tab 4 — Manage Alerts. |
+| `admin/views/audit.py` | 49 | 1 | 0 | 0 | Tab 8 — Audit Log. |
+| `admin/views/backup.py` | 78 | 1 | 0 | 0 | Tab 7 — Backup & Restore. |
+| `admin/views/cells.py` | 119 | 1 | 4 | 0 | Tab 2 — Manage Cells. |
+| `admin/views/cores.py` | 90 | 1 | 3 | 0 | Tab 3 — Manage Core Nodes. |
+| `admin/views/dashboard.py` | 38 | 1 | 0 | 0 | Tab 0 — Admin Dashboard summary. |
+| `admin/views/encryption.py` | 88 | 1 | 0 | 0 | Tab 6 — Encryption Management. |
+| `admin/views/special_lines.py` | 102 | 1 | 0 | 0 | Tab 5 — Special Lines Management. |
+| `admin/views/subscribers.py` | 213 | 1 | 4 | 0 | Tab 1 — Manage Subscribers (CRUD). |
+| `radar/__init__.py` | 10 | 0 | 0 | 0 | TELECOM Radar package. |
+| `radar/_config.py` | 17 | 0 | 0 | 0 | Package-level constants shared across radar modules. |
+| `radar/main.py` | 352 | 1 | 3 | 0 | Radar entry point — orchestrates sidebar, filters, tabs. |
+| `radar/services/__init__.py` | 2 | 0 | 0 | 0 | Non-Streamlit services for the radar dashboard. |
+| `radar/services/anomaly.py` | 141 | 1 | 1 | 0 | Z-score based anomaly detection — free of Streamlit imports. |
+| `radar/services/pdf.py` | 94 | 1 | 0 | 0 | PDF report builder — free of Streamlit imports. |
+| `radar/services/period.py` | 46 | 3 | 0 | 0 | Period comparison helpers — free of Streamlit imports. |
+| `radar/services/ui.py` | 101 | 8 | 0 | 0 | Small Streamlit UI helpers (cards, formatters, section headers). |
+| `radar/views/__init__.py` | 2 | 0 | 0 | 0 | One module per radar tab. Each exposes render(data, filtered, ctx). |
+| `radar/views/anomalies.py` | 89 | 1 | 0 | 0 | Tab 2 — Anomaly Detection. |
+| `radar/views/attack_radar.py` | 100 | 1 | 0 | 0 | Tab 13 — Attack Radar. |
+| `radar/views/encryption.py` | 92 | 1 | 0 | 0 | Tab 9 — Encryption Coverage. |
+| `radar/views/geography.py` | 109 | 1 | 0 | 0 | Tab 11 — Geographic Distribution. |
+| `radar/views/messaging.py` | 86 | 1 | 0 | 0 | Tab 7 — Messaging Analytics. |
+| `radar/views/osint.py` | 74 | 1 | 0 | 0 | Tab 12 — OSINT Radar. |
+| `radar/views/overview.py` | 111 | 1 | 0 | 0 | Tab 0 — Radar Overview. |
+| `radar/views/period_compare.py` | 132 | 1 | 0 | 0 | Tab 1 — Period Comparison. |
+| `radar/views/special_lines.py` | 79 | 1 | 0 | 0 | Tab 10 — Special Lines Analytics. |
+| `radar/views/technology.py` | 77 | 1 | 0 | 0 | Tab 5 — Technology Distribution. |
+| `radar/views/threat_radar.py` | 106 | 1 | 0 | 0 | Tab 8 — Threat Radar. |
+| `radar/views/time_series.py` | 68 | 1 | 0 | 0 | Tab 3 — Time Series. |
+| `radar/views/traffic_mix.py` | 62 | 1 | 0 | 0 | Tab 4 — Traffic Mix. |
+| `radar/views/voice.py` | 86 | 1 | 0 | 0 | Tab 6 — Voice Analytics. |
 
 ---
 
 ## Testing
 
-**27 tests** across 4 files.
+**65 tests** collected across 5 files.
 
 ```bash
-pytest              # fast tests (unit + smoke + db)
+pytest              # fast tests (unit + smoke + db + attack_core)
 pytest --run-slow   # also runs the full simulator end-to-end
 ```
 
-| File | Tests | Test classes |
+| File | Test functions | Test classes |
 |---|---:|---:|
+| `tests/test_attack_core.py` | 34 | 4 |
 | `tests/test_db.py` | 5 | 2 |
 | `tests/test_integration.py` | 1 | 0 |
 | `tests/test_smoke.py` | 2 | 0 |
 | `tests/test_unit.py` | 19 | 6 |
+
+_Note: parametrized tests are counted once by the AST scanner but expand to multiple cases at collect time (`pytest --collect-only` reports 65 total)._
 
 ---
 
@@ -129,11 +281,165 @@ pytest --run-slow   # also runs the full simulator end-to-end
 Version-constrained in `requirements.txt`:
 
 ```
-pandas>=2.0,<3.0
-streamlit>=1.30,<2.0
-plotly>=5.18,<6.0
-matplotlib>=3.7,<4.0
-pytest>=7.4,<9.0
+altair==6.3.0
+altgraph==0.17.5
+annotated-doc==0.0.5
+annotated-types==0.8.0
+anyio==4.14.2
+arabic-reshaper==3.0.1
+attrdict==2.0.1
+attrs==26.1.0
+audioop-lts==0.2.2
+blinker==1.9.0
+brotli==1.2.0
+cabarchive==0.2.5
+certifi==2026.7.22
+charset-normalizer==3.5.1
+choreographer==1.4.0
+click==8.4.2
+colorama==0.4.6
+contourpy==1.3.3
+cx_Freeze==8.7.0
+cycler==0.12.1
+darkdetect==0.8.0
+docx==0.2.4
+einops==0.8.2
+fastapi==0.141.1
+filelock==3.32.6
+Flask==3.1.3
+fonttools==4.65.0
+freeze-core==0.7.5
+fsspec==2026.9.0
+gradio==6.28.0
+gradio_client==2.7.1
+groovy==0.1.2
+h11==0.16.0
+hf-gradio==0.4.1
+hf-xet==1.6.0
+httpcore==1.0.9
+httpcore2==2.13.0
+httptools==0.8.0
+httpx==0.28.1
+httpx2==2.13.0
+huggingface_hub==1.33.0
+idna==3.19
+iniconfig==2.3.0
+itsdangerous==2.2.0
+Jinja2==3.1.6
+jiter==0.17.0
+jsonschema==4.26.0
+jsonschema-specifications==2025.9.1
+kaleido==1.4.0
+kiwisolver==1.5.1
+lief==1.0.0
+logistro==2.0.1
+lxml==6.1.3
+markdown-it-py==4.2.0
+MarkupSafe==3.0.3
+matplotlib==3.11.1
+mdurl==0.1.2
+mpmath==1.3.0
+narwhals==2.26.0
+networkx==3.7
+Nuitka==4.2.1
+numpy==2.5.3
+openai==3.14.0
+orjson==3.12.0
+packaging==26.3
+pandas==2.3.3
+pefile==2024.8.26
+pillow==12.3.0
+platformdirs==4.11.12
+plotly==5.24.1
+pluggy==1.6.0
+protobuf==7.36.2
+pyarrow==25.0.1
+pydantic==2.13.4
+pydantic_core==2.46.4
+pydeck==0.9.3
+pydub==0.25.1
+pygame-ce==2.5.8
+Pygments==2.21.0
+pyinstaller==6.22.3
+pyinstaller-hooks-contrib==2026.7
+pyparsing==3.3.2
+PyQt-Fluent-Widgets==1.11.3
+PyQt5-Frameless-Window==0.8.2
+PyQt6-Fluent-Widgets==1.11.3
+PyQt6-Frameless-Window==0.8.2
+pyqtdarktheme==0.1.7
+pyqtgraph==0.14.0
+PySide6==6.11.2
+PySide6-Fluent-Widgets==1.11.3
+PySide6_Addons==6.11.2
+PySide6_Essentials==6.11.2
+PySideSix-Frameless-Window==0.8.2
+pytest==8.4.2
+python-bidi==0.6.11
+python-dateutil==2.9.0.post0
+python-docx==1.2.0
+python-dotenv==1.2.3
+python-msilib==0.7.0
+python-multipart==0.0.32
+python-pptx==1.0.2
+pytz==2026.4
+pywin32==312
+pywin32-ctypes==0.2.3
+PyYAML==6.0.3
+referencing==0.37.0
+regex==2026.9.10
+reportlab==5.0.1
+requests==2.34.2
+rich==15.0.0
+rpds-py==2026.6.3
+safehttpx==0.1.7
+safetensors==0.8.0
+semantic-version==2.10.0
+setuptools==84.0.0
+shellingham==1.5.4
+shiboken6==6.11.2
+simplejson==4.1.2
+six==1.17.0
+sniffio==1.3.1
+starlette==1.6.0
+streamlit==1.64.0
+streamlit-autorefresh==1.0.1
+striprtf==0.0.33
+sympy==1.14.0
+tenacity==9.1.4
+timm==1.0.30
+tokenizers==0.22.2
+toml==0.10.2
+tomlkit==0.14.0
+tqdm==4.70.1
+transformers==4.57.6
+truststore==0.10.4
+typer==0.27.2
+typing-inspection==0.4.4
+typing_extensions==4.16.0
+tzdata==2026.4
+urllib3==2.8.0
+uvicorn==0.52.4
+watchdog==6.0.0
+websockets==16.1.1
+Werkzeug==3.1.8
+wheel==0.48.0
+xlsxwriter==3.2.9
+zstandard==0.25.0
+```
+
+Minimal CI set in `requirements-ci.txt`:
+
+```
+streamlit>=1.30
+plotly>=5.20
+pandas>=2.0
+numpy>=1.26
+matplotlib>=3.8
+reportlab>=4.0
+streamlit-autorefresh>=1.0
+pytest>=8.0
+pytest-cov>=5.0
 ```
 
 ---
@@ -173,6 +479,11 @@ Recommended `.gitignore` entries:
 .venv/
 __pycache__/
 telecom_sim_output/
+*.bak
+*.v1_backup
+*.v2_backup
+*.v3_backup
+_admin_auth_backup/
 *.zip
 *.pdf
 *.pyc
@@ -184,23 +495,37 @@ telecom_sim_output/
 
 ### Why local-only?
 No network calls anywhere. All data comes from a seeded RNG
-(`SEED = 1403` in `telecom_net_sim.py`). Runs are reproducible and
-tests are hermetic. Streamlit telemetry is disabled.
+(default `SEED = 1403`, overridable via `--seed` / `--random-seed`).
+Runs are reproducible by default, tests are hermetic, and Streamlit
+telemetry is disabled.
 
 ### Why SQLite?
 Single-file DB, zero setup, easy backup / restore, portable.
 
-### Why `main()` guards in every Streamlit module?
+### Why shims at the root?
+`telecom_dashboard.py`, `telecom_admin.py` and `telecom_radar.py`
+are 22-line shims that call `dashboard.main()`, `admin.main()`,
+`radar.main()` respectively. This keeps the historical command
+`streamlit run telecom_dashboard.py` working while the actual code
+lives in a small, focused package.
+
+### Why `main()` guards everywhere?
 Streamlit scripts execute top-to-bottom on every rerun. Without a
-guard, `import telecom_*` would run the whole UI. Each module
-defines a `main()` and ends with a guard that runs it only when
-executed under `streamlit run` or as `__main__`. This makes every
-module both a script and a library.
+guard, `import telecom_*` would run the whole UI. Each entry point
+defines `main()` and calls it only under `__main__`. This makes
+every module importable and testable.
 
 ### Why SQLite's online backup API?
 `shutil.copy2` on a WAL-mode DB copies only `.db`, not the pending
-`-wal`. The backup can be inconsistent. `sqlite3.Connection.backup()` produces a consistent snapshot even
+`-wal`. The backup can be inconsistent.
+`sqlite3.Connection.backup()` produces a consistent snapshot even
 while writers are active.
+
+### Why split `attack_core.py` from `telecom_attack.py`?
+All simulation logic (scenario generation, event expansion, alert
+conversion) is DB-free and lives in `attack_core.py`. The DB layer,
+target indexing and CLI orchestration live in `telecom_attack.py`.
+This makes the core testable in <0.5 s without spinning up SQLite.
 
 ---
 
@@ -210,10 +535,13 @@ while writers are active.
 - `restore_2pb.py` scales `SUM(bytes)` for display only; the DB does
   **not** physically hold 2 PB.
 - Streamlit dashboards are read-only; all writes go through the admin panel.
-- No CI configured. Add `.github/workflows/ci.yml` running
-  `pytest --run-slow` to enable.
-- `test_db.py` and `test_unit.py::TestPickTarget` require
-  `telecom_sim_output/telecom_sim.db` to exist; run
-  `python telecom_net_sim.py` first if they skip.
+- GitHub Actions currently tests on Python 3.11 and 3.12. Python 3.13+
+  may work but is untested in CI.
+- `test_db.py`, `test_smoke.py` and `test_integration.py` require
+  `telecom_sim_output/telecom_sim.db` to exist (or generate one on
+  the fly); run `python telecom_net_sim.py --subs 500 --cdrs 2000`
+  first if they fail locally.
 
 ---
+
+*Generated 2026-10-02 by `generate_readme.py`.*
