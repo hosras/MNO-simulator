@@ -1,0 +1,15 @@
+# Normalize line endings across platforms.
+# All text files are stored with LF in the repository.
+# Windows batch files keep CRLF.
+* text=auto eol=lf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binary files — never touch
+*.png binary
+*.jpg binary
+*.pdf binary
+*.db binary
+*.zip binary
+*.xlsx binary
+*.ico binary

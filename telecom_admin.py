@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Backwards-compatible shim.
 
 The old monolithic telecom_admin.py has been split into the
@@ -9,6 +8,7 @@ Use either:
     streamlit run telecom_admin.py
     streamlit run admin/main.py
 """
+
 import os
 import sys
 

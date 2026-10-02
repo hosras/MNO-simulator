@@ -1,21 +1,23 @@
-# -*- coding: utf-8 -*-
 """Unit tests for radar.services.period — pure helpers."""
+
 import pandas as pd
 import pytest
 
-from radar.services.period import split_periods, period_stats, delta_pct
+from radar.services.period import delta_pct, period_stats, split_periods
 
 
 def make_cdrs(n=100, call_type="voice", bytes_=1000, duration=60):
     """Build a minimal CDR DataFrame with ts + expected columns."""
     ts = pd.date_range("2026-01-01", periods=n, freq="h")
-    return pd.DataFrame({
-        "ts": ts,
-        "record_id": [f"r{i}" for i in range(n)],
-        "call_type": [call_type] * n,
-        "bytes": [bytes_] * n,
-        "duration_sec": [duration] * n,
-    })
+    return pd.DataFrame(
+        {
+            "ts": ts,
+            "record_id": [f"r{i}" for i in range(n)],
+            "call_type": [call_type] * n,
+            "bytes": [bytes_] * n,
+            "duration_sec": [duration] * n,
+        }
+    )
 
 
 # ==================================================================
@@ -69,11 +71,13 @@ class TestPeriodStats:
         assert stats["cdr"] == 0
 
     def test_counts_by_call_type(self):
-        df = pd.concat([
-            make_cdrs(10, call_type="voice"),
-            make_cdrs(5, call_type="sms"),
-            make_cdrs(3, call_type="data"),
-        ])
+        df = pd.concat(
+            [
+                make_cdrs(10, call_type="voice"),
+                make_cdrs(5, call_type="sms"),
+                make_cdrs(3, call_type="data"),
+            ]
+        )
         stats = period_stats(df)
         assert stats["cdr"] == 18
         assert stats["voice"] == 10
@@ -88,10 +92,12 @@ class TestPeriodStats:
         assert stats["bytes"] == 5000
 
     def test_minutes_only_for_voice(self):
-        df = pd.concat([
-            make_cdrs(5, call_type="voice", duration=60),   # 5 * 60s = 5 min
-            make_cdrs(5, call_type="sms", duration=0),
-        ])
+        df = pd.concat(
+            [
+                make_cdrs(5, call_type="voice", duration=60),  # 5 * 60s = 5 min
+                make_cdrs(5, call_type="sms", duration=0),
+            ]
+        )
         stats = period_stats(df)
         assert stats["minutes"] == pytest.approx(5.0)
 

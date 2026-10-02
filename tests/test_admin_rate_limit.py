@@ -1,11 +1,11 @@
-# -*- coding: utf-8 -*-
 """Unit tests for admin.services.rate_limit — patch db_one, no real DB."""
+
 from datetime import datetime, timedelta
 
 import pytest
 
 import admin.services.rate_limit as rl_module
-from admin._config import LOGIN_WINDOW_MIN, LOGIN_MAX_FAILS
+from admin._config import LOGIN_MAX_FAILS, LOGIN_WINDOW_MIN
 from admin.services.rate_limit import (
     count_recent_failed_logins,
     lockout_remaining_sec,
@@ -30,8 +30,7 @@ def stub_db(monkeypatch):
 
 
 def _ts(minutes_ago: float) -> str:
-    return (datetime.now() - timedelta(minutes=minutes_ago)).strftime(
-        "%Y-%m-%d %H:%M:%S")
+    return (datetime.now() - timedelta(minutes=minutes_ago)).strftime("%Y-%m-%d %H:%M:%S")
 
 
 # ==================================================================

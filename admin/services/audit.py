@@ -1,9 +1,9 @@
-# -*- coding: utf-8 -*-
 """Audit log: schema init + append helper."""
+
 from datetime import datetime
 
-from telecom_common import db_exec
 from admin.services.auth import current_user
+from telecom_common import db_exec
 
 
 def init_audit() -> None:
@@ -14,8 +14,13 @@ def init_audit() -> None:
 
 def log_audit(action: str, entity: str, entity_id, details: str = "") -> None:
     db_exec(
-        "INSERT INTO audit_log(ts,user,action,entity,entity_id,details) "
-        "VALUES(?,?,?,?,?,?)",
-        (datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-         current_user(), action, entity, str(entity_id), details),
+        "INSERT INTO audit_log(ts,user,action,entity,entity_id,details) " "VALUES(?,?,?,?,?,?)",
+        (
+            datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            current_user(),
+            action,
+            entity,
+            str(entity_id),
+            details,
+        ),
     )

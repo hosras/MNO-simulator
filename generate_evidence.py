@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Auto-generate EVIDENCE.md from the project's live state.
 
 Produces a delivery-ready evidence document that proves the project
@@ -14,7 +13,7 @@ Usage:
 Output:
     EVIDENCE.md
 """
-import re
+
 import subprocess
 import sys
 from datetime import datetime
@@ -104,12 +103,17 @@ def scan_network_imports():
             stripped = line.strip()
             if stripped.startswith("#"):
                 continue
-            is_import = (stripped.startswith("import ")
-                         or stripped.startswith("from "))
+            is_import = stripped.startswith("import ") or stripped.startswith("from ")
             is_call = any(
-                tok in stripped for tok in
-                ("socket.socket(", "urlopen(", "requests.get(",
-                 "requests.post(", "httpx.", "aiohttp.")
+                tok in stripped
+                for tok in (
+                    "socket.socket(",
+                    "urlopen(",
+                    "requests.get(",
+                    "requests.post(",
+                    "httpx.",
+                    "aiohttp.",
+                )
             )
             if not (is_import or is_call):
                 continue
@@ -122,8 +126,13 @@ def scan_network_imports():
 
 def scan_telemetry_config():
     cfg = ROOT / ".streamlit" / "config.toml"
-    info = {"exists": cfg.exists(), "gatherUsageStats": None,
-            "address": None, "cors": None, "xsrf": None}
+    info = {
+        "exists": cfg.exists(),
+        "gatherUsageStats": None,
+        "address": None,
+        "cors": None,
+        "xsrf": None,
+    }
     if not cfg.exists():
         return info
     text = cfg.read_text(encoding="utf-8")
@@ -169,12 +178,14 @@ def run_import_test():
     names = module_import_names()
     if not names:
         return False, "", "no modules found"
-    code = ("import " + ", ".join(names) +
-            "; print('OK: all modules imported cleanly')")
+    code = "import " + ", ".join(names) + "; print('OK: all modules imported cleanly')"
     try:
         r = subprocess.run(
             [sys.executable, "-c", code],
-            cwd=str(ROOT), capture_output=True, text=True, timeout=90,
+            cwd=str(ROOT),
+            capture_output=True,
+            text=True,
+            timeout=90,
         )
         return r.returncode == 0, r.stdout.strip(), r.stderr.strip()
     except Exception as e:
@@ -185,11 +196,9 @@ def check_gitignore():
     p = ROOT / ".gitignore"
     if not p.exists():
         return None
-    wanted = [".venv/", "__pycache__/", "telecom_sim_output/",
-              "*.zip", "*.pdf", "*.pyc"]
+    wanted = [".venv/", "__pycache__/", "telecom_sim_output/", "*.zip", "*.pdf", "*.pyc"]
     text = p.read_text(encoding="utf-8")
-    return [w for w in wanted
-            if any(line.strip() == w for line in text.split("\n"))]
+    return [w for w in wanted if any(line.strip() == w for line in text.split("\n"))]
 
 
 # ------------------------------------------------------------------
@@ -216,8 +225,10 @@ def build_evidence():
     parts.append("")
     parts.append("**Project:** TELECOM-NET-SIM  ")
     parts.append(f"**Generated:** {now}  ")
-    parts.append("**Purpose:** Prove the simulator runs entirely offline — "
-                 "no network calls, no telemetry, no LAN exposure.")
+    parts.append(
+        "**Purpose:** Prove the simulator runs entirely offline — "
+        "no network calls, no telemetry, no LAN exposure."
+    )
     parts.append("")
     parts.append("---")
     parts.append("")
@@ -232,10 +243,10 @@ def build_evidence():
         parts.append("> Streamlit will emit usage statistics to its servers.")
     else:
         rows = [
-            ("gatherUsageStats",     cfg["gatherUsageStats"], "false"),
-            ("address",              cfg["address"],          '"127.0.0.1"'),
-            ("enableCORS",           cfg["cors"],             "true"),
-            ("enableXsrfProtection", cfg["xsrf"],             "true"),
+            ("gatherUsageStats", cfg["gatherUsageStats"], "false"),
+            ("address", cfg["address"], '"127.0.0.1"'),
+            ("enableCORS", cfg["cors"], "true"),
+            ("enableXsrfProtection", cfg["xsrf"], "true"),
         ]
         parts.append("| Setting | Value | Expected | Status |")
         parts.append("|---|---|---|---|")
@@ -249,15 +260,21 @@ def build_evidence():
     parts.append("")
     parts.append("Expected output when running a dashboard:")
     parts.append("")
-    parts.append(fence("text",
-        "Uvicorn server started on 127.0.0.1:8501\n"
-        "\n"
-        "  You can now view your Streamlit app in your browser.\n"
-        "\n"
-        "  URL: http://127.0.0.1:8501"))
+    parts.append(
+        fence(
+            "text",
+            "Uvicorn server started on 127.0.0.1:8501\n"
+            "\n"
+            "  You can now view your Streamlit app in your browser.\n"
+            "\n"
+            "  URL: http://127.0.0.1:8501",
+        )
+    )
     parts.append("")
-    parts.append("**Note:** There must be **no** `External URL` line and "
-                 "**no** `Network URL` on a non-loopback address.")
+    parts.append(
+        "**Note:** There must be **no** `External URL` line and "
+        "**no** `Network URL` on a non-loopback address."
+    )
     parts.append("")
 
     # 3. netstat
@@ -269,19 +286,27 @@ def build_evidence():
     parts.append("")
     parts.append("Expected result — every address must be `127.0.0.1`:")
     parts.append("")
-    parts.append(fence("text",
-        "TCP    127.0.0.1:8501    0.0.0.0:0         LISTENING     <pid>\n"
-        "TCP    127.0.0.1:8501    127.0.0.1:XXXXX   ESTABLISHED   <pid>"))
+    parts.append(
+        fence(
+            "text",
+            "TCP    127.0.0.1:8501    0.0.0.0:0         LISTENING     <pid>\n"
+            "TCP    127.0.0.1:8501    127.0.0.1:XXXXX   ESTABLISHED   <pid>",
+        )
+    )
     parts.append("")
-    parts.append("**Red flags:** any line with `0.0.0.0:8501` or `[::]:8501` "
-                 "means the port is exposed beyond loopback.")
+    parts.append(
+        "**Red flags:** any line with `0.0.0.0:8501` or `[::]:8501` "
+        "means the port is exposed beyond loopback."
+    )
     parts.append("")
 
     # 4. Static scan
     parts.append("## 4. Static Code Analysis")
     parts.append("")
-    parts.append("Scanned: top-level modules (`telecom_*.py`, `attack_core.py`) "
-                 "and all package modules (`dashboard/`, `admin/`, `radar/`).")
+    parts.append(
+        "Scanned: top-level modules (`telecom_*.py`, `attack_core.py`) "
+        "and all package modules (`dashboard/`, `admin/`, `radar/`)."
+    )
     parts.append("")
     parts.append(f"Tokens searched: {', '.join(f'`{t}`' for t in NETWORK_TOKENS)}")
     parts.append("")
@@ -301,8 +326,7 @@ def build_evidence():
     parts.append("## 5. Source Modules")
     parts.append("")
     total_lines = sum(n for _, n in modules)
-    parts.append(f"Total: **{len(modules)}** Python modules "
-                 f"({total_lines:,} lines).")
+    parts.append(f"Total: **{len(modules)}** Python modules " f"({total_lines:,} lines).")
     parts.append("")
     parts.append("| Module | Lines |")
     parts.append("|---|---:|")
@@ -316,8 +340,7 @@ def build_evidence():
     names = module_import_names()
     parts.append("Command:")
     parts.append("")
-    parts.append(fence("cmd",
-        'python -c "import ' + ", ".join(names) + '; print(\'OK\')"'))
+    parts.append(fence("cmd", 'python -c "import ' + ", ".join(names) + "; print('OK')\""))
     parts.append("")
     parts.append("Result:")
     parts.append("")
@@ -343,8 +366,7 @@ def build_evidence():
         parts.append("_`requirements.txt` not found._")
     parts.append("")
     if ci_reqs:
-        parts.append(f"From `requirements-ci.txt` ({len(ci_reqs)} packages, "
-                     f"used by CI):")
+        parts.append(f"From `requirements-ci.txt` ({len(ci_reqs)} packages, " f"used by CI):")
         parts.append("")
         parts.append(fence("text", "\n".join(ci_reqs)))
         parts.append("")
@@ -369,10 +391,14 @@ def build_evidence():
     parts.append("## Verification Summary")
     parts.append("")
     checks = [
-        ("Streamlit telemetry disabled",
-         bool(cfg["exists"]) and cfg["gatherUsageStats"] == "false"),
-        ("Loopback bind address configured",
-         bool(cfg["address"]) and "127.0.0.1" in str(cfg["address"])),
+        (
+            "Streamlit telemetry disabled",
+            bool(cfg["exists"]) and cfg["gatherUsageStats"] == "false",
+        ),
+        (
+            "Loopback bind address configured",
+            bool(cfg["address"]) and "127.0.0.1" in str(cfg["address"]),
+        ),
         ("No network imports in source", not net_hits),
         ("All modules import cleanly", import_ok),
     ]
@@ -382,10 +408,14 @@ def build_evidence():
         parts.append(f"| {label} | {'✅ PASS' if ok else '❌ FAIL'} |")
     parts.append("")
     all_ok = all(ok for _, ok in checks)
-    parts.append("**Overall: " +
-                 ("✅ Project operates fully locally.**"
-                  if all_ok else
-                  "❌ Some checks failed — see above.**"))
+    parts.append(
+        "**Overall: "
+        + (
+            "✅ Project operates fully locally.**"
+            if all_ok
+            else "❌ Some checks failed — see above.**"
+        )
+    )
     parts.append("")
     parts.append("---")
     parts.append("")
@@ -399,8 +429,7 @@ def main():
     text = build_evidence()
     OUT.write_text(text, encoding="utf-8", newline="\n")
     print(f"[OK]  wrote {OUT}")
-    print(f"[OK]  {len(text):,} chars, "
-          f"{text.count(chr(10)) + 1:,} lines")
+    print(f"[OK]  {len(text):,} chars, " f"{text.count(chr(10)) + 1:,} lines")
 
 
 if __name__ == "__main__":

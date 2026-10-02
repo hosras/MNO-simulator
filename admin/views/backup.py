@@ -1,16 +1,19 @@
-# -*- coding: utf-8 -*-
 """Tab 7 — Backup & Restore."""
+
+import contextlib
 import json
 import os
 
 import streamlit as st
 
 from admin._config import BACKUP_DIR
-from admin.services.db import db_df, db_exec
 from admin.services.audit import log_audit
 from admin.services.backup import (
-    create_backup, list_backups, restore_backup,
+    create_backup,
+    list_backups,
+    restore_backup,
 )
+from admin.services.db import db_df, db_exec
 
 
 def render():
@@ -29,22 +32,21 @@ def render():
             mb = os.path.getsize(os.path.join(BACKUP_DIR, b)) / 1e6
             with c1:
                 st.write(f"{b} -- {mb:.2f} MB")
-            with c2:
-                with open(os.path.join(BACKUP_DIR, b), "rb") as f:
-                    st.download_button(
-                        "DL", f.read(), b, "application/x-sqlite3",
-                        key=f"dl_{b}",
-                    )
+            with c2, open(os.path.join(BACKUP_DIR, b), "rb") as f:
+                st.download_button(
+                    "DL",
+                    f.read(),
+                    b,
+                    "application/x-sqlite3",
+                    key=f"dl_{b}",
+                )
             with c3:
                 if st.button("Restore", key=f"rs_{b}"):
                     try:
                         restored = restore_backup(b)
                         log_audit("RESTORE", "db", b, "ok")
                         st.cache_data.clear()
-                        st.success(
-                            f"Restored {os.path.basename(restored)}. "
-                            f"Reloading…"
-                        )
+                        st.success(f"Restored {os.path.basename(restored)}. " f"Reloading…")
                         st.rerun()
                     except Exception as e:
                         log_audit("RESTORE_FAILED", "db", b, str(e))
@@ -55,18 +57,22 @@ def render():
     st.divider()
     if st.button("Export DB to JSON"):
         all_data = {}
-        for t in ["subscribers", "cells", "cores", "alerts",
-                  "audit_log", "attack_scenarios", "attack_events"]:
-            try:
-                all_data[t] = db_df(
-                    f"SELECT * FROM {t}"
-                ).to_dict(orient="records")
-            except Exception:
-                pass
+        for t in [
+            "subscribers",
+            "cells",
+            "cores",
+            "alerts",
+            "audit_log",
+            "attack_scenarios",
+            "attack_events",
+        ]:
+            with contextlib.suppress(Exception):
+                all_data[t] = db_df(f"SELECT * FROM {t}").to_dict(orient="records")
         st.download_button(
             "Download JSON",
             json.dumps(all_data, ensure_ascii=False, indent=2, default=str),
-            "telecom_export.json", "application/json",
+            "telecom_export.json",
+            "application/json",
         )
         log_audit("EXPORT", "db", "json", "")
 

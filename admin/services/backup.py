@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """SQLite backup / restore / list — free of Streamlit imports.
 
 These functions are pure w.r.t. Streamlit: they only touch the
@@ -10,12 +9,14 @@ Public API:
     list_backups() -> list[str]               # filenames, newest first
     restore_backup(filename) -> str           # absolute path
 """
+
+import contextlib
 import os
 import sqlite3
 from datetime import datetime
 
-from telecom_common import DB_PATH
 from admin._config import BACKUP_DIR
+from telecom_common import DB_PATH
 
 os.makedirs(BACKUP_DIR, exist_ok=True)
 
@@ -32,9 +33,7 @@ def create_backup(label: str = "auto") -> str:
 
     os.makedirs(BACKUP_DIR, exist_ok=True)
 
-    safe_label = "".join(
-        ch for ch in str(label) if ch.isalnum() or ch in "-_"
-    ) or "auto"
+    safe_label = "".join(ch for ch in str(label) if ch.isalnum() or ch in "-_") or "auto"
 
     ts = datetime.now().strftime("%Y%m%d_%H%M%S")
     fn = os.path.join(BACKUP_DIR, f"backup_{safe_label}_{ts}.db")
@@ -99,7 +98,7 @@ def restore_backup(backup_filename: str) -> str:
         finally:
             chk_con.close()
     except sqlite3.DatabaseError as e:
-        raise RuntimeError(f"Backup is not a valid SQLite DB: {e}")
+        raise RuntimeError(f"Backup is not a valid SQLite DB: {e}") from e
 
     if not res or res[0] != "ok":
         raise RuntimeError(f"Backup integrity check failed: {res}")
@@ -121,9 +120,7 @@ def restore_backup(backup_filename: str) -> str:
     for suffix in ("-wal", "-shm"):
         side = DB_PATH + suffix
         if os.path.exists(side):
-            try:
+            with contextlib.suppress(OSError):
                 os.remove(side)
-            except OSError:
-                pass
 
     return os.path.abspath(backup_path)

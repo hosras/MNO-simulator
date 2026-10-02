@@ -1,8 +1,8 @@
-# -*- coding: utf-8 -*-
 """Dashboard entry point — sets page config, sidebar, KPI row, tabs.
 
 Each tab is delegated to a view module in dashboard.views.*
 """
+
 import os
 import subprocess
 import sys
@@ -11,14 +11,26 @@ import streamlit as st
 
 from dashboard._config import DB_PATH
 from dashboard.services.data import (
-    get_raw_data, apply_filters, render_sidebar_filters,
+    apply_filters,
+    get_raw_data,
+    render_sidebar_filters,
 )
 from dashboard.services.styles import inject_css
-from dashboard.services.ui import kpi, fmt_num, render_header
+from dashboard.services.ui import fmt_num, kpi, render_header
 from dashboard.views import (
-    overview, network, traffic, signal, voice_messaging,
-    osint, sigint, special_lines, encryption, alerts,
-    subscribers, report, attacks,
+    alerts,
+    attacks,
+    encryption,
+    network,
+    osint,
+    overview,
+    report,
+    sigint,
+    signal,
+    special_lines,
+    subscribers,
+    traffic,
+    voice_messaging,
 )
 
 
@@ -42,8 +54,12 @@ def main():
         if st.button("▶️ Run Simulator", use_container_width=True):
             try:
                 with st.spinner("Running simulator..."):
-                    r = subprocess.run([sys.executable, "telecom_net_sim.py"],
-                                       capture_output=True, text=True, timeout=900)
+                    r = subprocess.run(
+                        [sys.executable, "telecom_net_sim.py"],
+                        capture_output=True,
+                        text=True,
+                        timeout=900,
+                    )
                 if r.returncode == 0:
                     st.success("Simulator finished successfully.")
                     st.cache_data.clear()
@@ -56,8 +72,10 @@ def main():
 
     # -------- LOAD --------
     if not os.path.exists(DB_PATH):
-        st.warning("⚠️ Database not found. Please run `telecom_net_sim.py` "
-                   "first, or click 'Run Simulator'.")
+        st.warning(
+            "⚠️ Database not found. Please run `telecom_net_sim.py` "
+            "first, or click 'Run Simulator'."
+        )
         st.stop()
 
     data = get_raw_data()
@@ -65,8 +83,7 @@ def main():
     # -------- FILTERS --------
     with st.sidebar:
         st.markdown("### 🎛️ Filters")
-        sel_cities, sel_techs, date_range = render_sidebar_filters(
-            data["cells"], data["cdrs"])
+        sel_cities, sel_techs, date_range = render_sidebar_filters(data["cells"], data["cdrs"])
         st.divider()
         st.caption(f"🗄️ DB: `{DB_PATH}`")
         st.caption("🔒 Mode: **LOCAL-ONLY**")
@@ -96,35 +113,50 @@ def main():
     st.write("")
 
     # -------- TABS --------
-    tabs = st.tabs([
-        "🏠 Overview",
-        "🗼 Network & Topology",
-        "📊 Traffic",
-        "📶 Signal Quality",
-        "📞 Voice & Messaging",
-        "🌐 OSINT",
-        "🕵️ SIGINT",
-        "🔑 Special Lines",
-        "🔐 Encryption",
-        "🚨 Alerts & SMS",
-        "👥 Subscribers",
-        "📄 Report",
-        "🛡️ Attacks",
-    ])
+    tabs = st.tabs(
+        [
+            "🏠 Overview",
+            "🗼 Network & Topology",
+            "📊 Traffic",
+            "📶 Signal Quality",
+            "📞 Voice & Messaging",
+            "🌐 OSINT",
+            "🕵️ SIGINT",
+            "🔑 Special Lines",
+            "🔐 Encryption",
+            "🚨 Alerts & SMS",
+            "👥 Subscribers",
+            "📄 Report",
+            "🛡️ Attacks",
+        ]
+    )
 
-    with tabs[0]:  overview.render(data, filtered)
-    with tabs[1]:  network.render(data, filtered)
-    with tabs[2]:  traffic.render(data, filtered)
-    with tabs[3]:  signal.render(data, filtered)
-    with tabs[4]:  voice_messaging.render(data, filtered)
-    with tabs[5]:  osint.render(data, filtered)
-    with tabs[6]:  sigint.render(data, filtered)
-    with tabs[7]:  special_lines.render(data, filtered)
-    with tabs[8]:  encryption.render(data, filtered)
-    with tabs[9]:  alerts.render(data, filtered)
-    with tabs[10]: subscribers.render(data, filtered)
-    with tabs[11]: report.render(data, filtered)
-    with tabs[12]: attacks.render(data, filtered)
+    with tabs[0]:
+        overview.render(data, filtered)
+    with tabs[1]:
+        network.render(data, filtered)
+    with tabs[2]:
+        traffic.render(data, filtered)
+    with tabs[3]:
+        signal.render(data, filtered)
+    with tabs[4]:
+        voice_messaging.render(data, filtered)
+    with tabs[5]:
+        osint.render(data, filtered)
+    with tabs[6]:
+        sigint.render(data, filtered)
+    with tabs[7]:
+        special_lines.render(data, filtered)
+    with tabs[8]:
+        encryption.render(data, filtered)
+    with tabs[9]:
+        alerts.render(data, filtered)
+    with tabs[10]:
+        subscribers.render(data, filtered)
+    with tabs[11]:
+        report.render(data, filtered)
+    with tabs[12]:
+        attacks.render(data, filtered)
 
 
 if __name__ == "__main__":

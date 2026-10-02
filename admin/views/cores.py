@@ -1,28 +1,48 @@
-# -*- coding: utf-8 -*-
 """Tab 3 — Manage Core Nodes."""
+
 import streamlit as st
 
-from telecom_common import CITIES
-from admin.services.db import db_df, db_exec, db_one
 from admin.services.audit import log_audit
-
+from admin.services.db import db_df, db_exec, db_one
+from telecom_common import CITIES
 
 CORE_ROLES = [
-    "MSC", "BSC", "RNC", "MME", "SGW", "PGW",
-    "HSS", "PCRF", "AMF", "SMF", "UPF", "IMS",
-    "MMSC", "RCS-AS", "NWDAF", "RIS-C", "ISAC", "AI-RAN",
+    "MSC",
+    "BSC",
+    "RNC",
+    "MME",
+    "SGW",
+    "PGW",
+    "HSS",
+    "PCRF",
+    "AMF",
+    "SMF",
+    "UPF",
+    "IMS",
+    "MMSC",
+    "RCS-AS",
+    "NWDAF",
+    "RIS-C",
+    "ISAC",
+    "AI-RAN",
 ]
 
 
 def render():
     st.subheader("Manage Core Nodes")
-    act = st.radio("Action", ["View", "Add", "Edit", "Delete"],
-                   horizontal=True, key="core_act",
-                   label_visibility="collapsed")
+    act = st.radio(
+        "Action",
+        ["View", "Add", "Edit", "Delete"],
+        horizontal=True,
+        key="core_act",
+        label_visibility="collapsed",
+    )
     if act == "View":
         st.dataframe(
             db_df("SELECT * FROM cores ORDER BY role"),
-            use_container_width=True, hide_index=True, height=500,
+            use_container_width=True,
+            hide_index=True,
+            height=500,
         )
     elif act == "Add":
         _add()
@@ -45,8 +65,7 @@ def _add():
             cp = st.number_input("Capacity (tps)", 1000, 1_000_000, 100_000, 1000)
         if st.form_submit_button("Add", use_container_width=True):
             try:
-                db_exec("INSERT INTO cores VALUES(?,?,?,?,?,?)",
-                        (nid, nm, rl, tc, ct, cp))
+                db_exec("INSERT INTO cores VALUES(?,?,?,?,?,?)", (nid, nm, rl, tc, ct, cp))
                 log_audit("CREATE", "core", nid, rl)
                 st.success("Added.")
                 st.rerun()
@@ -62,13 +81,16 @@ def _edit():
     if not row:
         st.warning("Not found.")
         return
-    d = dict(zip(
-        ["node_id", "name", "role", "tech", "city", "capacity_tps"], row,
-    ))
+    d = dict(
+        zip(
+            ["node_id", "name", "role", "tech", "city", "capacity_tps"],
+            row,
+            strict=False,
+        )
+    )
     with st.form("edit_core"):
         nm = st.text_input("Name", d["name"])
-        cp = st.number_input("Capacity", 1000, 1_000_000,
-                             int(d["capacity_tps"]), 1000)
+        cp = st.number_input("Capacity", 1000, 1_000_000, int(d["capacity_tps"]), 1000)
         if st.form_submit_button("Save", use_container_width=True):
             db_exec(
                 "UPDATE cores SET name=?,capacity_tps=? WHERE node_id=?",

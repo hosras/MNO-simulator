@@ -1,9 +1,9 @@
-# -*- coding: utf-8 -*-
 """Unit tests for admin.services.auth — fake session_state, no runtime."""
+
 import pytest
 
 import admin.services.auth as auth_module
-from admin.services.auth import is_logged_in, current_user, logout
+from admin.services.auth import current_user, is_logged_in, logout
 
 
 # ------------------------------------------------------------------
@@ -24,6 +24,7 @@ class _FakeSessionState(dict):
 
 class _FakeStreamlit:
     """Minimal `streamlit` stub for auth tests."""
+
     def __init__(self):
         self.session_state = _FakeSessionState()
 

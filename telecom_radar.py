@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Backwards-compatible shim.
 
 The old monolithic telecom_radar.py has been split into the
@@ -9,6 +8,7 @@ Use either:
     streamlit run telecom_radar.py
     streamlit run radar/main.py
 """
+
 import os
 import sys
 

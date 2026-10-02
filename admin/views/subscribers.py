@@ -1,22 +1,32 @@
-# -*- coding: utf-8 -*-
 """Tab 1 — Manage Subscribers (CRUD)."""
+
 import sqlite3
 
 import streamlit as st
 
-from telecom_common import (
-    CITIES, LINE_CLASSES, PLANS, CIPHER_SUITES,
-    gen_msisdn, gen_imsi, gen_imei, gen_key_id,
-)
-from admin.services.db import db_df, db_exec, db_one
 from admin.services.audit import log_audit
+from admin.services.db import db_df, db_exec, db_one
+from telecom_common import (
+    CIPHER_SUITES,
+    CITIES,
+    LINE_CLASSES,
+    PLANS,
+    gen_imei,
+    gen_imsi,
+    gen_key_id,
+    gen_msisdn,
+)
 
 
 def render():
     st.subheader("Manage Subscribers")
-    action = st.radio("Action", ["View", "Add", "Edit", "Delete"],
-                      horizontal=True, key="sub_act",
-                      label_visibility="collapsed")
+    action = st.radio(
+        "Action",
+        ["View", "Add", "Edit", "Delete"],
+        horizontal=True,
+        key="sub_act",
+        label_visibility="collapsed",
+    )
 
     if action == "View":
         _view()
@@ -33,8 +43,7 @@ def _view():
     with c1:
         search = st.text_input("Search (MSISDN/IMSI/IMEI)", key="sub_q")
     with c2:
-        lc_f = st.multiselect("Line Class", LINE_CLASSES,
-                              default=LINE_CLASSES, key="sub_lc")
+        lc_f = st.multiselect("Line Class", LINE_CLASSES, default=LINE_CLASSES, key="sub_lc")
     with c3:
         lim = st.number_input("Limit", 50, 10000, 500, 50, key="sub_lim")
     sql = "SELECT * FROM subscribers WHERE 1=1"
@@ -53,7 +62,8 @@ def _view():
     st.download_button(
         "Download CSV",
         df.to_csv(index=False).encode("utf-8-sig"),
-        "subscribers.csv", "text/csv",
+        "subscribers.csv",
+        "text/csv",
     )
 
 
@@ -84,9 +94,7 @@ def _add():
             enc_req = st.checkbox("Encryption Required")
             e2e = st.checkbox("E2E Enabled")
         with ec2:
-            cipher = st.selectbox(
-                "Cipher Suite", ["None"] + list(CIPHER_SUITES.keys())
-            )
+            cipher = st.selectbox("Cipher Suite", ["None"] + list(CIPHER_SUITES.keys()))
         with ec3:
             key_id_in = st.text_input("Key ID", value="")
             rot = st.number_input("Key Rotation (days)", 0, 365, 90)
@@ -102,15 +110,32 @@ def _add():
                         encryption_required,cipher_suite,key_id,
                         key_rotation_days,e2e_enabled)
                         VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
-                    (msisdn, imsi, imei, city, plan, kyc, int(roa), 0.1,
-                     line_class, int(intl), int(fb), int(clir),
-                     int(cliro), qos, int(li), int(dr), "",
-                     int(enc_req), cipher,
-                     key_id_in or (gen_key_id(imsi) if e2e else ""),
-                     rot, int(e2e)),
+                    (
+                        msisdn,
+                        imsi,
+                        imei,
+                        city,
+                        plan,
+                        kyc,
+                        int(roa),
+                        0.1,
+                        line_class,
+                        int(intl),
+                        int(fb),
+                        int(clir),
+                        int(cliro),
+                        qos,
+                        int(li),
+                        int(dr),
+                        "",
+                        int(enc_req),
+                        cipher,
+                        key_id_in or (gen_key_id(imsi) if e2e else ""),
+                        rot,
+                        int(e2e),
+                    ),
                 )
-                log_audit("CREATE", "subscriber", msisdn,
-                          f"class={line_class}")
+                log_audit("CREATE", "subscriber", msisdn, f"class={line_class}")
                 st.success("Added.")
                 st.rerun()
             except sqlite3.IntegrityError as e:
@@ -128,16 +153,30 @@ def _edit():
         st.warning("Not found.")
         return
     cols = [
-        "msisdn", "imsi", "imei", "city", "plan",
-        "kyc_age_days", "roaming_enabled", "risk_score",
-        "line_class", "international_access", "filter_bypass",
-        "clir_enabled", "clir_override", "priority_qos",
-        "lawful_intercept", "direct_routing",
-        "whitelisted_asns", "encryption_required",
-        "cipher_suite", "key_id", "key_rotation_days",
+        "msisdn",
+        "imsi",
+        "imei",
+        "city",
+        "plan",
+        "kyc_age_days",
+        "roaming_enabled",
+        "risk_score",
+        "line_class",
+        "international_access",
+        "filter_bypass",
+        "clir_enabled",
+        "clir_override",
+        "priority_qos",
+        "lawful_intercept",
+        "direct_routing",
+        "whitelisted_asns",
+        "encryption_required",
+        "cipher_suite",
+        "key_id",
+        "key_rotation_days",
         "e2e_enabled",
     ]
-    d = dict(zip(cols, row))
+    d = dict(zip(cols, row, strict=False))
     cl = [c[0] for c in CITIES]
     with st.form("edit_sub"):
         c1, c2, c3 = st.columns(3)
@@ -146,18 +185,20 @@ def _edit():
             st.text_input("IMSI", d["imsi"], disabled=True)
             imei_new = st.text_input("IMEI", d["imei"])
             city = st.selectbox(
-                "City", cl,
+                "City",
+                cl,
                 index=cl.index(d["city"]) if d["city"] in cl else 0,
             )
         with c2:
             plan = st.selectbox(
-                "Plan", PLANS,
+                "Plan",
+                PLANS,
                 index=PLANS.index(d["plan"]) if d["plan"] in PLANS else 0,
             )
             line_class = st.selectbox(
-                "Line Class", LINE_CLASSES,
-                index=LINE_CLASSES.index(d["line_class"])
-                if d["line_class"] in LINE_CLASSES else 0,
+                "Line Class",
+                LINE_CLASSES,
+                index=LINE_CLASSES.index(d["line_class"]) if d["line_class"] in LINE_CLASSES else 0,
             )
             qos = st.slider("Priority QoS", 0, 9, int(d["priority_qos"]))
         with c3:
@@ -170,9 +211,9 @@ def _edit():
             roa = st.checkbox("Roaming", bool(d["roaming_enabled"]))
         cipher_l = ["None"] + list(CIPHER_SUITES.keys())
         cipher = st.selectbox(
-            "Cipher Suite", cipher_l,
-            index=cipher_l.index(d["cipher_suite"])
-            if d["cipher_suite"] in cipher_l else 0,
+            "Cipher Suite",
+            cipher_l,
+            index=cipher_l.index(d["cipher_suite"]) if d["cipher_suite"] in cipher_l else 0,
         )
         if st.form_submit_button("Save", use_container_width=True):
             db_exec(
@@ -184,10 +225,23 @@ def _edit():
                     priority_qos=?, lawful_intercept=?,
                     direct_routing=?, cipher_suite=?
                     WHERE msisdn=?""",
-                (imei_new, city, plan, d["kyc_age_days"],
-                 int(roa), line_class, int(intl), int(fb),
-                 int(clir), int(cliro), qos, int(li),
-                 int(dr), cipher, msisdn),
+                (
+                    imei_new,
+                    city,
+                    plan,
+                    d["kyc_age_days"],
+                    int(roa),
+                    line_class,
+                    int(intl),
+                    int(fb),
+                    int(clir),
+                    int(cliro),
+                    qos,
+                    int(li),
+                    int(dr),
+                    cipher,
+                    msisdn,
+                ),
             )
             log_audit("UPDATE", "subscriber", msisdn, f"class={line_class}")
             st.success("Updated.")
@@ -202,9 +256,7 @@ def _delete():
     if not row:
         st.warning("Not found.")
         return
-    st.json(dict(zip(
-        ["msisdn", "imsi", "imei", "city", "plan"], row[:5]
-    )))
+    st.json(dict(zip(["msisdn", "imsi", "imei", "city", "plan"], row[:5], strict=False)))
     if st.checkbox("Confirm", key="sub_del_c"):
         if st.button("Delete", type="primary"):
             db_exec("DELETE FROM subscribers WHERE msisdn=?", (msisdn,))

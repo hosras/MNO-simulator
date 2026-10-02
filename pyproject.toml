@@ -1,0 +1,38 @@
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+exclude = [
+    ".venv",
+    "__pycache__",
+    "telecom_sim_output",
+    ".pytest_cache",
+]
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # isort
+    "B",    # flake8-bugbear
+    "UP",   # pyupgrade
+    "C4",   # flake8-comprehensions
+    "SIM",  # flake8-simplify
+]
+ignore = [
+    "E501",    # line-too-long (formatter handles it)
+    "B008",    # function-call-in-default (Streamlit idiom)
+    "C408",    # dict() vs {} — plotly calls read better with dict()
+    "SIM102",  # nested-if — common Streamlit checkbox+button pattern
+    "SIM108",  # ternary — multi-line if/else is clearer when condition is long
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["E501", "F401", "F811", "B011", "B904"]
+"__init__.py" = ["F401"]
+"attack_core.py" = ["B006"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"

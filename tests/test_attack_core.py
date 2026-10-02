@@ -1,16 +1,16 @@
-# -*- coding: utf-8 -*-
 """Unit tests for attack_core — pure functions, no DB required.
 
 These tests are fast (no subprocess, no DB) and run by default in CI.
 """
+
 import pytest
 
 from attack_core import (
     ATTACK_CATALOG,
-    pick_target,
-    generate_scenarios,
-    expand_events,
     attacks_to_alerts,
+    expand_events,
+    generate_scenarios,
+    pick_target,
 )
 
 
@@ -22,15 +22,15 @@ def fake_idx():
     """A minimal target index that exercises every routing branch."""
     return {
         "cores": {
-            "HSS":  ["HSS-01", "HSS-02"],
-            "SGW":  ["SGW-01"],
-            "PGW":  ["PGW-01"],
-            "UPF":  ["UPF-01"],
-            "IMS":  ["IMS-01"],
-            "AMF":  ["AMF-01"],
-            "SMF":  ["SMF-01"],
-            "MME":  ["MME-01"],
-            "MSC":  ["MSC-01"],
+            "HSS": ["HSS-01", "HSS-02"],
+            "SGW": ["SGW-01"],
+            "PGW": ["PGW-01"],
+            "UPF": ["UPF-01"],
+            "IMS": ["IMS-01"],
+            "AMF": ["AMF-01"],
+            "SMF": ["SMF-01"],
+            "MME": ["MME-01"],
+            "MSC": ["MSC-01"],
             "RIS-C": ["RIS-01"],
             "ISAC": ["ISAC-01"],
             "AI-RAN": ["AIRAN-01"],
@@ -79,13 +79,11 @@ class TestPickTarget:
         assert t in fake_idx["all_cores"]
 
     def test_empty_pool_returns_unknown(self):
-        empty = {"cores": {}, "all_cores": [],
-                 "cells_5g": [], "cells_6g": []}
+        empty = {"cores": {}, "all_cores": [], "cells_5g": [], "cells_6g": []}
         assert pick_target("DIAMETER_ULR_FLOOD", empty) == "UNKNOWN"
 
     def test_thz_empty_6g_returns_unknown(self):
-        idx = {"cores": {}, "all_cores": [],
-               "cells_5g": [], "cells_6g": []}
+        idx = {"cores": {}, "all_cores": [], "cells_5g": [], "cells_6g": []}
         assert pick_target("THZ_JAMMING", idx) == "UNKNOWN"
 
 
@@ -101,10 +99,23 @@ class TestGenerateScenarios:
     def test_required_fields_present(self, fake_idx):
         s = generate_scenarios(3, fake_idx)
         required = {
-            "scenario_id", "name", "attack_type", "target_layer",
-            "target_node", "target_iface", "protocol", "severity",
-            "start_ts", "end_ts", "duration_sec", "rate_pps",
-            "total_events", "source_ip", "mitre", "status", "notes",
+            "scenario_id",
+            "name",
+            "attack_type",
+            "target_layer",
+            "target_node",
+            "target_iface",
+            "protocol",
+            "severity",
+            "start_ts",
+            "end_ts",
+            "duration_sec",
+            "rate_pps",
+            "total_events",
+            "source_ip",
+            "mitre",
+            "status",
+            "notes",
         }
         for sc in s:
             assert required.issubset(sc.keys())
@@ -118,8 +129,7 @@ class TestGenerateScenarios:
         # When n >= 4, at least 4 6G-family scenarios must appear
         s = generate_scenarios(10, fake_idx)
         types = {x["attack_type"] for x in s}
-        sixg_forced = {"RIS_PHASE_POISON", "AI_RAN_POISON",
-                       "THZ_JAMMING", "QUIC_FLOOD_6G"}
+        sixg_forced = {"RIS_PHASE_POISON", "AI_RAN_POISON", "THZ_JAMMING", "QUIC_FLOOD_6G"}
         # Guarantee: all 4 are present when n >= 4
         assert sixg_forced.issubset(types)
 
@@ -174,10 +184,21 @@ class TestExpandEvents:
         s = generate_scenarios(2, fake_idx)
         ev = expand_events(s, samples_per_scenario=3)
         required = {
-            "scenario_id", "ts", "attack_type", "target_node",
-            "source_ip", "pps", "latency_ms", "drop_pct",
-            "detected", "detected_by", "blocked",
-            "mttd_sec", "mttr_sec", "severity", "notes",
+            "scenario_id",
+            "ts",
+            "attack_type",
+            "target_node",
+            "source_ip",
+            "pps",
+            "latency_ms",
+            "drop_pct",
+            "detected",
+            "detected_by",
+            "blocked",
+            "mttd_sec",
+            "mttr_sec",
+            "severity",
+            "notes",
         }
         for e in ev:
             assert required.issubset(e.keys())
@@ -245,9 +266,17 @@ class TestAttacksToAlerts:
             sc["status"] = "DETECTED"
         alerts = attacks_to_alerts(s, [])
         required = {
-            "alert_id", "timestamp", "severity", "alert_type",
-            "msisdn", "description", "extra", "sms_sent",
-            "sms_to", "sms_body", "ack",
+            "alert_id",
+            "timestamp",
+            "severity",
+            "alert_type",
+            "msisdn",
+            "description",
+            "extra",
+            "sms_sent",
+            "sms_to",
+            "sms_body",
+            "ack",
         }
         for a in alerts:
             assert required.issubset(a.keys())

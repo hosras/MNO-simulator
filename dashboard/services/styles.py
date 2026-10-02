@@ -1,10 +1,11 @@
-# -*- coding: utf-8 -*-
 """Global CSS — injected once by main()."""
+
 import streamlit as st
 
 
 def inject_css():
-    st.markdown("""
+    st.markdown(
+        """
     <style>
       html, body, [class*="css"] {
         direction: ltr; text-align: left;
@@ -22,4 +23,6 @@ def inject_css():
       section.main > div {padding-top: 1rem;}
       div[data-testid="stMetricValue"] { font-size: 22px; }
     </style>
-    """, unsafe_allow_html=True)
+    """,
+        unsafe_allow_html=True,
+    )

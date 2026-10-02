@@ -1,10 +1,10 @@
-# -*- coding: utf-8 -*-
 """Unit tests for radar.services.pdf — pure builder, no Streamlit."""
+
 import pandas as pd
 import pytest
 
 import radar.services.pdf as pdf_module
-from radar.services.pdf import build_pdf, HAS_PDF
+from radar.services.pdf import HAS_PDF, build_pdf
 
 
 class TestHasPdfFlag:
@@ -32,10 +32,12 @@ class TestBuildPdf:
         assert out[:5] == b"%PDF-"
 
     def test_section_with_table(self):
-        df = pd.DataFrame({
-            "col_a": [1, 2, 3],
-            "col_b": ["x", "y", "z"],
-        })
+        df = pd.DataFrame(
+            {
+                "col_a": [1, 2, 3],
+                "col_b": ["x", "y", "z"],
+            }
+        )
         sections = [
             {"heading": "Metrics", "text": "See table below"},
             {"heading": "Data", "table": df},
@@ -45,10 +47,7 @@ class TestBuildPdf:
         assert out[:5] == b"%PDF-"
 
     def test_many_sections(self):
-        sections = [
-            {"heading": f"Section {i}", "text": "Lorem ipsum " * 10}
-            for i in range(20)
-        ]
+        sections = [{"heading": f"Section {i}", "text": "Lorem ipsum " * 10} for i in range(20)]
         out = build_pdf("Long Report", sections)
         assert out is not None
         assert out[:5] == b"%PDF-"

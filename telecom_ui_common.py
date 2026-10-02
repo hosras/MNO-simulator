@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Shared Streamlit + Plotly helpers used by dashboard and radar.
 
 Import this module from INSIDE main() of dashboard/radar. Do not import
@@ -9,26 +8,26 @@ Public API:
     Data     : load_data, db_mtime
     UI       : chart, dl_button, csv_download
 """
-import os
+
 import json
+import os
 import sqlite3
 
 import pandas as pd
-import streamlit as st
-import plotly.express as px        # noqa: F401 (re-export)
+import plotly.express as px  # noqa: F401 (re-export)
 import plotly.graph_objects as go  # noqa: F401 (re-export)
-
+import streamlit as st
 
 # ------------------------------------------------------------------
 # Theme colors (shared across all dashboards)
 # ------------------------------------------------------------------
 ORANGE = "#f6821f"
-BLUE   = "#0ea5e9"
-GREEN  = "#22c55e"
-RED    = "#ef4444"
+BLUE = "#0ea5e9"
+GREEN = "#22c55e"
+RED = "#ef4444"
 PURPLE = "#a855f7"
-GRAY   = "#94a3b8"
-DARK   = "#0f172a"
+GRAY = "#94a3b8"
+DARK = "#0f172a"
 
 
 # ------------------------------------------------------------------
@@ -57,26 +56,32 @@ def load_data(db_path, mtime):
 
     def _tbl(name):
         r = con.execute(
-            "SELECT name FROM sqlite_master "
-            "WHERE type='table' AND name=?",
+            "SELECT name FROM sqlite_master " "WHERE type='table' AND name=?",
             (name,),
         ).fetchone()
         return r is not None
 
     data = {
-        "cells":       pd.read_sql("SELECT * FROM cells", con),
-        "cores":       pd.read_sql("SELECT * FROM cores", con),
+        "cells": pd.read_sql("SELECT * FROM cells", con),
+        "cores": pd.read_sql("SELECT * FROM cores", con),
         "subscribers": pd.read_sql("SELECT * FROM subscribers", con),
-        "cdrs":        pd.read_sql("SELECT * FROM cdrs", con),
-        "osint_reg":   pd.read_sql("SELECT * FROM osint_public_registry", con),
-        "osint_comp":  pd.read_sql("SELECT * FROM osint_complaints", con),
-        "alerts":      pd.read_sql("SELECT * FROM alerts", con),
-        "sms_alerts":  (pd.read_sql("SELECT * FROM sms_alerts", con)
-                        if _tbl("sms_alerts") else pd.DataFrame()),
-        "attack_scenarios": (pd.read_sql("SELECT * FROM attack_scenarios", con)
-                             if _tbl("attack_scenarios") else pd.DataFrame()),
-        "attack_events":    (pd.read_sql("SELECT * FROM attack_events", con)
-                             if _tbl("attack_events") else pd.DataFrame()),
+        "cdrs": pd.read_sql("SELECT * FROM cdrs", con),
+        "osint_reg": pd.read_sql("SELECT * FROM osint_public_registry", con),
+        "osint_comp": pd.read_sql("SELECT * FROM osint_complaints", con),
+        "alerts": pd.read_sql("SELECT * FROM alerts", con),
+        "sms_alerts": (
+            pd.read_sql("SELECT * FROM sms_alerts", con) if _tbl("sms_alerts") else pd.DataFrame()
+        ),
+        "attack_scenarios": (
+            pd.read_sql("SELECT * FROM attack_scenarios", con)
+            if _tbl("attack_scenarios")
+            else pd.DataFrame()
+        ),
+        "attack_events": (
+            pd.read_sql("SELECT * FROM attack_events", con)
+            if _tbl("attack_events")
+            else pd.DataFrame()
+        ),
     }
 
     findings = {}
@@ -93,9 +98,9 @@ def load_data(db_path, mtime):
 
     cdrs = data["cdrs"]
     if len(cdrs):
-        cdrs["ts"]   = pd.to_datetime(cdrs["timestamp"], errors="coerce")
+        cdrs["ts"] = pd.to_datetime(cdrs["timestamp"], errors="coerce")
         cdrs["hour"] = cdrs["ts"].dt.hour
-        cdrs["day"]  = cdrs["ts"].dt.date
+        cdrs["day"] = cdrs["ts"].dt.date
 
     return data
 
@@ -104,7 +109,7 @@ def load_data(db_path, mtime):
 # Auto-key chart + download helpers
 # ------------------------------------------------------------------
 _chart_counter = {"n": 0}
-_dl_counter    = {"n": 0}
+_dl_counter = {"n": 0}
 
 
 def chart(fig, **kwargs):
@@ -122,8 +127,7 @@ def dl_button(label, data=None, file_name=None, mime=None, **kwargs):
     """st.download_button with a guaranteed-unique key."""
     _dl_counter["n"] += 1
     kwargs.setdefault("key", f"_ui_autodl_{_dl_counter['n']}")
-    return st.download_button(label, data=data, file_name=file_name,
-                              mime=mime, **kwargs)
+    return st.download_button(label, data=data, file_name=file_name, mime=mime, **kwargs)
 
 
 def csv_download(df, filename, label="Download CSV"):

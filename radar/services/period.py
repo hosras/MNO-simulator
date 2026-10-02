@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Period comparison helpers — free of Streamlit imports.
 
 Given a CDR DataFrame, split it into two periods (previous vs
@@ -9,11 +8,11 @@ Public API:
     period_stats(df) -> dict
     delta_pct(curr, prev) -> float | None
 """
+
 import pandas as pd
 
 
-def split_periods(cdrs_f: pd.DataFrame,
-                  split_ratio: float = 0.5):
+def split_periods(cdrs_f: pd.DataFrame, split_ratio: float = 0.5):
     """Split a time-sorted CDR DataFrame into (previous, current)."""
     if cdrs_f is None or not len(cdrs_f):
         return None, None
@@ -25,8 +24,16 @@ def split_periods(cdrs_f: pd.DataFrame,
 def period_stats(df) -> dict:
     """Return a dict of per-period totals. Empty for empty input."""
     if df is None or not len(df):
-        return {"cdr": 0, "bytes": 0, "voice": 0, "sms": 0, "mms": 0,
-                "data": 0, "rcs": 0, "minutes": 0}
+        return {
+            "cdr": 0,
+            "bytes": 0,
+            "voice": 0,
+            "sms": 0,
+            "mms": 0,
+            "data": 0,
+            "rcs": 0,
+            "minutes": 0,
+        }
     return {
         "cdr": len(df),
         "bytes": df["bytes"].sum(),

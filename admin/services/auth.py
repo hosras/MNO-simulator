@@ -1,5 +1,5 @@
-# -*- coding: utf-8 -*-
 """Session-state helpers for authentication (Streamlit-based)."""
+
 import streamlit as st
 
 

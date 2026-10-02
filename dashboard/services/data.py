@@ -1,5 +1,5 @@
-# -*- coding: utf-8 -*-
 """Data access — cached DB load + filter application."""
+
 from datetime import timedelta
 
 import pandas as pd

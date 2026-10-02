@@ -1,13 +1,14 @@
-# -*- coding: utf-8 -*-
 """Smoke tests: each module imports cleanly in a fresh subprocess.
 
 Using subprocess (rather than import) gives us a clean __name__ context
 and lets us assert on stderr, catching the Streamlit-warning problem
 we fixed earlier.
 """
+
 import subprocess
 import sys
 from pathlib import Path
+
 import pytest
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -17,8 +18,8 @@ CLEAN_IMPORT_MODULES = [
     "telecom_net_sim",
     "telecom_attack",
     "telecom_admin",
-    "telecom_radar",       # [RADAR-MAIN-GUARD v1]
-    "telecom_dashboard",   # [DASHBOARD-MAIN-GUARD v1]
+    "telecom_radar",  # [RADAR-MAIN-GUARD v1]
+    "telecom_dashboard",  # [DASHBOARD-MAIN-GUARD v1]
 ]
 
 SYNTAX_ONLY_MODULES = [
@@ -44,14 +45,13 @@ def test_import_cleanly(mod):
         "missing ScriptRunContext",
     )
     stderr_lines = [
-        line for line in proc.stderr.splitlines()
+        line
+        for line in proc.stderr.splitlines()
         if not any(s in line for s in _IGNORED_STDERR_SUBSTRINGS)
     ]
     cleaned_stderr = "\n".join(stderr_lines).strip()
 
-    assert cleaned_stderr == "", (
-        f"import {mod} produced stderr output:\n{proc.stderr}"
-    )
+    assert cleaned_stderr == "", f"import {mod} produced stderr output:\n{proc.stderr}"
 
 
 if SYNTAX_ONLY_MODULES:

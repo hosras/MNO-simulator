@@ -1,10 +1,10 @@
-# -*- coding: utf-8 -*-
 """Tab 5 — Special Lines Management."""
+
 import streamlit as st
 
-from telecom_common import LINE_CLASSES, db_chunked_in_update
-from admin.services.db import db_df, db_exec, db_one
 from admin.services.audit import log_audit
+from admin.services.db import db_df, db_exec, db_one
+from telecom_common import LINE_CLASSES, db_chunked_in_update
 
 
 def render():
@@ -43,11 +43,13 @@ def render():
         if st.button("Apply"):
             if len(df) > 0:
                 n = db_chunked_in_update(
-                    "subscribers", "msisdn", "line_class=?",
-                    [newc], df["msisdn"].tolist(),
+                    "subscribers",
+                    "msisdn",
+                    "line_class=?",
+                    [newc],
+                    df["msisdn"].tolist(),
                 )
-                log_audit("BULK_UPDATE", "subscriber", f"{n}",
-                          f"class={newc}")
+                log_audit("BULK_UPDATE", "subscriber", f"{n}", f"class={newc}")
                 st.success(f"Updated {n}.")
                 st.rerun()
 
@@ -65,18 +67,22 @@ def render():
     if not row:
         st.warning("Not found.")
         return
-    st.write(dict(zip(
-        ["msisdn", "class", "intl", "fb", "clir", "cliro",
-         "qos", "li", "dr"],
-        row,
-    )))
+    st.write(
+        dict(
+            zip(
+                ["msisdn", "class", "intl", "fb", "clir", "cliro", "qos", "li", "dr"],
+                row,
+                strict=False,
+            )
+        )
+    )
     with st.form("toggle_sl"):
         p1, p2, p3 = st.columns(3)
         with p1:
             nlc = st.selectbox(
-                "Line Class", LINE_CLASSES,
-                index=LINE_CLASSES.index(row[1])
-                if row[1] in LINE_CLASSES else 0,
+                "Line Class",
+                LINE_CLASSES,
+                index=LINE_CLASSES.index(row[1]) if row[1] in LINE_CLASSES else 0,
             )
             intl = st.checkbox("International", bool(row[2]))
             fb = st.checkbox("Filter Bypass", bool(row[3]))
@@ -94,8 +100,7 @@ def render():
                     clir_enabled=?,clir_override=?,priority_qos=?,
                     lawful_intercept=?,direct_routing=?
                     WHERE msisdn=?""",
-                (nlc, int(intl), int(fb), int(clir),
-                 int(cliro), qos, int(li), int(dr), msisdn),
+                (nlc, int(intl), int(fb), int(clir), int(cliro), qos, int(li), int(dr), msisdn),
             )
             log_audit("PERM_UPDATE", "subscriber", msisdn, f"class={nlc}")
             st.success("Saved.")

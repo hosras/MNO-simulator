@@ -1,40 +1,60 @@
-# -*- coding: utf-8 -*-
 """Admin panel entry point — login flow + tabs.
 
 All Streamlit rendering happens inside main(); nothing at import time.
 """
+
 import os
 from datetime import datetime
 
 import streamlit as st
 
-from telecom_common import (
-    DB_PATH, has_password, set_password, verify_password,
-)
-from admin._config import LOGIN_WINDOW_MIN, LOGIN_MAX_FAILS
+from admin._config import LOGIN_MAX_FAILS, LOGIN_WINDOW_MIN
 from admin.services.audit import init_audit, log_audit
-from admin.services.auth import is_logged_in, current_user, logout
-from admin.services.rate_limit import (
-    count_recent_failed_logins, lockout_remaining_sec,
-)
-from admin.services.db import db_count, db_df
+from admin.services.auth import current_user, is_logged_in, logout
 from admin.services.backup import create_backup
+from admin.services.db import db_count, db_df
+from admin.services.rate_limit import (
+    count_recent_failed_logins,
+    lockout_remaining_sec,
+)
+from admin.views import (
+    alerts as v_alerts,
+)
+from admin.views import (
+    audit as v_audit,
+)
+from admin.views import (
+    backup as v_backup,
+)
+from admin.views import (
+    cells as v_cells,
+)
+from admin.views import (
+    cores as v_cores,
+)
 from admin.views import (
     dashboard as v_dashboard,
-    subscribers as v_subscribers,
-    cells as v_cells,
-    cores as v_cores,
-    alerts as v_alerts,
-    special_lines as v_special_lines,
+)
+from admin.views import (
     encryption as v_encryption,
-    backup as v_backup,
-    audit as v_audit,
+)
+from admin.views import (
+    special_lines as v_special_lines,
+)
+from admin.views import (
+    subscribers as v_subscribers,
+)
+from telecom_common import (
+    DB_PATH,
+    has_password,
+    set_password,
+    verify_password,
 )
 
 
 def _inject_css():
     st.markdown(
-        "<style>html,body,[class*=\"css\"]{direction:ltr;text-align:left;"
+        '<style>html,body,[class*="css"]{direction:ltr;text-align:left;'
         "font-family:'Segoe UI',sans-serif;}"
         ".admin-header{background:linear-gradient(90deg,#dc2626,#7c2d12);"
         "padding:18px 24px;border-radius:14px;color:#fff;"
@@ -49,9 +69,9 @@ def _render_first_time_setup():
     st.markdown(
         '<div class="admin-header"><div>'
         '<div style="font-size:24px;font-weight:800;">'
-        'TELECOM Admin Panel</div>'
+        "TELECOM Admin Panel</div>"
         '<div style="opacity:.9;font-size:13px;">'
-        'First-time setup</div></div></div>',
+        "First-time setup</div></div></div>",
         unsafe_allow_html=True,
     )
     st.write("")
@@ -77,9 +97,9 @@ def _render_login():
     st.markdown(
         '<div class="admin-header"><div>'
         '<div style="font-size:24px;font-weight:800;">'
-        'TELECOM Admin Panel</div>'
+        "TELECOM Admin Panel</div>"
         '<div style="opacity:.9;font-size:13px;">'
-        'Authenticated access</div></div></div>',
+        "Authenticated access</div></div></div>",
         unsafe_allow_html=True,
     )
     st.write("")
@@ -103,8 +123,7 @@ def _render_login():
                 log_audit("LOGIN", "system", "-", "successful")
                 st.rerun()
             else:
-                log_audit("LOGIN_FAILED", "system", user or "-",
-                          "bad credentials")
+                log_audit("LOGIN_FAILED", "system", user or "-", "bad credentials")
                 remaining = LOGIN_MAX_FAILS - (recent_fails + 1)
                 if remaining > 0:
                     st.error(
@@ -131,9 +150,7 @@ def _render_sidebar():
         st.metric("Subscribers", f"{db_count('subscribers'):,}")
         st.metric("Cells", f"{db_count('cells'):,}")
         try:
-            n6g = int(db_df(
-                "SELECT COUNT(*) AS n FROM cells WHERE tech='6G'"
-            ).iloc[0]["n"])
+            n6g = int(db_df("SELECT COUNT(*) AS n FROM cells WHERE tech='6G'").iloc[0]["n"])
             st.metric("  6G Cells", f"{n6g:,}")
         except Exception:
             pass
@@ -176,31 +193,49 @@ def main():
     st.markdown(
         f'<div class="admin-header"><div>'
         f'<div style="font-size:22px;font-weight:800;">'
-        f'TELECOM Admin Panel</div>'
+        f"TELECOM Admin Panel</div>"
         f'<div style="opacity:.9;font-size:13px;">CRUD | Audit | Backup | '
-        f'User: <b>{current_user()}</b></div></div>'
+        f"User: <b>{current_user()}</b></div></div>"
         f'<div style="text-align:right;font-size:12px;opacity:.9;">'
-        f'{datetime.now():%Y-%m-%d %H:%M}</div></div>',
+        f"{datetime.now():%Y-%m-%d %H:%M}</div></div>",
         unsafe_allow_html=True,
     )
     st.write("")
 
     _render_sidebar()
 
-    tabs = st.tabs([
-        "Dashboard", "Subscribers", "Cells", "Core Nodes", "Alerts",
-        "Special Lines", "Encryption", "Backup / Restore", "Audit Log",
-    ])
+    tabs = st.tabs(
+        [
+            "Dashboard",
+            "Subscribers",
+            "Cells",
+            "Core Nodes",
+            "Alerts",
+            "Special Lines",
+            "Encryption",
+            "Backup / Restore",
+            "Audit Log",
+        ]
+    )
 
-    with tabs[0]: v_dashboard.render()
-    with tabs[1]: v_subscribers.render()
-    with tabs[2]: v_cells.render()
-    with tabs[3]: v_cores.render()
-    with tabs[4]: v_alerts.render()
-    with tabs[5]: v_special_lines.render()
-    with tabs[6]: v_encryption.render()
-    with tabs[7]: v_backup.render()
-    with tabs[8]: v_audit.render()
+    with tabs[0]:
+        v_dashboard.render()
+    with tabs[1]:
+        v_subscribers.render()
+    with tabs[2]:
+        v_cells.render()
+    with tabs[3]:
+        v_cores.render()
+    with tabs[4]:
+        v_alerts.render()
+    with tabs[5]:
+        v_special_lines.render()
+    with tabs[6]:
+        v_encryption.render()
+    with tabs[7]:
+        v_backup.render()
+    with tabs[8]:
+        v_audit.render()
 
 
 if __name__ == "__main__":

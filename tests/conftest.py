@@ -1,14 +1,15 @@
-# -*- coding: utf-8 -*-
 """Shared fixtures for the test suite.
 
 Key guarantee: NO test writes to the real telecom_sim_output/ directory.
 All filesystem-touching tests use tmp_path or a subprocess in an
 isolated directory.
 """
+
 import os
 import sys
-import pytest
 from pathlib import Path
+
+import pytest
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 if str(PROJECT_ROOT) not in sys.path:
@@ -17,15 +18,15 @@ if str(PROJECT_ROOT) not in sys.path:
 
 def pytest_addoption(parser):
     parser.addoption(
-        "--run-slow", action="store_true", default=False,
+        "--run-slow",
+        action="store_true",
+        default=False,
         help="Run slow integration tests that spawn the full simulator",
     )
 
 
 def pytest_configure(config):
-    config.addinivalue_line(
-        "markers", "slow: slow integration tests (subprocess-based)"
-    )
+    config.addinivalue_line("markers", "slow: slow integration tests (subprocess-based)")
 
 
 def pytest_collection_modifyitems(config, items):

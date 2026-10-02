@@ -1,16 +1,19 @@
-# -*- coding: utf-8 -*-
 """Unit tests for admin.services.backup — no Streamlit, no real DB.
 
 We monkeypatch DB_PATH and BACKUP_DIR to point at pytest's tmp_path,
 so the real project DB is never touched.
 """
+
 import os
 import sqlite3
+
 import pytest
 
 import admin.services.backup as backup_module
 from admin.services.backup import (
-    create_backup, list_backups, restore_backup,
+    create_backup,
+    list_backups,
+    restore_backup,
 )
 
 
@@ -92,7 +95,8 @@ class TestListBackups:
 
     def test_missing_dir_returns_empty_list(self, isolated, monkeypatch):
         monkeypatch.setattr(
-            backup_module, "BACKUP_DIR",
+            backup_module,
+            "BACKUP_DIR",
             str(isolated["backups"] / "does_not_exist"),
         )
         assert list_backups() == []

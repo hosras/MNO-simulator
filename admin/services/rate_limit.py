@@ -1,24 +1,21 @@
-# -*- coding: utf-8 -*-
 """Login rate-limit helpers.
 
 Counter lives in audit_log (not session_state) so browser refresh
 and app restart cannot clear it.
 """
+
 from datetime import datetime, timedelta
 
+from admin._config import LOGIN_MAX_FAILS, LOGIN_WINDOW_MIN
 from telecom_common import db_one
-from admin._config import LOGIN_WINDOW_MIN, LOGIN_MAX_FAILS
 
 
 def count_recent_failed_logins(minutes: int = LOGIN_WINDOW_MIN) -> int:
     """Count LOGIN_FAILED entries in audit_log within the last N minutes."""
-    cutoff = (datetime.now() - timedelta(minutes=minutes)).strftime(
-        "%Y-%m-%d %H:%M:%S"
-    )
+    cutoff = (datetime.now() - timedelta(minutes=minutes)).strftime("%Y-%m-%d %H:%M:%S")
     try:
         row = db_one(
-            "SELECT COUNT(*) FROM audit_log "
-            "WHERE action='LOGIN_FAILED' AND ts >= ?",
+            "SELECT COUNT(*) FROM audit_log " "WHERE action='LOGIN_FAILED' AND ts >= ?",
             (cutoff,),
         )
         return int(row[0]) if row else 0

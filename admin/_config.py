@@ -1,5 +1,5 @@
-# -*- coding: utf-8 -*-
 """Package-level constants shared across admin modules."""
+
 import os
 
 from telecom_common import OUT_DIR
@@ -13,5 +13,10 @@ LOGIN_MAX_FAILS = 5
 
 # Line classes for bulk update
 BULK_UPDATE_CLASSES = [
-    "VIP", "Government", "Corporate", "Emergency", "Test", "Normal",
+    "VIP",
+    "Government",
+    "Corporate",
+    "Emergency",
+    "Test",
+    "Normal",
 ]

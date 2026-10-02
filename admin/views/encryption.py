@@ -1,10 +1,10 @@
-# -*- coding: utf-8 -*-
 """Tab 6 — Encryption Management."""
+
 import streamlit as st
 
-from telecom_common import CIPHER_SUITES, gen_key_id
-from admin.services.db import db_df, db_exec, db_one
 from admin.services.audit import log_audit
+from admin.services.db import db_df, db_exec, db_one
+from telecom_common import CIPHER_SUITES, gen_key_id
 
 
 def render():
@@ -15,8 +15,7 @@ def render():
             FROM subscribers WHERE e2e_enabled=1"""
     )
     st.caption(f"{len(df)} encrypted subscribers")
-    st.dataframe(df.head(500), use_container_width=True,
-                 hide_index=True, height=400)
+    st.dataframe(df.head(500), use_container_width=True, hide_index=True, height=400)
 
     st.markdown("#### Rotate Keys")
     c1, c2 = st.columns(2)
@@ -24,11 +23,11 @@ def render():
         rc = st.multiselect(
             "Classes:",
             ["VIP", "Government", "Corporate", "Emergency", "Test"],
-            default=["Government", "Emergency"], key="enc_rc",
+            default=["Government", "Emergency"],
+            key="enc_rc",
         )
     with c2:
-        nc = st.selectbox("New cipher", list(CIPHER_SUITES.keys()),
-                          key="enc_nc")
+        nc = st.selectbox("New cipher", list(CIPHER_SUITES.keys()), key="enc_nc")
     if st.button("Rotate Now", type="primary"):
         if rc:
             ph = ",".join("?" * len(rc))
@@ -39,8 +38,7 @@ def render():
             n = 0
             for _, r in rows.iterrows():
                 db_exec(
-                    "UPDATE subscribers SET key_id=?,cipher_suite=? "
-                    "WHERE msisdn=?",
+                    "UPDATE subscribers SET key_id=?,cipher_suite=? " "WHERE msisdn=?",
                     (gen_key_id(r["msisdn"]), nc, r["msisdn"]),
                 )
                 n += 1
@@ -61,15 +59,22 @@ def render():
     if not row:
         st.warning("Not found.")
         return
-    st.write(dict(zip(
-        ["msisdn", "cipher", "key_id", "e2e", "req", "rot"], row,
-    )))
+    st.write(
+        dict(
+            zip(
+                ["msisdn", "cipher", "key_id", "e2e", "req", "rot"],
+                row,
+                strict=False,
+            )
+        )
+    )
     cl = ["None"] + list(CIPHER_SUITES.keys())
     with st.form("enc_edit"):
         e2e = st.checkbox("E2E Enabled", bool(row[3]))
         er = st.checkbox("Encryption Required", bool(row[4]))
         cs = st.selectbox(
-            "Cipher", cl,
+            "Cipher",
+            cl,
             index=cl.index(row[1]) if row[1] in cl else 0,
         )
         rt = st.number_input("Rotation days", 0, 365, int(row[5]))
