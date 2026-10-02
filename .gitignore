@@ -41,3 +41,8 @@ Thumbs.db
 *.v2_backup
 *.v3_backup
 _admin_auth_backup/
+
+# Coverage data
+.coverage
+htmlcov/
+coverage.xml

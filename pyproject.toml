@@ -36,3 +36,60 @@ ignore = [
 quote-style = "double"
 indent-style = "space"
 line-ending = "lf"
+[tool.coverage.run]
+source = ["."]
+branch = true
+omit = [
+    # Tests
+    "*/tests/*",
+    "*/__pycache__/*",
+    "*/.venv/*",
+
+    # Streamlit views (require runtime to test)
+    "dashboard/views/*",
+    "admin/views/*",
+    "radar/views/*",
+
+    # Entry points / shims
+    "telecom_dashboard.py",
+    "telecom_admin.py",
+    "telecom_radar.py",
+    "dashboard/main.py",
+    "admin/main.py",
+    "radar/main.py",
+    "dashboard/__init__.py",
+    "admin/__init__.py",
+    "radar/__init__.py",
+    "dashboard/_config.py",
+    "admin/_config.py",
+    "radar/_config.py",
+
+    # Streamlit UI helpers
+    "telecom_ui_common.py",
+    "dashboard/services/styles.py",
+    "dashboard/services/ui.py",
+    "dashboard/services/data.py",
+    "radar/services/ui.py",
+
+    # Generators / tools
+    "generate_readme.py",
+    "generate_evidence.py",
+    "generate_project_report.py",
+    "restore_2pb.py",
+    "check_6g_now.py",
+    "main.py",
+
+    # Simulator (tested via integration test only)
+    "telecom_net_sim.py",
+]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = false
+exclude_lines = [
+    "pragma: no cover",
+    "if __name__ == .__main__.:",
+    "raise NotImplementedError",
+    "if TYPE_CHECKING:",
+    "@abstractmethod",
+]
