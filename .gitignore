@@ -46,3 +46,6 @@ _admin_auth_backup/
 .coverage
 htmlcov/
 coverage.xml
+
+# Old simulation output (kept locally, not tracked)
+telecom_sim_output_old/
