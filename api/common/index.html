@@ -303,6 +303,25 @@
   
   
     <li class="md-tabs__item">
+      <a href="../../logging/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Logging
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
       <a href="../../security/" class="md-tabs__link">
         
   
@@ -310,6 +329,25 @@
     
   
   Security
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../benchmarks/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Performance Benchmarks
 
       </a>
     </li>
@@ -519,6 +557,33 @@
   
   
     <li class="md-nav__item">
+      <a href="../../logging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Logging
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../security/" class="md-nav__link">
         
   
@@ -527,6 +592,33 @@
     
   
     Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../benchmarks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Performance Benchmarks
   
 
     
@@ -605,7 +697,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
         
           
           <div class="md-nav__link md-nav__container">
@@ -627,14 +719,14 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="">
+              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_7">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1398,9 +1490,15 @@
 <span class="normal">210</span>
 <span class="normal">211</span>
 <span class="normal">212</span>
-<span class="normal">213</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">db_count</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">DB_PATH</span><span class="p">):</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">db_count</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">DB_PATH</span><span class="p">):</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">r</span> <span class="o">=</span> <span class="n">db_one</span><span class="p">(</span><span class="sa">f</span><span class="s2">"SELECT COUNT(*) FROM </span><span class="si">{</span><span class="n">table</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">)</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">db_one</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"SELECT COUNT(*) FROM </span><span class="si">{</span><span class="n">table</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>  <span class="c1"># nosec B608</span>
+            <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span>
+        <span class="p">)</span>
         <span class="k">return</span> <span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">r</span> <span class="k">else</span> <span class="mi">0</span>
     <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
         <span class="k">return</span> <span class="mi">0</span>
@@ -1426,10 +1524,7 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>telecom_common.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">216</span>
-<span class="normal">217</span>
-<span class="normal">218</span>
-<span class="normal">219</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">219</span>
 <span class="normal">220</span>
 <span class="normal">221</span>
 <span class="normal">222</span>
@@ -1444,7 +1539,11 @@
 <span class="normal">231</span>
 <span class="normal">232</span>
 <span class="normal">233</span>
-<span class="normal">234</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">db_chunked_in_update</span><span class="p">(</span>
+<span class="normal">234</span>
+<span class="normal">235</span>
+<span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">db_chunked_in_update</span><span class="p">(</span>
     <span class="n">table</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">set_clause</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">where_values</span><span class="p">,</span> <span class="n">chunk_size</span><span class="o">=</span><span class="mi">800</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">DB_PATH</span>
 <span class="p">):</span>
     <span class="n">total</span> <span class="o">=</span> <span class="mi">0</span>
@@ -1454,8 +1553,9 @@
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">where_values</span><span class="p">),</span> <span class="n">chunk_size</span><span class="p">):</span>
             <span class="n">chunk</span> <span class="o">=</span> <span class="n">where_values</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">chunk_size</span><span class="p">]</span>
             <span class="n">ph</span> <span class="o">=</span> <span class="s2">","</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">"?"</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">chunk</span><span class="p">))</span>
-            <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">"UPDATE </span><span class="si">{</span><span class="n">table</span><span class="si">}</span><span class="s2"> SET </span><span class="si">{</span><span class="n">set_clause</span><span class="si">}</span><span class="s2"> "</span> <span class="sa">f</span><span class="s2">"WHERE </span><span class="si">{</span><span class="n">column</span><span class="si">}</span><span class="s2"> IN (</span><span class="si">{</span><span class="n">ph</span><span class="si">}</span><span class="s2">)"</span><span class="p">,</span>
+            <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>  <span class="c1"># nosec B608</span>
+                <span class="sa">f</span><span class="s2">"UPDATE </span><span class="si">{</span><span class="n">table</span><span class="si">}</span><span class="s2"> SET </span><span class="si">{</span><span class="n">set_clause</span><span class="si">}</span><span class="s2"> "</span>  <span class="c1"># nosec B608</span>
+                <span class="sa">f</span><span class="s2">"WHERE </span><span class="si">{</span><span class="n">column</span><span class="si">}</span><span class="s2"> IN (</span><span class="si">{</span><span class="n">ph</span><span class="si">}</span><span class="s2">)"</span><span class="p">,</span>
                 <span class="nb">tuple</span><span class="p">(</span><span class="n">values</span> <span class="o">+</span> <span class="n">chunk</span><span class="p">),</span>
             <span class="p">)</span>
             <span class="n">total</span> <span class="o">+=</span> <span class="n">cur</span><span class="o">.</span><span class="n">rowcount</span>
@@ -1708,7 +1808,7 @@
 <span class="normal">135</span>
 <span class="normal">136</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">gen_key_id</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="s2">""</span><span class="p">):</span>
     <span class="n">src</span> <span class="o">=</span> <span class="n">seed</span> <span class="ow">or</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span><span class="si">}{</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span>
-    <span class="k">return</span> <span class="s2">"KEY-"</span> <span class="o">+</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha1</span><span class="p">(</span><span class="n">src</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()[:</span><span class="mi">16</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+    <span class="k">return</span> <span class="s2">"KEY-"</span> <span class="o">+</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha1</span><span class="p">(</span><span class="n">src</span><span class="o">.</span><span class="n">encode</span><span class="p">(),</span> <span class="n">usedforsecurity</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()[:</span><span class="mi">16</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>

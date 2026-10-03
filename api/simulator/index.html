@@ -303,6 +303,25 @@
   
   
     <li class="md-tabs__item">
+      <a href="../../logging/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Logging
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
       <a href="../../security/" class="md-tabs__link">
         
   
@@ -310,6 +329,25 @@
     
   
   Security
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../benchmarks/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Performance Benchmarks
 
       </a>
     </li>
@@ -519,6 +557,33 @@
   
   
     <li class="md-nav__item">
+      <a href="../../logging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Logging
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../security/" class="md-nav__link">
         
   
@@ -527,6 +592,33 @@
     
   
     Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../benchmarks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Performance Benchmarks
   
 
     
@@ -605,7 +697,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
         
           
           <div class="md-nav__link md-nav__container">
@@ -627,14 +719,14 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="">
+              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_7">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1712,11 +1804,7 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>telecom_net_sim.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">153</span>
-<span class="normal">154</span>
-<span class="normal">155</span>
-<span class="normal">156</span>
-<span class="normal">157</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">157</span>
 <span class="normal">158</span>
 <span class="normal">159</span>
 <span class="normal">160</span>
@@ -1727,7 +1815,14 @@
 <span class="normal">165</span>
 <span class="normal">166</span>
 <span class="normal">167</span>
-<span class="normal">168</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">parse_args</span><span class="p">(</span><span class="n">argv</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">parse_args</span><span class="p">(</span><span class="n">argv</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Parse CLI arguments.</span>
 
 <span class="sd">    Returns Namespace with: seed, random_seed, subs, cdrs.</span>
@@ -1742,6 +1837,9 @@
     <span class="p">)</span>
     <span class="n">p</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--subs"</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Number of subscribers"</span><span class="p">)</span>
     <span class="n">p</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--cdrs"</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">60_000</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Number of CDR records"</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--verbose"</span><span class="p">,</span> <span class="s2">"-v"</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">"store_true"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Enable DEBUG logging"</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--quiet"</span><span class="p">,</span> <span class="s2">"-q"</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">"store_true"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Only show WARNING and above"</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--log-file"</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Optional path to write logs to"</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">p</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">argv</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -1765,14 +1863,7 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>telecom_net_sim.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">310</span>
-<span class="normal">311</span>
-<span class="normal">312</span>
-<span class="normal">313</span>
-<span class="normal">314</span>
-<span class="normal">315</span>
-<span class="normal">316</span>
-<span class="normal">317</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">317</span>
 <span class="normal">318</span>
 <span class="normal">319</span>
 <span class="normal">320</span>
@@ -1838,7 +1929,14 @@
 <span class="normal">380</span>
 <span class="normal">381</span>
 <span class="normal">382</span>
-<span class="normal">383</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">build_topology</span><span class="p">():</span>
+<span class="normal">383</span>
+<span class="normal">384</span>
+<span class="normal">385</span>
+<span class="normal">386</span>
+<span class="normal">387</span>
+<span class="normal">388</span>
+<span class="normal">389</span>
+<span class="normal">390</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">build_topology</span><span class="p">():</span>
     <span class="n">cells</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">CellSite</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">counters</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">city</span><span class="p">,</span> <span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">,</span> <span class="n">pop</span><span class="p">,</span> <span class="n">_w</span> <span class="ow">in</span> <span class="n">CITIES</span><span class="p">:</span>
@@ -1934,14 +2032,7 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>telecom_net_sim.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">455</span>
-<span class="normal">456</span>
-<span class="normal">457</span>
-<span class="normal">458</span>
-<span class="normal">459</span>
-<span class="normal">460</span>
-<span class="normal">461</span>
-<span class="normal">462</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">462</span>
 <span class="normal">463</span>
 <span class="normal">464</span>
 <span class="normal">465</span>
@@ -2031,7 +2122,20 @@
 <span class="normal">549</span>
 <span class="normal">550</span>
 <span class="normal">551</span>
-<span class="normal">552</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">build_subscribers</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5000</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Subscriber</span><span class="p">]:</span>
+<span class="normal">552</span>
+<span class="normal">553</span>
+<span class="normal">554</span>
+<span class="normal">555</span>
+<span class="normal">556</span>
+<span class="normal">557</span>
+<span class="normal">558</span>
+<span class="normal">559</span>
+<span class="normal">560</span>
+<span class="normal">561</span>
+<span class="normal">562</span>
+<span class="normal">563</span>
+<span class="normal">564</span>
+<span class="normal">565</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">build_subscribers</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5000</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Subscriber</span><span class="p">]:</span>
     <span class="n">subs</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">used_msisdn</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
     <span class="n">used_imsi</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
@@ -2094,7 +2198,13 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">cipher</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">CIPHER_SUITES</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
             <span class="n">key_id</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="s2">"KEY-"</span> <span class="o">+</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha1</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">imsi</span><span class="si">}{</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()[:</span><span class="mi">16</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+                <span class="s2">"KEY-"</span>
+                <span class="o">+</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha1</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">imsi</span><span class="si">}{</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="o">.</span><span class="n">encode</span><span class="p">(),</span>
+                    <span class="n">usedforsecurity</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="o">.</span><span class="n">hexdigest</span><span class="p">()[:</span><span class="mi">16</span><span class="p">]</span>
+                <span class="o">.</span><span class="n">upper</span><span class="p">()</span>
             <span class="p">)</span>
             <span class="n">rot_days</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="mi">30</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">180</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
@@ -2151,20 +2261,7 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>telecom_net_sim.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">595</span>
-<span class="normal">596</span>
-<span class="normal">597</span>
-<span class="normal">598</span>
-<span class="normal">599</span>
-<span class="normal">600</span>
-<span class="normal">601</span>
-<span class="normal">602</span>
-<span class="normal">603</span>
-<span class="normal">604</span>
-<span class="normal">605</span>
-<span class="normal">606</span>
-<span class="normal">607</span>
-<span class="normal">608</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">608</span>
 <span class="normal">609</span>
 <span class="normal">610</span>
 <span class="normal">611</span>
@@ -2320,7 +2417,20 @@
 <span class="normal">761</span>
 <span class="normal">762</span>
 <span class="normal">763</span>
-<span class="normal">764</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">gen_cdrs</span><span class="p">(</span><span class="n">subs</span><span class="p">,</span> <span class="n">cells</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">60_000</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="normal">764</span>
+<span class="normal">765</span>
+<span class="normal">766</span>
+<span class="normal">767</span>
+<span class="normal">768</span>
+<span class="normal">769</span>
+<span class="normal">770</span>
+<span class="normal">771</span>
+<span class="normal">772</span>
+<span class="normal">773</span>
+<span class="normal">774</span>
+<span class="normal">775</span>
+<span class="normal">776</span>
+<span class="normal">777</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">gen_cdrs</span><span class="p">(</span><span class="n">subs</span><span class="p">,</span> <span class="n">cells</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">60_000</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
     <span class="n">by_city_cells</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cells</span><span class="p">:</span>
         <span class="n">by_city_cells</span><span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">city</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
@@ -2512,20 +2622,7 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>telecom_net_sim.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1671</span>
-<span class="normal">1672</span>
-<span class="normal">1673</span>
-<span class="normal">1674</span>
-<span class="normal">1675</span>
-<span class="normal">1676</span>
-<span class="normal">1677</span>
-<span class="normal">1678</span>
-<span class="normal">1679</span>
-<span class="normal">1680</span>
-<span class="normal">1681</span>
-<span class="normal">1682</span>
-<span class="normal">1683</span>
-<span class="normal">1684</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1684</span>
 <span class="normal">1685</span>
 <span class="normal">1686</span>
 <span class="normal">1687</span>
@@ -2569,64 +2666,97 @@
 <span class="normal">1725</span>
 <span class="normal">1726</span>
 <span class="normal">1727</span>
-<span class="normal">1728</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">argv</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="normal">1728</span>
+<span class="normal">1729</span>
+<span class="normal">1730</span>
+<span class="normal">1731</span>
+<span class="normal">1732</span>
+<span class="normal">1733</span>
+<span class="normal">1734</span>
+<span class="normal">1735</span>
+<span class="normal">1736</span>
+<span class="normal">1737</span>
+<span class="normal">1738</span>
+<span class="normal">1739</span>
+<span class="normal">1740</span>
+<span class="normal">1741</span>
+<span class="normal">1742</span>
+<span class="normal">1743</span>
+<span class="normal">1744</span>
+<span class="normal">1745</span>
+<span class="normal">1746</span>
+<span class="normal">1747</span>
+<span class="normal">1748</span>
+<span class="normal">1749</span>
+<span class="normal">1750</span>
+<span class="normal">1751</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">argv</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="k">global</span> <span class="n">SEED</span>
     <span class="n">args</span> <span class="o">=</span> <span class="n">parse_args</span><span class="p">(</span><span class="n">argv</span><span class="p">)</span>
+
+    <span class="c1"># Configure logging based on CLI flags</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+        <span class="n">log_level</span> <span class="o">=</span> <span class="s2">"DEBUG"</span>
+    <span class="k">elif</span> <span class="n">args</span><span class="o">.</span><span class="n">quiet</span><span class="p">:</span>
+        <span class="n">log_level</span> <span class="o">=</span> <span class="s2">"WARNING"</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">log_level</span> <span class="o">=</span> <span class="s2">"INFO"</span>
+    <span class="n">setup_logging</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">log_level</span><span class="p">,</span> <span class="n">log_file</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">log_file</span><span class="p">)</span>
+
     <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">random_seed</span><span class="p">:</span>
         <span class="n">SEED</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="o">**</span><span class="mi">9</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">SEED</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">seed</span>
     <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">SEED</span><span class="p">)</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"="</span> <span class="o">*</span> <span class="mi">78</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">" </span><span class="si">{</span><span class="n">OPERATOR</span><span class="si">}</span><span class="s2">-NET-SIM v3.0 | LOCAL-ONLY | Seed=</span><span class="si">{</span><span class="n">SEED</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"="</span> <span class="o">*</span> <span class="mi">78</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"="</span> <span class="o">*</span> <span class="mi">78</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">" </span><span class="si">{</span><span class="n">OPERATOR</span><span class="si">}</span><span class="s2">-NET-SIM v3.0 | LOCAL-ONLY | Seed=</span><span class="si">{</span><span class="n">SEED</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"="</span> <span class="o">*</span> <span class="mi">78</span><span class="p">)</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"[1/7] Building network topology..."</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"[1/7] Building network topology..."</span><span class="p">)</span>
     <span class="n">cells</span><span class="p">,</span> <span class="n">cores</span> <span class="o">=</span> <span class="n">build_topology</span><span class="p">()</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"      Cells: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">cells</span><span class="p">)</span><span class="si">}</span><span class="s2"> | Core nodes: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">cores</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"      Cells: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">cells</span><span class="p">)</span><span class="si">}</span><span class="s2"> | Core nodes: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">cores</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"[2/7] Generating subscribers..."</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"[2/7] Generating subscribers..."</span><span class="p">)</span>
     <span class="n">subs</span> <span class="o">=</span> <span class="n">build_subscribers</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">subs</span><span class="p">)</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"[3/7] Generating CDR records..."</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"[3/7] Generating CDR records..."</span><span class="p">)</span>
     <span class="n">cdrs</span> <span class="o">=</span> <span class="n">gen_cdrs</span><span class="p">(</span><span class="n">subs</span><span class="p">,</span> <span class="n">cells</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">cdrs</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"      </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">cdrs</span><span class="p">)</span><span class="si">}</span><span class="s2"> records generated."</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"      </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">cdrs</span><span class="p">)</span><span class="si">}</span><span class="s2"> records generated."</span><span class="p">)</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"[4/7] Running OSINT analysis..."</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"[4/7] Running OSINT analysis..."</span><span class="p">)</span>
     <span class="n">osint_data</span> <span class="o">=</span> <span class="n">osint_collect</span><span class="p">(</span><span class="n">cells</span><span class="p">,</span> <span class="n">subs</span><span class="p">)</span>
     <span class="n">osint_r</span> <span class="o">=</span> <span class="n">osint_report</span><span class="p">(</span><span class="n">osint_data</span><span class="p">)</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"[5/7] Running SIGINT analysis..."</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"[5/7] Running SIGINT analysis..."</span><span class="p">)</span>
     <span class="n">sigint_r</span> <span class="o">=</span> <span class="n">sigint_analyze</span><span class="p">(</span><span class="n">cdrs</span><span class="p">,</span> <span class="n">cells</span><span class="p">)</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"[5.5/7] Running alert engine + SMS dispatch..."</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"[5.5/7] Running alert engine + SMS dispatch..."</span><span class="p">)</span>
     <span class="n">alerts</span> <span class="o">=</span> <span class="n">run_alert_engine</span><span class="p">(</span><span class="n">subs</span><span class="p">,</span> <span class="n">cdrs</span><span class="p">,</span> <span class="n">sigint_r</span><span class="p">,</span> <span class="n">osint_r</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"        </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">alerts</span><span class="p">)</span><span class="si">}</span><span class="s2"> alerts dispatched via SMS."</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"        </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">alerts</span><span class="p">)</span><span class="si">}</span><span class="s2"> alerts dispatched via SMS."</span><span class="p">)</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"[6/7] Persisting to SQLite..."</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"[6/7] Persisting to SQLite..."</span><span class="p">)</span>
     <span class="n">persist</span><span class="p">(</span><span class="n">cells</span><span class="p">,</span> <span class="n">cores</span><span class="p">,</span> <span class="n">subs</span><span class="p">,</span> <span class="n">cdrs</span><span class="p">,</span> <span class="n">osint_data</span><span class="p">,</span> <span class="n">osint_r</span><span class="p">,</span> <span class="n">sigint_r</span><span class="p">,</span> <span class="n">alerts</span><span class="p">)</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"[7/7] Rendering charts and report..."</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"[7/7] Rendering charts and report..."</span><span class="p">)</span>
     <span class="n">visualize</span><span class="p">(</span><span class="n">cells</span><span class="p">,</span> <span class="n">cdrs</span><span class="p">,</span> <span class="n">sigint_r</span><span class="p">,</span> <span class="n">osint_r</span><span class="p">)</span>
     <span class="n">build_report</span><span class="p">(</span><span class="n">cells</span><span class="p">,</span> <span class="n">cores</span><span class="p">,</span> <span class="n">subs</span><span class="p">,</span> <span class="n">cdrs</span><span class="p">,</span> <span class="n">osint_r</span><span class="p">,</span> <span class="n">sigint_r</span><span class="p">,</span> <span class="n">alerts</span><span class="p">)</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"[8/8] Running attack simulation..."</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"[8/8] Running attack simulation..."</span><span class="p">)</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="kn">import</span><span class="w"> </span><span class="nn">telecom_attack</span>
 
         <span class="n">atk</span> <span class="o">=</span> <span class="n">telecom_attack</span><span class="o">.</span><span class="n">run_attack_simulation</span><span class="p">(</span>
             <span class="n">n_scenarios</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">samples_per_scenario</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">inject_alerts</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">"        </span><span class="si">{</span><span class="n">atk</span><span class="p">[</span><span class="s1">'scenarios'</span><span class="p">]</span><span class="si">}</span><span class="s2"> scenarios, </span><span class="si">{</span><span class="n">atk</span><span class="p">[</span><span class="s1">'events'</span><span class="p">]</span><span class="si">}</span><span class="s2"> events, "</span>
-            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">atk</span><span class="p">[</span><span class="s1">'alerts'</span><span class="p">]</span><span class="si">}</span><span class="s2"> alerts."</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"        </span><span class="si">{</span><span class="n">atk</span><span class="p">[</span><span class="s1">'scenarios'</span><span class="p">]</span><span class="si">}</span><span class="s2"> scenarios, "</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">atk</span><span class="p">[</span><span class="s1">'events'</span><span class="p">]</span><span class="si">}</span><span class="s2"> events, </span><span class="si">{</span><span class="n">atk</span><span class="p">[</span><span class="s1">'alerts'</span><span class="p">]</span><span class="si">}</span><span class="s2"> alerts."</span>
         <span class="p">)</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"        [i] Attack simulation skipped: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">"        Attack simulation skipped: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">[OK] Simulation completed successfully."</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"[DIR] Outputs: </span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">OUT</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"[OK] Simulation completed successfully."</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"[DIR] Outputs: </span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">OUT</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>

@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://hosras.github.io/MNO-simulator/architecture/">
+        <link rel="canonical" href="https://hosras.github.io/MNO-simulator/logging/">
       
       
-        <link rel="prev" href="../getting-started/">
+        <link rel="prev" href="../testing/">
       
       
-        <link rel="next" href="../testing/">
+        <link rel="next" href="../security/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>Architecture - TELECOM-NET-SIM</title>
+        <title>Logging - TELECOM-NET-SIM</title>
       
     
     
@@ -80,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#architecture" class="md-skip">
+        <a href="#logging" class="md-skip">
           Skip to content
         </a>
       
@@ -114,7 +114,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Architecture
+              Logging
             
           </span>
         </div>
@@ -263,11 +263,9 @@
   
   
   
-    
   
-  
-    <li class="md-tabs__item md-tabs__item--active">
-      <a href="./" class="md-tabs__link">
+    <li class="md-tabs__item">
+      <a href="../architecture/" class="md-tabs__link">
         
   
   
@@ -303,9 +301,11 @@
   
   
   
+    
   
-    <li class="md-tabs__item">
-      <a href="../logging/" class="md-tabs__link">
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
         
   
   
@@ -500,37 +500,10 @@
       
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Architecture
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../architecture/" class="md-nav__link">
         
   
   
@@ -546,159 +519,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#package-layout" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Package Layout
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#why-this-split" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Why this split?
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Why this split?">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#small-diffs" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Small diffs
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#testable" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Testable
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#backward-compatible" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Backward compatible
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#design-decisions" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Design Decisions
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Design Decisions">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#why-local-only" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Why local-only?
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#why-sqlite" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Why SQLite?
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#why-split-attack_corepy-from-telecom_attackpy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Why split attack_core.py from telecom_attack.py?
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#why-main-guards-everywhere" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Why main() guards everywhere?
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#database-schema" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Database Schema
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -734,10 +554,37 @@
       
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../logging/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Logging
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -753,6 +600,164 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#quick-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick start
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cli-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI options
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="CLI options">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Examples
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#log-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Log format
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#why-not-just-print" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why not just print
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#custom-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom usage
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Testing
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#design-notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Design notes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API reference
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#telecom_logging.setup_logging" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        setup_logging
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#telecom_logging.get_logger" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_logger
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#telecom_logging.silence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        silence
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1061,10 +1066,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#package-layout" class="md-nav__link">
+  <a href="#quick-start" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Package Layout
+        Quick start
       
     </span>
   </a>
@@ -1072,44 +1077,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#why-this-split" class="md-nav__link">
+  <a href="#cli-options" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Why this split?
+        CLI options
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Why this split?">
+    <nav class="md-nav" aria-label="CLI options">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#small-diffs" class="md-nav__link">
+  <a href="#examples" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Small diffs
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#testable" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Testable
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#backward-compatible" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Backward compatible
+        Examples
       
     </span>
   </a>
@@ -1122,71 +1105,98 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#design-decisions" class="md-nav__link">
+  <a href="#log-format" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Design Decisions
+        Log format
       
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="Design Decisions">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#why-local-only" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Why local-only?
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#why-sqlite" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Why SQLite?
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#why-split-attack_corepy-from-telecom_attackpy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Why split attack_core.py from telecom_attack.py?
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#why-main-guards-everywhere" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Why main() guards everywhere?
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#database-schema" class="md-nav__link">
+  <a href="#why-not-just-print" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Database Schema
+        Why not just print
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#custom-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom usage
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Testing
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#design-notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Design notes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API reference
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#telecom_logging.setup_logging" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        setup_logging
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#telecom_logging.get_logger" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_logger
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#telecom_logging.silence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        silence
       
     </span>
   </a>
@@ -1210,7 +1220,7 @@
 
 
   
-    <a href="https://github.com/hosras/MNO-simulator/edit/main/docs/architecture.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/hosras/MNO-simulator/edit/main/docs/logging.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -1218,101 +1228,339 @@
   
 
 
-<h1 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h1>
-<h2 id="package-layout">Package Layout<a class="headerlink" href="#package-layout" title="Permanent link">&para;</a></h2>
-<p>The project uses thin <strong>entry-point shims</strong> at the repository root.
-The actual implementation lives in three self-contained packages.</p>
-<div class="highlight"><pre><span></span><code>MNO-simulator/
-- telecom_net_sim.py       # CLI simulator
-- telecom_attack.py        # attack orchestrator (DB layer)
-- attack_core.py           # pure attack logic (no DB)
-- telecom_common.py        # shared utilities + schema
-- telecom_ui_common.py     # Streamlit + Plotly helpers
--
-- telecom_dashboard.py     # shim -&gt; dashboard.main
-- telecom_admin.py         # shim -&gt; admin.main
-- telecom_radar.py         # shim -&gt; radar.main
--
-- dashboard/               # operations dashboard (13 tabs)
-- admin/                   # CRUD + audit + backup (9 tabs)
-- radar/                   # statistical analytics (14 tabs)
-- tests/                   # pytest suite
-- .github/workflows/       # CI
+<h1 id="logging">Logging<a class="headerlink" href="#logging" title="Permanent link">&para;</a></h1>
+<p>TELECOM-NET-SIM uses the standard <code>logging</code> module via a thin wrapper
+in <code>telecom_logging.py</code>. No custom framework, no external dependencies.</p>
+<h2 id="quick-start">Quick start<a class="headerlink" href="#quick-start" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">telecom_logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_logging</span><span class="p">,</span> <span class="n">get_logger</span>
+
+<span class="n">setup_logging</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="s2">"INFO"</span><span class="p">)</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"hello"</span><span class="p">)</span>
 </code></pre></div>
-<h2 id="why-this-split">Why this split?<a class="headerlink" href="#why-this-split" title="Permanent link">&para;</a></h2>
-<h3 id="small-diffs">Small diffs<a class="headerlink" href="#small-diffs" title="Permanent link">&para;</a></h3>
-<p>Editing one dashboard tab changes <strong>one small file</strong>, not a 1,300-line monolith.</p>
-<h3 id="testable">Testable<a class="headerlink" href="#testable" title="Permanent link">&para;</a></h3>
-<p>Services (<code>anomaly</code>, <code>backup</code>, <code>pdf</code>, <code>period</code>) have <strong>no Streamlit import</strong>.
-They can be unit-tested without a runtime.</p>
-<h3 id="backward-compatible">Backward compatible<a class="headerlink" href="#backward-compatible" title="Permanent link">&para;</a></h3>
-<p><code>streamlit run telecom_dashboard.py</code> still works exactly as before.</p>
-<h2 id="design-decisions">Design Decisions<a class="headerlink" href="#design-decisions" title="Permanent link">&para;</a></h2>
-<h3 id="why-local-only">Why local-only?<a class="headerlink" href="#why-local-only" title="Permanent link">&para;</a></h3>
-<p>No network calls anywhere. All data comes from a seeded RNG
-(default <code>SEED = 1403</code>, overridable via <code>--seed</code> / <code>--random-seed</code>).</p>
-<h3 id="why-sqlite">Why SQLite?<a class="headerlink" href="#why-sqlite" title="Permanent link">&para;</a></h3>
-<p>Single-file DB, zero setup, easy backup/restore, portable.
-WAL mode + <code>sqlite3.Connection.backup()</code> gives atomic snapshots.</p>
-<h3 id="why-split-attack_corepy-from-telecom_attackpy">Why split attack_core.py from telecom_attack.py?<a class="headerlink" href="#why-split-attack_corepy-from-telecom_attackpy" title="Permanent link">&para;</a></h3>
-<ul>
-<li><strong>attack_core.py</strong> -- pure functions. No DB, no I/O. 34 unit tests in 0.3 s.</li>
-<li><strong>telecom_attack.py</strong> -- the DB layer: target indexing, persistence, alert injection, CLI orchestration.</li>
-</ul>
-<h3 id="why-main-guards-everywhere">Why main() guards everywhere?<a class="headerlink" href="#why-main-guards-everywhere" title="Permanent link">&para;</a></h3>
-<p>Streamlit scripts execute top-to-bottom on every rerun. Without a
-guard, <code>import telecom_dashboard</code> would run the whole UI.</p>
-<h2 id="database-schema">Database Schema<a class="headerlink" href="#database-schema" title="Permanent link">&para;</a></h2>
+<h2 id="cli-options">CLI options<a class="headerlink" href="#cli-options" title="Permanent link">&para;</a></h2>
+<p>The simulator (<code>telecom_net_sim.py</code>) exposes three flags:</p>
 <table>
 <thead>
 <tr>
-<th>Table</th>
-<th>Purpose</th>
+<th>Flag</th>
+<th>Effect</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>cells</code></td>
-<td>2G-6G cell sites</td>
+<td><code>--verbose</code>, <code>-v</code></td>
+<td>Enable DEBUG-level logging</td>
 </tr>
 <tr>
-<td><code>cores</code></td>
-<td>Core nodes (MSC, MME, AMF, UPF, NWDAF, ...)</td>
+<td><code>--quiet</code>, <code>-q</code></td>
+<td>Only show WARNING and above</td>
 </tr>
 <tr>
-<td><code>subscribers</code></td>
-<td>5,000 subscribers with line classes + encryption</td>
-</tr>
-<tr>
-<td><code>cdrs</code></td>
-<td>Call detail records</td>
-</tr>
-<tr>
-<td><code>alerts</code></td>
-<td>Rule-engine alerts</td>
-</tr>
-<tr>
-<td><code>sms_alerts</code></td>
-<td>SOC SMS dispatch log</td>
-</tr>
-<tr>
-<td><code>audit_log</code></td>
-<td>Admin actions</td>
-</tr>
-<tr>
-<td><code>attack_scenarios</code></td>
-<td>Attack simulator output</td>
-</tr>
-<tr>
-<td><code>attack_events</code></td>
-<td>Attack time-series</td>
-</tr>
-<tr>
-<td><code>sigint_findings</code></td>
-<td>JSON blobs of SIGINT analysis</td>
+<td><code>--log-file PATH</code></td>
+<td>Also write logs to <code>PATH</code> (UTF-8)</td>
 </tr>
 </tbody>
 </table>
+<h3 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>telecom_net_sim.py
+python<span class="w"> </span>telecom_net_sim.py<span class="w"> </span>--verbose
+python<span class="w"> </span>telecom_net_sim.py<span class="w"> </span>--quiet
+python<span class="w"> </span>telecom_net_sim.py<span class="w"> </span>--verbose<span class="w"> </span>--log-file<span class="w"> </span>logs/run.log
+python<span class="w"> </span>telecom_net_sim.py<span class="w"> </span>--subs<span class="w"> </span><span class="m">100</span><span class="w"> </span>--cdrs<span class="w"> </span><span class="m">500</span><span class="w"> </span>--verbose
+</code></pre></div>
+<h2 id="log-format">Log format<a class="headerlink" href="#log-format" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>HH:MM:SS | LEVEL   | module                | message
+</code></pre></div>
+<p>Example:</p>
+<div class="highlight"><pre><span></span><code>10:51:00 | INFO    | telecom_net_sim       | [1/7] Building network topology...
+10:51:00 | INFO    | telecom_net_sim       |       Cells: 294 | Core nodes: 119
+10:51:00 | INFO    | telecom_attack        | Generating 25 scenarios...
+10:51:00 | WARNING | telecom_attack        | Attack simulation skipped
+</code></pre></div>
+<ul>
+<li><strong>Timestamp</strong>: HH:MM:SS (local time).</li>
+<li><strong>Level</strong>: DEBUG / INFO / WARNING / ERROR / CRITICAL.</li>
+<li><strong>Module</strong>: the logger name (usually <code>__name__</code>).</li>
+<li><strong>Message</strong>: free-form.</li>
+</ul>
+<h2 id="why-not-just-print">Why not just print<a class="headerlink" href="#why-not-just-print" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Levels</strong>: filter at runtime (<code>--quiet</code> in CI, <code>--verbose</code> when debugging).</li>
+<li><strong>Routing</strong>: stdout, stderr, a file, or all three.</li>
+<li><strong>Testability</strong>: <code>caplog</code> fixture lets you assert log messages in tests.</li>
+<li><strong>Metadata</strong>: timestamp, level, and module name come for free.</li>
+</ul>
+<h2 id="custom-usage">Custom usage<a class="headerlink" href="#custom-usage" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">telecom_logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_logging</span><span class="p">,</span> <span class="n">get_logger</span><span class="p">,</span> <span class="n">silence</span>
+
+<span class="n">setup_logging</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="s2">"DEBUG"</span><span class="p">,</span> <span class="n">log_file</span><span class="o">=</span><span class="s2">"logs/app.log"</span><span class="p">)</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"detailed trace"</span><span class="p">)</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"normal progress"</span><span class="p">)</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"recoverable issue"</span><span class="p">)</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"hard failure"</span><span class="p">)</span>
+
+<span class="n">silence</span><span class="p">(</span><span class="s2">"streamlit"</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="testing">Testing<a class="headerlink" href="#testing" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">telecom_logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_logging</span><span class="p">,</span> <span class="n">get_logger</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_logs_message</span><span class="p">(</span><span class="n">caplog</span><span class="p">):</span>
+    <span class="n">setup_logging</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="s2">"INFO"</span><span class="p">)</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="s2">"my.module"</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">caplog</span><span class="o">.</span><span class="n">at_level</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"hello"</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="s2">"hello"</span> <span class="ow">in</span> <span class="n">caplog</span><span class="o">.</span><span class="n">text</span>
+</code></pre></div>
+<p>The full suite lives in <code>tests/test_logging.py</code>.</p>
+<h2 id="design-notes">Design notes<a class="headerlink" href="#design-notes" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Idempotent</strong>: calling <code>setup_logging()</code> twice does not duplicate handlers.</li>
+<li><strong>UTF-8 safe</strong>: file handler uses <code>encoding="utf-8"</code>.</li>
+<li><strong>No global state pollution</strong>: previous handlers are removed first.</li>
+<li><strong>Report output is not logging</strong>: the final <code>report.txt</code> is still produced by <code>build_report()</code> using <code>print()</code>.</li>
+</ul>
+<h2 id="api-reference">API reference<a class="headerlink" href="#api-reference" title="Permanent link">&para;</a></h2>
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="telecom_logging.setup_logging" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">telecom_logging.setup_logging</span>
+
+
+<a href="#telecom_logging.setup_logging" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">setup_logging</span><span class="p">(</span><span class="n">level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">'INFO'</span><span class="p">,</span> <span class="n">log_file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">simple</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
+
+    <div class="doc doc-contents first">
+
+        <p>Configure the root logger.</p>
+<p>Idempotent: safe to call multiple times — old handlers are removed.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>level</code>
+            </td>
+            <td>
+                  <code><span title="str">str</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>one of DEBUG / INFO / WARNING / ERROR / CRITICAL.</p>
+              </div>
+            </td>
+            <td>
+                  <code>&#39;INFO&#39;</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>log_file</code>
+            </td>
+            <td>
+                  <code><span title="str">str</span> | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>optional path to a log file (UTF-8).</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>simple</code>
+            </td>
+            <td>
+                  <code><span title="bool">bool</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>if True, use a compact format without timestamps.</p>
+              </div>
+            </td>
+            <td>
+                  <code>False</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>telecom_logging.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">setup_logging</span><span class="p">(</span>
+    <span class="n">level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"INFO"</span><span class="p">,</span>
+    <span class="n">log_file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">simple</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Configure the root logger.</span>
+
+<span class="sd">    Idempotent: safe to call multiple times — old handlers are removed.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        level: one of DEBUG / INFO / WARNING / ERROR / CRITICAL.</span>
+<span class="sd">        log_file: optional path to a log file (UTF-8).</span>
+<span class="sd">        simple: if True, use a compact format without timestamps.</span>
+<span class="sd">    """</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span>
+
+    <span class="c1"># Remove any handlers added by previous calls (important for tests).</span>
+    <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">root</span><span class="o">.</span><span class="n">handlers</span><span class="p">):</span>
+        <span class="n">root</span><span class="o">.</span><span class="n">removeHandler</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+
+    <span class="n">fmt</span> <span class="o">=</span> <span class="n">_SIMPLE_FMT</span> <span class="k">if</span> <span class="n">simple</span> <span class="k">else</span> <span class="n">_VERBOSE_FMT</span>
+    <span class="n">formatter</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span><span class="n">fmt</span><span class="p">,</span> <span class="n">datefmt</span><span class="o">=</span><span class="n">_DATE_FMT</span><span class="p">)</span>
+
+    <span class="c1"># Console handler</span>
+    <span class="n">console</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">(</span><span class="n">stream</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">formatter</span><span class="p">)</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">console</span><span class="p">)</span>
+
+    <span class="c1"># File handler (optional)</span>
+    <span class="k">if</span> <span class="n">log_file</span><span class="p">:</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">log_file</span><span class="p">)</span>
+        <span class="n">path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">fh</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"a"</span><span class="p">)</span>
+        <span class="n">fh</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">formatter</span><span class="p">)</span>
+        <span class="n">root</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">fh</span><span class="p">)</span>
+
+    <span class="n">root</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">_parse_level</span><span class="p">(</span><span class="n">level</span><span class="p">))</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="telecom_logging.get_logger" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">telecom_logging.get_logger</span>
+
+
+<a href="#telecom_logging.get_logger" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">get_logger</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">logging</span><span class="o">.</span><span class="n">Logger</span>
+</code></pre></div>
+
+    <div class="doc doc-contents first">
+
+        <p>Return a module-level logger.</p>
+<p>Thin wrapper around <code>logging.getLogger</code> so callers depend only on
+this module, not directly on the stdlib.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>telecom_logging.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">79</span>
+<span class="normal">80</span>
+<span class="normal">81</span>
+<span class="normal">82</span>
+<span class="normal">83</span>
+<span class="normal">84</span>
+<span class="normal">85</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_logger</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">logging</span><span class="o">.</span><span class="n">Logger</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Return a module-level logger.</span>
+
+<span class="sd">    Thin wrapper around ``logging.getLogger`` so callers depend only on</span>
+<span class="sd">    this module, not directly on the stdlib.</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="telecom_logging.silence" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">telecom_logging.silence</span>
+
+
+<a href="#telecom_logging.silence" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">silence</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">level</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">WARNING</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
+
+    <div class="doc doc-contents first">
+
+        <p>Raise the level of a specific logger.</p>
+<p>Useful for quieting noisy third-party libraries.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>telecom_logging.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">silence</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">level</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">WARNING</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Raise the level of a specific logger.</span>
+
+<span class="sd">    Useful for quieting noisy third-party libraries.</span>
+<span class="sd">    """</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">level</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
 
 
 

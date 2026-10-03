@@ -303,6 +303,25 @@
   
   
     <li class="md-tabs__item">
+      <a href="../../logging/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Logging
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
       <a href="../../security/" class="md-tabs__link">
         
   
@@ -310,6 +329,25 @@
     
   
   Security
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../benchmarks/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Performance Benchmarks
 
       </a>
     </li>
@@ -519,6 +557,33 @@
   
   
     <li class="md-nav__item">
+      <a href="../../logging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Logging
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../security/" class="md-nav__link">
         
   
@@ -527,6 +592,33 @@
     
   
     Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../benchmarks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Performance Benchmarks
   
 
     
@@ -605,7 +697,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
         
           
           <div class="md-nav__link md-nav__container">
@@ -627,14 +719,14 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="">
+              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_7">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1498,8 +1590,7 @@ AI_RAN_POISON, THZ_JAMMING, QUIC_FLOOD_6G).</p>
 <span class="normal">370</span>
 <span class="normal">371</span>
 <span class="normal">372</span>
-<span class="normal">373</span>
-<span class="normal">374</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">generate_scenarios</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">target_idx</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">now</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="normal">373</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">generate_scenarios</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">target_idx</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">now</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Generate n random attack scenarios with plausible timings.</span>
 
 <span class="sd">    Pure: does not touch the DB. Caller supplies a pre-built target</span>
@@ -1528,11 +1619,10 @@ AI_RAN_POISON, THZ_JAMMING, QUIC_FLOOD_6G).</p>
         <span class="k">if</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">ATTACK_CATALOG</span>
     <span class="p">]</span>
     <span class="n">n_forced</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">_forced_6g</span><span class="p">),</span> <span class="n">n</span><span class="p">)</span>
-    <span class="n">chosen_types</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">_forced_6g</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">n_forced</span><span class="p">)</span>
+    <span class="n">chosen_types</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">_forced_6g</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">n_forced</span><span class="p">))</span>
     <span class="n">other_types</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">all_types</span> <span class="k">if</span> <span class="n">t</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_forced_6g</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="n">n_forced</span> <span class="ow">and</span> <span class="n">other_types</span><span class="p">:</span>
         <span class="n">chosen_types</span> <span class="o">+=</span> <span class="n">random</span><span class="o">.</span><span class="n">choices</span><span class="p">(</span><span class="n">other_types</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">n</span> <span class="o">-</span> <span class="n">n_forced</span><span class="p">)</span>
-    <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">chosen_types</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">atype</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">chosen_types</span><span class="p">):</span>
         <span class="n">meta</span> <span class="o">=</span> <span class="n">ATTACK_CATALOG</span><span class="p">[</span><span class="n">atype</span><span class="p">]</span>
@@ -1604,7 +1694,8 @@ MTTR, and KPI impact (latency, drop) derived from pps.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>attack_core.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">380</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">379</span>
+<span class="normal">380</span>
 <span class="normal">381</span>
 <span class="normal">382</span>
 <span class="normal">383</span>
@@ -1655,8 +1746,7 @@ MTTR, and KPI impact (latency, drop) derived from pps.</p>
 <span class="normal">428</span>
 <span class="normal">429</span>
 <span class="normal">430</span>
-<span class="normal">431</span>
-<span class="normal">432</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">expand_events</span><span class="p">(</span><span class="n">scenarios</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">samples_per_scenario</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="normal">431</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">expand_events</span><span class="p">(</span><span class="n">scenarios</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">samples_per_scenario</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Expand each scenario into a time-series of event samples.</span>
 
 <span class="sd">    Pure: no DB, no I/O.</span>
@@ -1678,7 +1768,7 @@ MTTR, and KPI impact (latency, drop) derived from pps.</p>
 
             <span class="n">mttr</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="n">blocked</span> <span class="o">=</span> <span class="mi">0</span>
-            <span class="k">if</span> <span class="n">detected</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">detected</span> <span class="ow">and</span> <span class="n">mttd</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">mttr</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">600</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">k</span> <span class="o">*</span> <span class="n">dur</span> <span class="o">/</span> <span class="n">samples_per_scenario</span> <span class="o">&gt;=</span> <span class="n">mttd</span> <span class="o">+</span> <span class="n">mttr</span><span class="p">:</span>
                     <span class="n">blocked</span> <span class="o">=</span> <span class="mi">1</span>
@@ -1735,7 +1825,8 @@ scenarios become alerts. Each alert routes to one SOC recipient.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>attack_core.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">438</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">437</span>
+<span class="normal">438</span>
 <span class="normal">439</span>
 <span class="normal">440</span>
 <span class="normal">441</span>
@@ -1778,8 +1869,7 @@ scenarios become alerts. Each alert routes to one SOC recipient.</p>
 <span class="normal">478</span>
 <span class="normal">479</span>
 <span class="normal">480</span>
-<span class="normal">481</span>
-<span class="normal">482</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">attacks_to_alerts</span><span class="p">(</span><span class="n">scenarios</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">events</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="normal">481</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">attacks_to_alerts</span><span class="p">(</span><span class="n">scenarios</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">events</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Convert attack scenarios into alert rows for the alerts table.</span>
 
 <span class="sd">    Pure: no DB, no I/O. Only DETECTED/SUCCESS/ONGOING or CRITICAL</span>
@@ -1847,11 +1937,7 @@ scenarios become alerts. Each alert routes to one SOC recipient.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>telecom_attack.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">241</span>
-<span class="normal">242</span>
-<span class="normal">243</span>
-<span class="normal">244</span>
-<span class="normal">245</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">245</span>
 <span class="normal">246</span>
 <span class="normal">247</span>
 <span class="normal">248</span>
@@ -1893,7 +1979,11 @@ scenarios become alerts. Each alert routes to one SOC recipient.</p>
 <span class="normal">284</span>
 <span class="normal">285</span>
 <span class="normal">286</span>
-<span class="normal">287</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">init_attack_tables</span><span class="p">():</span>
+<span class="normal">287</span>
+<span class="normal">288</span>
+<span class="normal">289</span>
+<span class="normal">290</span>
+<span class="normal">291</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">init_attack_tables</span><span class="p">():</span>
     <span class="n">con</span> <span class="o">=</span> <span class="n">db_connect</span><span class="p">()</span>
     <span class="n">cur</span> <span class="o">=</span> <span class="n">con</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
     <span class="n">cur</span><span class="o">.</span><span class="n">executescript</span><span class="p">(</span><span class="s2">"""</span>
@@ -2035,11 +2125,7 @@ THZ_JAMMING, QUIC_FLOOD_6G) so 6G is always represented.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>telecom_attack.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">376</span>
-<span class="normal">377</span>
-<span class="normal">378</span>
-<span class="normal">379</span>
-<span class="normal">380</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">380</span>
 <span class="normal">381</span>
 <span class="normal">382</span>
 <span class="normal">383</span>
@@ -2116,7 +2202,11 @@ THZ_JAMMING, QUIC_FLOOD_6G) so 6G is always represented.</p>
 <span class="normal">454</span>
 <span class="normal">455</span>
 <span class="normal">456</span>
-<span class="normal">457</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">generate_attack_scenarios</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">25</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="normal">457</span>
+<span class="normal">458</span>
+<span class="normal">459</span>
+<span class="normal">460</span>
+<span class="normal">461</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">generate_attack_scenarios</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">25</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Generate n random attack scenarios with plausible timings.</span>
 
 <span class="sd">    Picks attack types from ATTACK_CATALOG, resolves a target node</span>
@@ -2148,7 +2238,7 @@ THZ_JAMMING, QUIC_FLOOD_6G) so 6G is always represented.</p>
         <span class="k">if</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">ATTACK_CATALOG</span>
     <span class="p">]</span>
     <span class="n">n_forced</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">_forced_6g</span><span class="p">),</span> <span class="n">n</span><span class="p">)</span>
-    <span class="n">chosen_types</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">_forced_6g</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">n_forced</span><span class="p">)</span>
+    <span class="n">chosen_types</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">_forced_6g</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">n_forced</span><span class="p">))</span>
     <span class="n">other_types</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">all_types</span> <span class="k">if</span> <span class="n">t</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_forced_6g</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="n">n_forced</span> <span class="ow">and</span> <span class="n">other_types</span><span class="p">:</span>
         <span class="n">chosen_types</span> <span class="o">+=</span> <span class="n">random</span><span class="o">.</span><span class="n">choices</span><span class="p">(</span><span class="n">other_types</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">n</span> <span class="o">-</span> <span class="n">n_forced</span><span class="p">)</span>
@@ -2220,11 +2310,7 @@ THZ_JAMMING, QUIC_FLOOD_6G) so 6G is always represented.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>telecom_attack.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">577</span>
-<span class="normal">578</span>
-<span class="normal">579</span>
-<span class="normal">580</span>
-<span class="normal">581</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">581</span>
 <span class="normal">582</span>
 <span class="normal">583</span>
 <span class="normal">584</span>
@@ -2250,7 +2336,11 @@ THZ_JAMMING, QUIC_FLOOD_6G) so 6G is always represented.</p>
 <span class="normal">604</span>
 <span class="normal">605</span>
 <span class="normal">606</span>
-<span class="normal">607</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">persist_attacks</span><span class="p">(</span><span class="n">scenarios</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">events</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">607</span>
+<span class="normal">608</span>
+<span class="normal">609</span>
+<span class="normal">610</span>
+<span class="normal">611</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">persist_attacks</span><span class="p">(</span><span class="n">scenarios</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">events</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="n">init_attack_tables</span><span class="p">()</span>
     <span class="n">con</span> <span class="o">=</span> <span class="n">db_connect</span><span class="p">()</span>
     <span class="n">cur</span> <span class="o">=</span> <span class="n">con</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
@@ -2305,11 +2395,7 @@ THZ_JAMMING, QUIC_FLOOD_6G) so 6G is always represented.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>telecom_attack.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">610</span>
-<span class="normal">611</span>
-<span class="normal">612</span>
-<span class="normal">613</span>
-<span class="normal">614</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">614</span>
 <span class="normal">615</span>
 <span class="normal">616</span>
 <span class="normal">617</span>
@@ -2352,7 +2438,11 @@ THZ_JAMMING, QUIC_FLOOD_6G) so 6G is always represented.</p>
 <span class="normal">654</span>
 <span class="normal">655</span>
 <span class="normal">656</span>
-<span class="normal">657</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">inject_attack_alerts</span><span class="p">(</span><span class="n">alerts</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">657</span>
+<span class="normal">658</span>
+<span class="normal">659</span>
+<span class="normal">660</span>
+<span class="normal">661</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">inject_attack_alerts</span><span class="p">(</span><span class="n">alerts</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Merge attack-derived alerts into the alerts table."""</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">alerts</span><span class="p">:</span>
         <span class="k">return</span>
@@ -2528,11 +2618,7 @@ THZ_JAMMING, QUIC_FLOOD_6G) so 6G is always represented.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>telecom_attack.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">663</span>
-<span class="normal">664</span>
-<span class="normal">665</span>
-<span class="normal">666</span>
-<span class="normal">667</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">667</span>
 <span class="normal">668</span>
 <span class="normal">669</span>
 <span class="normal">670</span>
@@ -2575,7 +2661,14 @@ THZ_JAMMING, QUIC_FLOOD_6G) so 6G is always represented.</p>
 <span class="normal">707</span>
 <span class="normal">708</span>
 <span class="normal">709</span>
-<span class="normal">710</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">run_attack_simulation</span><span class="p">(</span>
+<span class="normal">710</span>
+<span class="normal">711</span>
+<span class="normal">712</span>
+<span class="normal">713</span>
+<span class="normal">714</span>
+<span class="normal">715</span>
+<span class="normal">716</span>
+<span class="normal">717</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">run_attack_simulation</span><span class="p">(</span>
     <span class="n">n_scenarios</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">25</span><span class="p">,</span> <span class="n">samples_per_scenario</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="n">inject_alerts</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""End-to-end attack simulation: generate → persist → alert.</span>
@@ -2602,17 +2695,20 @@ THZ_JAMMING, QUIC_FLOOD_6G) so 6G is always represented.</p>
 <span class="sd">              "by_severity": {severity: count, ...},</span>
 <span class="sd">            }</span>
 <span class="sd">    """</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"[ATTACK] Generating </span><span class="si">{</span><span class="n">n_scenarios</span><span class="si">}</span><span class="s2"> scenarios..."</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Generating </span><span class="si">{</span><span class="n">n_scenarios</span><span class="si">}</span><span class="s2"> scenarios..."</span><span class="p">)</span>
     <span class="n">scenarios</span> <span class="o">=</span> <span class="n">generate_attack_scenarios</span><span class="p">(</span><span class="n">n_scenarios</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"[ATTACK] Expanding to event time-series..."</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Expanding to event time-series..."</span><span class="p">)</span>
     <span class="n">events</span> <span class="o">=</span> <span class="n">expand_events</span><span class="p">(</span><span class="n">scenarios</span><span class="p">,</span> <span class="n">samples_per_scenario</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"[ATTACK] Persisting </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">scenarios</span><span class="p">)</span><span class="si">}</span><span class="s2"> scenarios, </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">events</span><span class="p">)</span><span class="si">}</span><span class="s2"> events..."</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Persisting </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">scenarios</span><span class="p">)</span><span class="si">}</span><span class="s2"> scenarios, </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">events</span><span class="p">)</span><span class="si">}</span><span class="s2"> events..."</span><span class="p">)</span>
     <span class="n">persist_attacks</span><span class="p">(</span><span class="n">scenarios</span><span class="p">,</span> <span class="n">events</span><span class="p">)</span>
+
     <span class="n">alerts</span> <span class="o">=</span> <span class="n">attacks_to_alerts</span><span class="p">(</span><span class="n">scenarios</span><span class="p">,</span> <span class="n">events</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">inject_alerts</span> <span class="ow">and</span> <span class="n">alerts</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"[ATTACK] Injecting </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">alerts</span><span class="p">)</span><span class="si">}</span><span class="s2"> alerts into alerts table..."</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Injecting </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">alerts</span><span class="p">)</span><span class="si">}</span><span class="s2"> alerts into alerts table..."</span><span class="p">)</span>
         <span class="n">inject_attack_alerts</span><span class="p">(</span><span class="n">alerts</span><span class="p">)</span>
-    <span class="n">summary</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">summary</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">"scenarios"</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">scenarios</span><span class="p">),</span>
         <span class="s2">"events"</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">events</span><span class="p">),</span>
         <span class="s2">"alerts"</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">alerts</span><span class="p">),</span>

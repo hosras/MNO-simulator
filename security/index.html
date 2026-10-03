@@ -13,10 +13,10 @@
         <link rel="canonical" href="https://hosras.github.io/MNO-simulator/security/">
       
       
-        <link rel="prev" href="../testing/">
+        <link rel="prev" href="../logging/">
       
       
-        <link rel="next" href="../contributing/">
+        <link rel="next" href="../benchmarks/">
       
       
         
@@ -301,6 +301,25 @@
   
   
   
+  
+    <li class="md-tabs__item">
+      <a href="../logging/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Logging
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
     
   
   
@@ -312,6 +331,25 @@
     
   
   Security
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../benchmarks/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Performance Benchmarks
 
       </a>
     </li>
@@ -516,6 +554,33 @@
       
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../logging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Logging
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
     
   
   
@@ -673,6 +738,50 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#static-analysis-bandit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Static analysis (bandit)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dependency-audit-pip-audit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dependency audit (pip-audit)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#automated-checks-in-ci" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Automated checks in CI
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#evidence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Evidence
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#reporting-a-vulnerability" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -687,6 +796,33 @@
   
 </nav>
       
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../benchmarks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Performance Benchmarks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -754,7 +890,7 @@
         
           
         
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_9" >
         
           
           <div class="md-nav__link md-nav__container">
@@ -776,14 +912,14 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_7">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1035,6 +1171,50 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#static-analysis-bandit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Static analysis (bandit)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dependency-audit-pip-audit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dependency audit (pip-audit)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#automated-checks-in-ci" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Automated checks in CI
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#evidence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Evidence
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#reporting-a-vulnerability" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1072,17 +1252,27 @@
 
 <h1 id="security-model">Security Model<a class="headerlink" href="#security-model" title="Permanent link">&para;</a></h1>
 <h2 id="threat-model">Threat Model<a class="headerlink" href="#threat-model" title="Permanent link">&para;</a></h2>
-<p>Designed for <strong>offline, single-host operation</strong>.</p>
+<p>TELECOM-NET-SIM is designed for <strong>offline, single-host operation</strong>.
+The threat model assumes:</p>
 <ul>
 <li>The host is trusted.</li>
-<li>Dashboards are accessed from the same machine (127.0.0.1).</li>
+<li>The dashboards are accessed from the same machine (<code>127.0.0.1</code>).</li>
 <li>No data ever leaves the host.</li>
 </ul>
 <h2 id="guarantees">Guarantees<a class="headerlink" href="#guarantees" title="Permanent link">&para;</a></h2>
 <h3 id="zero-external-network-calls">Zero external network calls<a class="headerlink" href="#zero-external-network-calls" title="Permanent link">&para;</a></h3>
-<p>Verified by static analysis:</p>
+<p>Verified by static analysis. The following tokens are scanned across
+all top-level and package modules:</p>
+<p><code>requests</code>, <code>urllib</code>, <code>http.client</code>, <code>aiohttp</code>, <code>httpx</code>, <code>urlopen</code>,
+<code>socket.socket</code>, <code>socket.create_connection</code>, <code>websocket</code>, <code>telnetlib</code>,
+<code>ftplib</code>, <code>smtplib</code>, <code>paramiko</code>, <code>http.server</code>, <code>flask</code>, <code>fastapi</code>.</p>
+<p>Run the check yourself:</p>
 <div class="highlight"><pre><span></span><code>python<span class="w"> </span>generate_evidence.py
 </code></pre></div>
+<p>Result (in <code>EVIDENCE.md</code>):</p>
+<blockquote>
+<p><strong>No network imports or calls found.</strong></p>
+</blockquote>
 <h3 id="streamlit-telemetry-disabled">Streamlit telemetry disabled<a class="headerlink" href="#streamlit-telemetry-disabled" title="Permanent link">&para;</a></h3>
 <p><code>.streamlit/config.toml</code>:</p>
 <div class="highlight"><pre><span></span><code><span class="k">[server]</span>
@@ -1090,13 +1280,18 @@
 
 <span class="k">[browser]</span>
 <span class="n">gatherUsageStats</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span>
+
+<span class="k">[server]</span>
+<span class="n">enableCORS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span>
+<span class="n">enableXsrfProtection</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span>
 </code></pre></div>
 <h3 id="loopback-only-binding">Loopback-only binding<a class="headerlink" href="#loopback-only-binding" title="Permanent link">&para;</a></h3>
+<p>All dashboards bind to <code>127.0.0.1</code>. Verify with:</p>
 <div class="highlight"><pre><span></span><code>netstat<span class="w"> </span>-ano<span class="w"> </span><span class="p">|</span><span class="w"> </span>findstr<span class="w"> </span>:8501
 </code></pre></div>
 <p>Every address must be <code>127.0.0.1</code>. Red flags: <code>0.0.0.0:8501</code> or <code>[::]:8501</code>.</p>
 <h3 id="password-hashing">Password hashing<a class="headerlink" href="#password-hashing" title="Permanent link">&para;</a></h3>
-<p>Admin passwords use <strong>scrypt</strong>:</p>
+<p>Admin passwords use <strong>scrypt</strong> with parameters:</p>
 <ul>
 <li><code>n = 2^14</code></li>
 <li><code>r = 8</code></li>
@@ -1104,18 +1299,88 @@
 <li><code>dklen = 32</code></li>
 </ul>
 <p>Salt is 16 random bytes from <code>secrets.token_bytes()</code>.
-Comparison uses <code>hmac.compare_digest</code>.</p>
+Comparison uses <code>hmac.compare_digest</code> (constant-time).</p>
 <h3 id="login-rate-limiting">Login rate-limiting<a class="headerlink" href="#login-rate-limiting" title="Permanent link">&para;</a></h3>
-<p>5 failed attempts within 15 minutes triggers a lockout.
-Counter lives in <code>audit_log</code> (not <code>session_state</code>).</p>
+<p>5 failed attempts within 15 minutes triggers a lockout. The counter
+lives in <code>audit_log</code> (not <code>session_state</code>), so browser refresh and app
+restart cannot bypass it.</p>
 <h3 id="backup-integrity">Backup integrity<a class="headerlink" href="#backup-integrity" title="Permanent link">&para;</a></h3>
 <ul>
 <li>WAL-aware snapshots via <code>sqlite3.Connection.backup()</code></li>
 <li><code>PRAGMA quick_check</code> before restore</li>
-<li>Path-traversal protection</li>
+<li>Path-traversal protection: filename must not contain <code>/</code> or backslash</li>
 </ul>
+<h2 id="static-analysis-bandit">Static analysis (bandit)<a class="headerlink" href="#static-analysis-bandit" title="Permanent link">&para;</a></h2>
+<p><a href="https://bandit.readthedocs.io/">bandit</a> runs on every push and on a
+weekly schedule.</p>
+<div class="highlight"><pre><span></span><code>bandit<span class="w"> </span>-c<span class="w"> </span>pyproject.toml<span class="w"> </span>-r<span class="w"> </span>.
+</code></pre></div>
+<p>Current result: <strong>No issues identified.</strong></p>
+<p>The following checks are intentionally skipped in <code>pyproject.toml</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Rule</th>
+<th>Reason</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>B101</code> (assert)</td>
+<td>Used for internal invariants; not production code</td>
+</tr>
+<tr>
+<td><code>B110</code> / <code>B112</code> (try/except/pass or continue)</td>
+<td>Deliberate defensive code</td>
+</tr>
+<tr>
+<td><code>B311</code> (random)</td>
+<td>Deterministic simulation with a fixed seed, NOT crypto</td>
+</tr>
+<tr>
+<td><code>B404</code> / <code>B603</code> / <code>B607</code> (subprocess)</td>
+<td>Only spawns our own simulator via <code>sys.executable</code></td>
+</tr>
+</tbody>
+</table>
+<p>The remaining <code>B608</code> (SQL) findings are documented as <code># nosec</code> with a
+comment explaining why the table/column names are safe (they come from
+a hardcoded list, not user input).</p>
+<h2 id="dependency-audit-pip-audit">Dependency audit (pip-audit)<a class="headerlink" href="#dependency-audit-pip-audit" title="Permanent link">&para;</a></h2>
+<p><a href="https://pypi.org/project/pip-audit/">pip-audit</a> scans
+<code>requirements.txt</code> and <code>requirements-ci.txt</code> for known CVEs.</p>
+<div class="highlight"><pre><span></span><code>pip-audit<span class="w"> </span>-r<span class="w"> </span>requirements-ci.txt
+pip-audit<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+</code></pre></div>
+<p>Current result:</p>
+<div class="highlight"><pre><span></span><code>No known vulnerabilities found
+</code></pre></div>
+<p>The runtime scan is informational only; the CI scan fails the job on
+any finding in the minimal CI set.</p>
+<h2 id="automated-checks-in-ci">Automated checks in CI<a class="headerlink" href="#automated-checks-in-ci" title="Permanent link">&para;</a></h2>
+<p>The <code>.github/workflows/security.yml</code> workflow runs:</p>
+<ol>
+<li><code>bandit</code> -- static analysis</li>
+<li><code>pip-audit</code> on <code>requirements-ci.txt</code> -- hard fail on findings</li>
+<li><code>pip-audit</code> on <code>requirements.txt</code> -- informational</li>
+</ol>
+<p>Triggers:</p>
+<ul>
+<li>Every push touching Python code or dependencies</li>
+<li>Every PR touching the same</li>
+<li>Weekly (Monday 06:00 UTC / 09:30 Tehran)</li>
+</ul>
+<h2 id="evidence">Evidence<a class="headerlink" href="#evidence" title="Permanent link">&para;</a></h2>
+<p><code>EVIDENCE.md</code> is auto-generated by <code>generate_evidence.py</code> and proves
+the guarantees above at any point in time:</p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>generate_evidence.py
+</code></pre></div>
+<p>It scans the codebase, reads <code>.streamlit/config.toml</code>, verifies imports,
+and produces a report you can attach to a delivery.</p>
 <h2 id="reporting-a-vulnerability">Reporting a vulnerability<a class="headerlink" href="#reporting-a-vulnerability" title="Permanent link">&para;</a></h2>
-<p>Please <strong>do not</strong> open a public issue. Use GitHub Security Advisories.</p>
+<p>Please <strong>do not</strong> open a public issue. Instead, use GitHub's
+<a href="https://github.com/hosras/MNO-simulator/security/advisories/new">private security advisory</a>
+form.</p>
 
 
 
