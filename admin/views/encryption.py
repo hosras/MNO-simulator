@@ -32,7 +32,8 @@ def render():
         if rc:
             ph = ",".join("?" * len(rc))
             rows = db_df(
-                f"SELECT msisdn FROM subscribers WHERE line_class IN ({ph})",
+                f"SELECT msisdn FROM subscribers "  # nosec B608
+                f"WHERE line_class IN ({ph})",
                 tuple(rc),
             )
             n = 0

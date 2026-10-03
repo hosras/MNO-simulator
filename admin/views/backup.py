@@ -67,7 +67,9 @@ def render():
             "attack_events",
         ]:
             with contextlib.suppress(Exception):
-                all_data[t] = db_df(f"SELECT * FROM {t}").to_dict(orient="records")
+                all_data[t] = db_df(
+                    f"SELECT * FROM {t}"  # nosec B608
+                ).to_dict(orient="records")
         st.download_button(
             "Download JSON",
             json.dumps(all_data, ensure_ascii=False, indent=2, default=str),

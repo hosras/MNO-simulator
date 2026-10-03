@@ -133,7 +133,7 @@ def gen_imei():
 
 def gen_key_id(seed=""):
     src = seed or f"{random.random()}{datetime.now()}"
-    return "KEY-" + hashlib.sha1(src.encode()).hexdigest()[:16].upper()
+    return "KEY-" + hashlib.sha1(src.encode(), usedforsecurity=False).hexdigest()[:16].upper()
 
 
 _AUTH_FILE = os.path.join(OUT_DIR, ".admin_auth")
@@ -207,7 +207,10 @@ def db_one(sql, params=(), path=DB_PATH):
 
 def db_count(table, path=DB_PATH):
     try:
-        r = db_one(f"SELECT COUNT(*) FROM {table}", path=path)
+        r = db_one(
+            f"SELECT COUNT(*) FROM {table}",  # nosec B608
+            path=path,
+        )
         return r[0] if r else 0
     except Exception:
         return 0
@@ -223,8 +226,9 @@ def db_chunked_in_update(
         for i in range(0, len(where_values), chunk_size):
             chunk = where_values[i : i + chunk_size]
             ph = ",".join("?" * len(chunk))
-            cur.execute(
-                f"UPDATE {table} SET {set_clause} " f"WHERE {column} IN ({ph})",
+            cur.execute(  # nosec B608
+                f"UPDATE {table} SET {set_clause} "  # nosec B608
+                f"WHERE {column} IN ({ph})",
                 tuple(values + chunk),
             )
             total += cur.rowcount

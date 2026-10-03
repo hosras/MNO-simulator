@@ -249,3 +249,41 @@ module = "tests.*"
 disallow_untyped_defs = false
 check_untyped_defs = false
 ignore_errors = true
+# ==================================================================
+# bandit — security linter
+# ==================================================================
+[tool.bandit]
+exclude_dirs = [
+    "tests",
+    ".venv",
+    "venv",
+    "docs",
+    "site",
+    "telecom_sim_output",
+]
+# Skip low-value checks in a simulation context
+skips = [
+    # B101: assert_used — normal in tests, and in non-test code we use them
+    # for internal invariants that should never fail in production.
+    "B101",
+
+    # B110: try_except_pass — defensive code that intentionally ignores
+    # expected errors (e.g. optional features, cleanup paths).
+    "B110",
+
+    # B112: try_except_continue — same rationale as B110.
+    "B112",
+
+    # B311: random — we use `random` for deterministic simulation with a
+    # fixed seed, NOT for cryptographic purposes.
+    "B311",
+
+    # B404/B603/B607: subprocess — used only to spawn our own simulator
+    # via `sys.executable`, not user input.
+    "B404",
+    "B603",
+    "B607",
+]
+
+[tool.bandit.assert_used]
+skips = ["*_test.py", "test_*.py", "*/tests/*"]

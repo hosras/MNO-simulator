@@ -522,7 +522,13 @@ def build_subscribers(n: int = 5000) -> list[Subscriber]:
             else:
                 cipher = random.choice(list(CIPHER_SUITES.keys()))
             key_id = (
-                "KEY-" + hashlib.sha1(f"{imsi}{random.random()}".encode()).hexdigest()[:16].upper()
+                "KEY-"
+                + hashlib.sha1(
+                    f"{imsi}{random.random()}".encode(),
+                    usedforsecurity=False,
+                )
+                .hexdigest()[:16]
+                .upper()
             )
             rot_days = random.choice([30, 60, 90, 180])
         else:
