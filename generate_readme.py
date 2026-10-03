@@ -63,6 +63,9 @@ def iter_project_py_files():
     p = ROOT / "attack_core.py"
     if p.exists():
         yield p
+    p = ROOT / "telecom_logging.py"
+    if p.exists():
+        yield p
     # Package modules
     for pkg in PACKAGES:
         pkg_dir = ROOT / pkg
@@ -163,6 +166,7 @@ def count_collected_tests():
                 "--no-header",
                 "-o",
                 "addopts=",
+                "--ignore=tests/benchmarks",
             ],
             cwd=str(ROOT),
             capture_output=True,
@@ -240,6 +244,7 @@ ARCHITECTURE = "\n".join(
         "├── attack_core.py           # pure attack logic (no DB, unit-testable)",
         "├── telecom_common.py        # shared utilities + schema",
         "├── telecom_ui_common.py     # Streamlit + Plotly helpers",
+        "├── telecom_logging.py       # centralized logging",
         "│",
         "├── telecom_dashboard.py     # shim -> dashboard.main",
         "├── telecom_admin.py         # shim -> admin.main",
@@ -261,7 +266,9 @@ ARCHITECTURE = "\n".join(
         "│   └── views/     (14 tabs)",
         "│",
         "├── tests/                   # pytest suite",
-        "└── .github/workflows/ci.yml # CI (runs pytest --run-slow)",
+        "│   └── benchmarks/          # pytest-benchmark (14 benchmarks)",
+        "│",
+        "└── .github/workflows/       # 5 workflows (CI, Docker, Docs, Security)",
         "```",
         "",
         "### Why this split?",
@@ -428,10 +435,45 @@ DATA_ARTIFACTS = "\n".join(
         "*.v2_backup",
         "*.v3_backup",
         "_admin_auth_backup/",
+        ".benchmarks/",
+        "logs/",
+        "site/",
         "*.zip",
         "*.pdf",
         "*.pyc",
         "```",
+        "",
+    ]
+)
+
+
+LOGGING = "\n".join(
+    [
+        "## Logging",
+        "",
+        "Centralized logging via `telecom_logging.py`, with CLI flags:",
+        "",
+        "| Flag | Effect |",
+        "|---|---|",
+        "| `--verbose`, `-v` | DEBUG-level output |",
+        "| `--quiet`, `-q` | Only WARNING and above |",
+        "| `--log-file PATH` | Also write to `PATH` (UTF-8) |",
+        "",
+        "Log format:",
+        "",
+        "```",
+        "HH:MM:SS | LEVEL   | module                | message",
+        "```",
+        "",
+        "Example:",
+        "",
+        "```",
+        "10:51:00 | INFO    | telecom_net_sim       | [1/7] Building network topology...",
+        "10:51:00 | INFO    | telecom_attack        | Generating 25 scenarios...",
+        "10:51:00 | WARNING | telecom_attack        | Attack simulation skipped: ...",
+        "```",
+        "",
+        f"Full documentation: [Logging guide]({DOCS_URL}logging/)",
         "",
     ]
 )
@@ -521,6 +563,12 @@ DESIGN_NOTES = "\n".join(
         "target indexing and CLI orchestration live in `telecom_attack.py`.",
         "This makes the core testable in <0.5 s without spinning up SQLite.",
         "",
+        "### Why a shared `telecom_logging.py`?",
+        "Instead of scattered `print()` calls, every module uses a scoped",
+        "logger via `get_logger(__name__)`. The entry points call",
+        "`setup_logging()` once. This gives us log levels, timestamps, and",
+        "per-module prefixes for free, and it is testable with `caplog`.",
+        "",
     ]
 )
 
@@ -538,28 +586,8 @@ LIMITATIONS_HEAD = "\n".join(
         "  `telecom_sim_output/telecom_sim.db` to exist (or generate one on",
         "  the fly); run `python telecom_net_sim.py --subs 500 --cdrs 2000`",
         "  first if they fail locally.",
-        "",
-        "## Performance Benchmarks",
-        "",
-        "Hot paths are benchmarked with [pytest-benchmark](https://pytest-benchmark.readthedocs.io/).",
-        "They live in `tests/benchmarks/` and are **ignored by default**.",
-        "",
-        "```bash",
-        "# Run all benchmarks",
-        'pytest tests/benchmarks/ --benchmark-only -o addopts=""',
-        "",
-        "# Save a baseline",
-        'pytest tests/benchmarks/ --benchmark-only --benchmark-autosave -o addopts=""',
-        "",
-        "# Compare against the baseline",
-        'pytest tests/benchmarks/ --benchmark-only --benchmark-compare -o addopts=""',
-        "```",
-        "",
-        "Covered functions:",
-        "",
-        "- `attack_core`: `pick_target`, `generate_scenarios`, `expand_events`, `attacks_to_alerts`",
-        "- `radar.services.period`: `split_periods`, `period_stats`, `delta_pct`",
-        "- `radar.services.anomaly`: `detect_anomalies`",
+        "- Performance benchmarks live in `tests/benchmarks/` and are excluded",
+        "  from the default test run (see `tests/benchmarks/README.md`).",
         "",
     ]
 )
@@ -584,7 +612,7 @@ def render_architecture(modules):
         "dashboard": "Operations dashboard + OSINT/SIGINT views",
         "admin": "CRUD, audit log, backup / restore",
         "radar": "Statistical analytics + anomaly detection + PDF",
-        "—": "Top-level modules (simulator, attack, common)",
+        "—": "Top-level modules (simulator, attack, logging, common)",
     }
     order = ["—"] + PACKAGES
     for pkg in order:
@@ -628,6 +656,7 @@ def render_tests(test_files, collected):
         "```bash",
         "pytest              # fast tests (unit + smoke + db + attack_core)",
         "pytest --run-slow   # also runs the full simulator end-to-end",
+        'pytest tests/benchmarks/ --benchmark-only -o addopts=""   # benchmarks',
         "```",
         "",
         "| File | Test functions | Test classes |",
@@ -741,6 +770,9 @@ def build_readme():
             "---",
             "",
             DATA_ARTIFACTS,
+            "---",
+            "",
+            LOGGING,
             "---",
             "",
             DOCKER,

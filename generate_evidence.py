@@ -173,6 +173,23 @@ def list_modules():
     return out
 
 
+def list_tests():
+    """Return (rel_path, n_lines, n_tests) for every test file."""
+    out = []
+    tests_dir = ROOT / "tests"
+    if not tests_dir.is_dir():
+        return out
+    for p in sorted(tests_dir.rglob("test_*.py")):
+        try:
+            src = p.read_text(encoding="utf-8")
+        except Exception:
+            continue
+        n_lines = src.count("\n") + 1
+        n_tests = sum(1 for line in src.split("\n") if line.lstrip().startswith("def test_"))
+        out.append((rel(p), n_lines, n_tests))
+    return out
+
+
 def run_import_test():
     """Import every project module in a subprocess."""
     names = module_import_names()
@@ -196,7 +213,17 @@ def check_gitignore():
     p = ROOT / ".gitignore"
     if not p.exists():
         return None
-    wanted = [".venv/", "__pycache__/", "telecom_sim_output/", "*.zip", "*.pdf", "*.pyc"]
+    wanted = [
+        ".venv/",
+        "__pycache__/",
+        "telecom_sim_output/",
+        "*.zip",
+        "*.pdf",
+        "*.pyc",
+        "logs/",
+        "site/",
+        ".benchmarks/",
+    ]
     text = p.read_text(encoding="utf-8")
     return [w for w in wanted if any(line.strip() == w for line in text.split("\n"))]
 
@@ -215,6 +242,7 @@ def build_evidence():
     ci_reqs = scan_requirements("requirements-ci.txt")
     net_hits = scan_network_imports()
     modules = list_modules()
+    tests = list_tests()
     import_ok, import_out, import_err = run_import_test()
     gi = check_gitignore()
 
@@ -334,13 +362,37 @@ def build_evidence():
         parts.append(f"| `{name}` | {n:,} |")
     parts.append("")
 
-    # 6. Import smoke test
-    parts.append("## 6. Import Smoke Test")
+    # 6. Test files
+    parts.append("## 6. Test Files")
+    parts.append("")
+    if tests:
+        total_tests = sum(t[2] for t in tests)
+        total_test_lines = sum(t[1] for t in tests)
+        parts.append(
+            f"Total: **{len(tests)}** test files "
+            f"({total_tests} test functions, {total_test_lines:,} lines)."
+        )
+        parts.append("")
+        parts.append("| File | Lines | Test functions |")
+        parts.append("|---|---:|---:|")
+        for name, n_lines, n_tests in tests:
+            parts.append(f"| `{name}` | {n_lines:,} | {n_tests} |")
+    else:
+        parts.append("_No test files found._")
+    parts.append("")
+
+    # 7. Import smoke test
+    parts.append("## 7. Import Smoke Test")
     parts.append("")
     names = module_import_names()
     parts.append("Command:")
     parts.append("")
-    parts.append(fence("cmd", 'python -c "import ' + ", ".join(names) + "; print('OK')\""))
+    parts.append(
+        fence(
+            "cmd",
+            'python -c "import ' + ", ".join(names) + "; print('OK')\"",
+        )
+    )
     parts.append("")
     parts.append("Result:")
     parts.append("")
@@ -355,8 +407,8 @@ def build_evidence():
             parts.append(fence("text", import_err))
     parts.append("")
 
-    # 7. Dependencies
-    parts.append("## 7. Runtime Dependencies")
+    # 8. Dependencies
+    parts.append("## 8. Runtime Dependencies")
     parts.append("")
     if reqs:
         parts.append(f"From `requirements.txt` ({len(reqs)} packages):")
@@ -371,8 +423,8 @@ def build_evidence():
         parts.append(fence("text", "\n".join(ci_reqs)))
         parts.append("")
 
-    # 8. .gitignore
-    parts.append("## 8. Artifact Hygiene")
+    # 9. .gitignore
+    parts.append("## 9. Artifact Hygiene")
     parts.append("")
     if gi is None:
         parts.append("_`.gitignore` not found._")

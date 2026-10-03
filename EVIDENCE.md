@@ -1,7 +1,7 @@
 # EVIDENCE — Fully Local Operation
 
 **Project:** TELECOM-NET-SIM  
-**Generated:** 2026-10-03 12:07:12  
+**Generated:** 2026-10-03 12:20:32  
 **Purpose:** Prove the simulator runs entirely offline — no network calls, no telemetry, no LAN exposure.
 
 ---
@@ -135,7 +135,32 @@ Total: **72** Python modules (9,517 lines).
 | `radar/views/traffic_mix.py` | 91 |
 | `radar/views/voice.py` | 109 |
 
-## 6. Import Smoke Test
+## 6. Test Files
+
+Total: **18** test files (292 test functions, 3,193 lines).
+
+| File | Lines | Test functions |
+|---|---:|---:|
+| `tests/benchmarks/test_benchmarks.py` | 185 | 14 |
+| `tests/test_admin_audit.py` | 133 | 13 |
+| `tests/test_admin_auth.py` | 121 | 14 |
+| `tests/test_admin_backup.py` | 170 | 19 |
+| `tests/test_admin_rate_limit.py` | 119 | 17 |
+| `tests/test_attack_core.py` | 301 | 34 |
+| `tests/test_common.py` | 244 | 31 |
+| `tests/test_coverage_extra.py` | 560 | 24 |
+| `tests/test_db.py` | 66 | 5 |
+| `tests/test_integration.py` | 76 | 1 |
+| `tests/test_logging.py` | 178 | 19 |
+| `tests/test_make_coverage_badge.py` | 111 | 21 |
+| `tests/test_radar_anomaly.py` | 226 | 16 |
+| `tests/test_radar_pdf.py` | 61 | 7 |
+| `tests/test_radar_period.py` | 126 | 17 |
+| `tests/test_smoke.py` | 64 | 2 |
+| `tests/test_telecom_attack_db.py` | 259 | 19 |
+| `tests/test_unit.py` | 193 | 19 |
+
+## 7. Import Smoke Test
 
 Command:
 
@@ -151,7 +176,7 @@ Result:
 OK: all modules imported cleanly
 ```
 
-## 7. Runtime Dependencies
+## 8. Runtime Dependencies
 
 From `requirements.txt` (145 packages):
 
@@ -321,7 +346,7 @@ pip-audit>=2.7
 pytest-benchmark>=4.0
 ```
 
-## 8. Artifact Hygiene
+## 9. Artifact Hygiene
 
 Recommended entries present in `.gitignore`:
 
@@ -330,6 +355,9 @@ Recommended entries present in `.gitignore`:
 - `telecom_sim_output/`
 - `*.zip`
 - `*.pdf`
+- `logs/`
+- `site/`
+- `.benchmarks/`
 
 ---
 
@@ -346,4 +374,4 @@ Recommended entries present in `.gitignore`:
 
 ---
 
-*Auto-generated 2026-10-03 12:07:12 by `generate_evidence.py`.*
+*Auto-generated 2026-10-03 12:20:32 by `generate_evidence.py`.*

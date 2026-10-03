@@ -33,6 +33,7 @@ MNO-simulator/
 ├── attack_core.py           # pure attack logic (no DB, unit-testable)
 ├── telecom_common.py        # shared utilities + schema
 ├── telecom_ui_common.py     # Streamlit + Plotly helpers
+├── telecom_logging.py       # centralized logging
 │
 ├── telecom_dashboard.py     # shim -> dashboard.main
 ├── telecom_admin.py         # shim -> admin.main
@@ -54,7 +55,9 @@ MNO-simulator/
 │   └── views/     (14 tabs)
 │
 ├── tests/                   # pytest suite
-└── .github/workflows/ci.yml # CI (runs pytest --run-slow)
+│   └── benchmarks/          # pytest-benchmark (14 benchmarks)
+│
+└── .github/workflows/       # 5 workflows (CI, Docker, Docs, Security)
 ```
 
 ### Why this split?
@@ -183,7 +186,7 @@ hold 2 PB.
 
 | Package | Files | Lines | Purpose |
 |---|---:|---:|---|
-| *(top-level)* | 9 | 3,518 | Top-level modules (simulator, attack, common) |
+| *(top-level)* | 10 | 3,622 | Top-level modules (simulator, attack, logging, common) |
 | `dashboard/` | 21 | 1,852 | Operations dashboard + OSINT/SIGINT views |
 | `admin/` | 19 | 1,527 | CRUD, audit log, backup / restore |
 | `radar/` | 23 | 2,620 | Statistical analytics + anomaly detection + PDF |
@@ -203,6 +206,7 @@ hold 2 PB.
 | `telecom_radar.py` | 22 | 0 | 0 | 0 | Backwards-compatible shim. |
 | `telecom_ui_common.py` | 141 | 5 | 0 | 0 | Shared Streamlit + Plotly helpers used by dashboard and radar. |
 | `attack_core.py` | 489 | 5 | 0 | 0 | TELECOM-ATTACK-CORE v1.0 |
+| `telecom_logging.py` | 104 | 3 | 1 | 0 | Centralized logging configuration for TELECOM-NET-SIM. |
 | `dashboard/__init__.py` | 11 | 0 | 0 | 0 | TELECOM Network Dashboard package. |
 | `dashboard/_config.py` | 13 | 0 | 0 | 0 | Package-level constants shared by all dashboard modules. |
 | `dashboard/main.py` | 164 | 1 | 0 | 0 | Dashboard entry point — sets page config, sidebar, KPI row, tabs. |
@@ -271,11 +275,12 @@ hold 2 PB.
 
 ## Testing
 
-**296 tests** collected across 17 files.
+**282 tests** collected across 17 files.
 
 ```bash
 pytest              # fast tests (unit + smoke + db + attack_core)
 pytest --run-slow   # also runs the full simulator end-to-end
+pytest tests/benchmarks/ --benchmark-only -o addopts=""   # benchmarks
 ```
 
 | File | Test functions | Test classes |
@@ -298,7 +303,7 @@ pytest --run-slow   # also runs the full simulator end-to-end
 | `tests/test_telecom_attack_db.py` | 19 | 6 |
 | `tests/test_unit.py` | 19 | 6 |
 
-_Note: parametrized tests are counted once by the AST scanner but expand to multiple cases at collect time (`pytest --collect-only` reports 296 total)._
+_Note: parametrized tests are counted once by the AST scanner but expand to multiple cases at collect time (`pytest --collect-only` reports 282 total)._
 
 ---
 
@@ -514,10 +519,41 @@ telecom_sim_output/
 *.v2_backup
 *.v3_backup
 _admin_auth_backup/
+.benchmarks/
+logs/
+site/
 *.zip
 *.pdf
 *.pyc
 ```
+
+---
+
+## Logging
+
+Centralized logging via `telecom_logging.py`, with CLI flags:
+
+| Flag | Effect |
+|---|---|
+| `--verbose`, `-v` | DEBUG-level output |
+| `--quiet`, `-q` | Only WARNING and above |
+| `--log-file PATH` | Also write to `PATH` (UTF-8) |
+
+Log format:
+
+```
+HH:MM:SS | LEVEL   | module                | message
+```
+
+Example:
+
+```
+10:51:00 | INFO    | telecom_net_sim       | [1/7] Building network topology...
+10:51:00 | INFO    | telecom_attack        | Generating 25 scenarios...
+10:51:00 | WARNING | telecom_attack        | Attack simulation skipped: ...
+```
+
+Full documentation: [Logging guide](https://docs.sunpannel.ir/logging/)
 
 ---
 
@@ -599,6 +635,12 @@ conversion) is DB-free and lives in `attack_core.py`. The DB layer,
 target indexing and CLI orchestration live in `telecom_attack.py`.
 This makes the core testable in <0.5 s without spinning up SQLite.
 
+### Why a shared `telecom_logging.py`?
+Instead of scattered `print()` calls, every module uses a scoped
+logger via `get_logger(__name__)`. The entry points call
+`setup_logging()` once. This gives us log levels, timestamps, and
+per-module prefixes for free, and it is testable with `caplog`.
+
 ---
 
 ## Known Limitations
@@ -612,28 +654,8 @@ This makes the core testable in <0.5 s without spinning up SQLite.
   `telecom_sim_output/telecom_sim.db` to exist (or generate one on
   the fly); run `python telecom_net_sim.py --subs 500 --cdrs 2000`
   first if they fail locally.
-
-## Performance Benchmarks
-
-Hot paths are benchmarked with [pytest-benchmark](https://pytest-benchmark.readthedocs.io/).
-They live in `tests/benchmarks/` and are **ignored by default**.
-
-```bash
-# Run all benchmarks
-pytest tests/benchmarks/ --benchmark-only -o addopts=""
-
-# Save a baseline
-pytest tests/benchmarks/ --benchmark-only --benchmark-autosave -o addopts=""
-
-# Compare against the baseline
-pytest tests/benchmarks/ --benchmark-only --benchmark-compare -o addopts=""
-```
-
-Covered functions:
-
-- `attack_core`: `pick_target`, `generate_scenarios`, `expand_events`, `attacks_to_alerts`
-- `radar.services.period`: `split_periods`, `period_stats`, `delta_pct`
-- `radar.services.anomaly`: `detect_anomalies`
+- Performance benchmarks live in `tests/benchmarks/` and are excluded
+  from the default test run (see `tests/benchmarks/README.md`).
 
 ---
 
