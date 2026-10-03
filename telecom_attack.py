@@ -16,6 +16,9 @@ from datetime import datetime, timedelta
 from typing import Any
 
 from telecom_common import SOC_RECIPIENTS, db_connect
+from telecom_logging import get_logger
+
+logger = get_logger("telecom_attack")
 
 # ------------------------------------------------------------------
 # ATTACK CATALOG
@@ -688,15 +691,18 @@ def run_attack_simulation(
               "by_severity": {severity: count, ...},
             }
     """
-    print(f"[ATTACK] Generating {n_scenarios} scenarios...")
+    logger.info(f"Generating {n_scenarios} scenarios...")
     scenarios = generate_attack_scenarios(n_scenarios)
-    print("[ATTACK] Expanding to event time-series...")
+
+    logger.info("Expanding to event time-series...")
     events = expand_events(scenarios, samples_per_scenario)
-    print(f"[ATTACK] Persisting {len(scenarios)} scenarios, {len(events)} events...")
+
+    logger.info(f"Persisting {len(scenarios)} scenarios, {len(events)} events...")
     persist_attacks(scenarios, events)
+
     alerts = attacks_to_alerts(scenarios, events)
     if inject_alerts and alerts:
-        print(f"[ATTACK] Injecting {len(alerts)} alerts into alerts table...")
+        logger.info(f"Injecting {len(alerts)} alerts into alerts table...")
         inject_attack_alerts(alerts)
     summary: dict[str, Any] = {
         "scenarios": len(scenarios),

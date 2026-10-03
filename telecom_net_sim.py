@@ -25,6 +25,10 @@ from dataclasses import asdict, dataclass, field
 from datetime import datetime, timedelta
 
 from telecom_common import CIPHER_SUITES
+from telecom_logging import get_logger, setup_logging
+
+logger = get_logger("telecom_net_sim")
+
 
 try:
     import matplotlib
@@ -165,6 +169,9 @@ def parse_args(argv=None):
     )
     p.add_argument("--subs", type=int, default=5000, help="Number of subscribers")
     p.add_argument("--cdrs", type=int, default=60_000, help="Number of CDR records")
+    p.add_argument("--verbose", "-v", action="store_true", help="Enable DEBUG logging")
+    p.add_argument("--quiet", "-q", action="store_true", help="Only show WARNING and above")
+    p.add_argument("--log-file", type=str, default=None, help="Optional path to write logs to")
     return p.parse_args(argv)
 
 
@@ -1671,61 +1678,71 @@ def build_report(cells, cores, subs, cdrs, osint_r, sigint_r, alerts):
 def main(argv=None):
     global SEED
     args = parse_args(argv)
+
+    # Configure logging based on CLI flags
+    if args.verbose:
+        log_level = "DEBUG"
+    elif args.quiet:
+        log_level = "WARNING"
+    else:
+        log_level = "INFO"
+    setup_logging(level=log_level, log_file=args.log_file)
+
     if args.random_seed:
         SEED = random.randint(1, 10**9)
     else:
         SEED = args.seed
     random.seed(SEED)
 
-    print("=" * 78)
-    print(f" {OPERATOR}-NET-SIM v3.0 | LOCAL-ONLY | Seed={SEED}")
-    print("=" * 78)
+    logger.info("=" * 78)
+    logger.info(f" {OPERATOR}-NET-SIM v3.0 | LOCAL-ONLY | Seed={SEED}")
+    logger.info("=" * 78)
 
-    print("[1/7] Building network topology...")
+    logger.info("[1/7] Building network topology...")
     cells, cores = build_topology()
-    print(f"      Cells: {len(cells)} | Core nodes: {len(cores)}")
+    logger.info(f"      Cells: {len(cells)} | Core nodes: {len(cores)}")
 
-    print("[2/7] Generating subscribers...")
+    logger.info("[2/7] Generating subscribers...")
     subs = build_subscribers(args.subs)
 
-    print("[3/7] Generating CDR records...")
+    logger.info("[3/7] Generating CDR records...")
     cdrs = gen_cdrs(subs, cells, n=args.cdrs)
-    print(f"      {len(cdrs)} records generated.")
+    logger.info(f"      {len(cdrs)} records generated.")
 
-    print("[4/7] Running OSINT analysis...")
+    logger.info("[4/7] Running OSINT analysis...")
     osint_data = osint_collect(cells, subs)
     osint_r = osint_report(osint_data)
 
-    print("[5/7] Running SIGINT analysis...")
+    logger.info("[5/7] Running SIGINT analysis...")
     sigint_r = sigint_analyze(cdrs, cells)
 
-    print("[5.5/7] Running alert engine + SMS dispatch...")
+    logger.info("[5.5/7] Running alert engine + SMS dispatch...")
     alerts = run_alert_engine(subs, cdrs, sigint_r, osint_r)
-    print(f"        {len(alerts)} alerts dispatched via SMS.")
+    logger.info(f"        {len(alerts)} alerts dispatched via SMS.")
 
-    print("[6/7] Persisting to SQLite...")
+    logger.info("[6/7] Persisting to SQLite...")
     persist(cells, cores, subs, cdrs, osint_data, osint_r, sigint_r, alerts)
 
-    print("[7/7] Rendering charts and report...")
+    logger.info("[7/7] Rendering charts and report...")
     visualize(cells, cdrs, sigint_r, osint_r)
     build_report(cells, cores, subs, cdrs, osint_r, sigint_r, alerts)
 
-    print("[8/8] Running attack simulation...")
+    logger.info("[8/8] Running attack simulation...")
     try:
         import telecom_attack
 
         atk = telecom_attack.run_attack_simulation(
             n_scenarios=25, samples_per_scenario=20, inject_alerts=True
         )
-        print(
-            f"        {atk['scenarios']} scenarios, {atk['events']} events, "
-            f"{atk['alerts']} alerts."
+        logger.info(
+            f"        {atk['scenarios']} scenarios, "
+            f"{atk['events']} events, {atk['alerts']} alerts."
         )
     except Exception as e:
-        print(f"        [i] Attack simulation skipped: {e}")
+        logger.warning(f"        Attack simulation skipped: {e}")
 
-    print("\n[OK] Simulation completed successfully.")
-    print(f"[DIR] Outputs: {os.path.abspath(OUT)}")
+    logger.info("[OK] Simulation completed successfully.")
+    logger.info(f"[DIR] Outputs: {os.path.abspath(OUT)}")
 
 
 if __name__ == "__main__":

@@ -52,3 +52,7 @@ coverage.xml
 
 # Old simulation output (kept locally, not tracked)
 telecom_sim_output_old/
+
+# Runtime logs
+logs/
+*.log

@@ -247,7 +247,12 @@ class TestRunAttackSimulation:
         assert summary["scenarios"] == 3
         assert _count(attack_db, "alerts") == 0
 
-    def test_prints_progress(self, attack_db, capsys):
-        telecom_attack.run_attack_simulation(2, 2)
-        out = capsys.readouterr().out
-        assert "[ATTACK]" in out
+    def test_logs_progress(self, attack_db, caplog):
+        import logging
+
+        with caplog.at_level(logging.INFO, logger="telecom_attack"):
+            telecom_attack.run_attack_simulation(2, 2)
+
+        messages = " ".join(r.message for r in caplog.records)
+        assert "Generating" in messages
+        assert "scenarios" in messages
