@@ -52,11 +52,15 @@ class TestIsLoggedIn:
         fake_st.session_state["admin_logged_in"] = False
         assert is_logged_in() is False
 
-    def test_truthy_values_are_returned(self, fake_st):
-        # .get() returns the raw value; caller must be ready for
-        # non-bool truthy values too.
+    def test_truthy_values_are_coerced_to_bool(self, fake_st):
+        # is_logged_in() coerces its return value to bool, so any
+        # truthy value becomes True.
         fake_st.session_state["admin_logged_in"] = "yes"
-        assert is_logged_in() == "yes"
+        assert is_logged_in() is True
+
+    def test_falsy_values_are_coerced_to_bool(self, fake_st):
+        fake_st.session_state["admin_logged_in"] = 0
+        assert is_logged_in() is False
 
 
 # ==================================================================

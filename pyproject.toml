@@ -89,10 +89,18 @@ py-modules = [
 line-length = 100
 target-version = "py311"
 exclude = [
-    ".venv",
-    "__pycache__",
-    "telecom_sim_output",
-    ".pytest_cache",
+    "^docs/",
+    "^site/",
+    "^telecom_sim_output/",
+    "^generate_readme\\.py$",
+    "^generate_evidence\\.py$",
+    "^generate_docs\\.py$",
+    "^generate_project_report\\.py$",
+    "^make_coverage_badge\\.py$",
+    "^restore_2pb\\.py$",
+    "^check_6g_now\\.py$",
+    "^main\\.py$",
+    "^telecom_net_sim\\.py$",
 ]
 
 [tool.ruff.lint]
@@ -184,3 +192,60 @@ exclude_lines = [
     "if TYPE_CHECKING:",
     "@abstractmethod",
 ]
+# ==================================================================
+# mypy — static type checker
+# ==================================================================
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+warn_redundant_casts = true
+warn_unused_ignores = false
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+check_untyped_defs = true
+no_implicit_optional = true
+strict_equality = true
+show_error_codes = true
+show_column_numbers = true
+pretty = true
+
+# Files to skip entirely
+exclude = [
+    "^docs/",
+    "^site/",
+    "^telecom_sim_output/",
+    "^generate_readme\\.py$",
+    "^generate_evidence\\.py$",
+    "^generate_docs\\.py$",
+    "^generate_project_report\\.py$",
+    "^make_coverage_badge\\.py$",
+    "^restore_2pb\\.py$",
+    "^check_6g_now\\.py$",
+    "^main\\.py$",
+]
+
+# Per-module overrides
+[[tool.mypy.overrides]]
+module = [
+    "streamlit.*",
+    "plotly.*",
+    "pandas.*",
+    "numpy.*",
+    "matplotlib.*",
+    "reportlab.*",
+    "streamlit_autorefresh.*",
+]
+ignore_missing_imports = true
+
+# Exclude legacy monolithic simulator (tested via integration test)
+[[tool.mypy.overrides]]
+module = "telecom_net_sim"
+ignore_errors = true
+
+# Tests can be looser
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
+check_untyped_defs = false
+ignore_errors = true

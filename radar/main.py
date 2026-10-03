@@ -194,7 +194,7 @@ def _render_sidebar(data):
             if st.button("🧹 Reset", use_container_width=True, key="btn_reset"):
                 st.cache_data.clear()
                 for k in list(st.session_state.keys()):
-                    if k.startswith("radar_"):
+                    if isinstance(k, str) and k.startswith("radar_"):
                         del st.session_state[k]
                 st.rerun()
 

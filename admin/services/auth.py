@@ -4,7 +4,7 @@ import streamlit as st
 
 
 def is_logged_in() -> bool:
-    return st.session_state.get("admin_logged_in", False)
+    return bool(st.session_state.get("admin_logged_in", False))
 
 
 def current_user() -> str:

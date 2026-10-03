@@ -324,11 +324,10 @@ def generate_scenarios(n: int, target_idx: dict, now: datetime | None = None) ->
         if a in ATTACK_CATALOG
     ]
     n_forced = min(len(_forced_6g), n)
-    chosen_types = random.sample(_forced_6g, k=n_forced)
+    chosen_types: list[str] = list(random.sample(_forced_6g, k=n_forced))
     other_types = [t for t in all_types if t not in _forced_6g]
     if n > n_forced and other_types:
         chosen_types += random.choices(other_types, k=n - n_forced)
-    random.shuffle(chosen_types)
 
     for i, atype in enumerate(chosen_types):
         meta = ATTACK_CATALOG[atype]
@@ -399,7 +398,7 @@ def expand_events(scenarios: list[dict], samples_per_scenario: int = 20) -> list
 
             mttr = None
             blocked = 0
-            if detected:
+            if detected and mttd is not None:
                 mttr = random.uniform(15, 600)
                 if k * dur / samples_per_scenario >= mttd + mttr:
                     blocked = 1

@@ -13,6 +13,7 @@
 import json
 import random
 from datetime import datetime, timedelta
+from typing import Any
 
 from telecom_common import SOC_RECIPIENTS, db_connect
 
@@ -293,10 +294,10 @@ def init_attack_tables():
 def _build_target_index() -> dict:
     """One-shot DB read: cache role -> [node_id] and 5G/6G cell lists.
 
-    Called once per generate_attack_scenarios() run so that _pick_target()
-    does not open a new SQLite connection for every scenario.
+    Called once per generate_attack_scenarios() run so that
+    pick_target() does not open a new SQLite connection per scenario.
     """
-    idx = {
+    idx: dict[str, Any] = {
         "cores": {},  # role -> [node_id, ...]
         "all_cores": [],  # every node_id
         "cells_5g": [],  # 5G cell_ids (for ORAN_* attacks)
@@ -405,7 +406,7 @@ def generate_attack_scenarios(n: int = 25) -> list[dict]:
         if a in ATTACK_CATALOG
     ]
     n_forced = min(len(_forced_6g), n)
-    chosen_types = random.sample(_forced_6g, k=n_forced)
+    chosen_types: list[str] = list(random.sample(_forced_6g, k=n_forced))
     other_types = [t for t in all_types if t not in _forced_6g]
     if n > n_forced and other_types:
         chosen_types += random.choices(other_types, k=n - n_forced)
@@ -476,7 +477,7 @@ def expand_events(scenarios: list[dict], samples_per_scenario: int = 20) -> list
             # Blocking after MTTD + response time
             mttr = None
             blocked = 0
-            if detected:
+            if detected and mttd is not None:
                 mttr = random.uniform(15, 600)
                 if k * dur / samples_per_scenario >= mttd + mttr:
                     blocked = 1
@@ -697,7 +698,7 @@ def run_attack_simulation(
     if inject_alerts and alerts:
         print(f"[ATTACK] Injecting {len(alerts)} alerts into alerts table...")
         inject_attack_alerts(alerts)
-    summary = {
+    summary: dict[str, Any] = {
         "scenarios": len(scenarios),
         "events": len(events),
         "alerts": len(alerts),
