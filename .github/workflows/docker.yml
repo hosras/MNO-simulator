@@ -42,6 +42,7 @@ jobs:
       - name: Smoke test - generate a tiny dataset
         run: |
           mkdir -p smoke_output
+          chmod 777 smoke_output
           docker run --rm \
             -v ${{ github.workspace }}/smoke_output:/app/telecom_sim_output \
             telecom-net-sim:test \
