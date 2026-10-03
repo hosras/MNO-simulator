@@ -287,3 +287,24 @@ skips = [
 
 [tool.bandit.assert_used]
 skips = ["*_test.py", "test_*.py", "*/tests/*"]
+
+# ==================================================================
+# pytest-benchmark
+# ==================================================================
+[tool.pytest.ini_options]
+# (This section may merge with existing pytest.ini — see pytest.ini for
+#  markers. We add benchmark-specific options here.)
+benchmark_columns = [
+    "min",
+    "max",
+    "mean",
+    "stddev",
+    "median",
+    "iqr",
+    "outliers",
+    "ops",
+    "rounds",
+]
+benchmark_warmup = "on"
+benchmark_min_rounds = 5
+benchmark_disable_gc = true

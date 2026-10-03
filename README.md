@@ -173,9 +173,9 @@ hold 2 PB.
 
 | Package | Files | Lines | Purpose |
 |---|---:|---:|---|
-| *(top-level)* | 8 | 3,381 | Top-level modules (simulator, attack, common) |
+| *(top-level)* | 9 | 3,518 | Top-level modules (simulator, attack, common) |
 | `dashboard/` | 21 | 1,852 | Operations dashboard + OSINT/SIGINT views |
-| `admin/` | 19 | 1,524 | CRUD, audit log, backup / restore |
+| `admin/` | 19 | 1,527 | CRUD, audit log, backup / restore |
 | `radar/` | 23 | 2,620 | Statistical analytics + anomaly detection + PDF |
 
 ---
@@ -185,13 +185,14 @@ hold 2 PB.
 | Module | Lines | Public | Private | Classes | Description |
 |---|---:|---:|---:|---:|---|
 | `telecom_admin.py` | 22 | 0 | 0 | 0 | Backwards-compatible shim. |
-| `telecom_attack.py` | 716 | 7 | 2 | 0 | TELECOM-ATTACK-SIM v1.0 |
-| `telecom_common.py` | 235 | 14 | 1 | 0 | TELECOM-NET-SIM | Common Utilities v1.0 (shared across modules) |
+| `telecom_attack.py` | 723 | 7 | 2 | 0 | TELECOM-ATTACK-SIM v1.0 |
+| `telecom_common.py` | 239 | 14 | 1 | 0 | TELECOM-NET-SIM | Common Utilities v1.0 (shared across modules) |
 | `telecom_dashboard.py` | 22 | 0 | 0 | 0 | Backwards-compatible shim. |
-| `telecom_net_sim.py` | 1,733 | 18 | 0 | 3 | TELECOM-NET-SIM v3.0 |
+| `telecom_logging.py` | 104 | 3 | 1 | 0 | Centralized logging configuration for TELECOM-NET-SIM. |
+| `telecom_net_sim.py` | 1,756 | 18 | 0 | 3 | TELECOM-NET-SIM v3.0 |
 | `telecom_radar.py` | 22 | 0 | 0 | 0 | Backwards-compatible shim. |
 | `telecom_ui_common.py` | 141 | 5 | 0 | 0 | Shared Streamlit + Plotly helpers used by dashboard and radar. |
-| `attack_core.py` | 490 | 5 | 0 | 0 | TELECOM-ATTACK-CORE v1.0 |
+| `attack_core.py` | 489 | 5 | 0 | 0 | TELECOM-ATTACK-CORE v1.0 |
 | `dashboard/__init__.py` | 11 | 0 | 0 | 0 | TELECOM Network Dashboard package. |
 | `dashboard/_config.py` | 13 | 0 | 0 | 0 | Package-level constants shared by all dashboard modules. |
 | `dashboard/main.py` | 164 | 1 | 0 | 0 | Dashboard entry point — sets page config, sidebar, KPI row, tabs. |
@@ -225,11 +226,11 @@ hold 2 PB.
 | `admin/views/__init__.py` | 2 | 0 | 0 | 0 | One module per admin tab. Each exposes render(). |
 | `admin/views/alerts.py` | 105 | 1 | 0 | 0 | Tab 4 — Manage Alerts. |
 | `admin/views/audit.py` | 48 | 1 | 0 | 0 | Tab 8 — Audit Log. |
-| `admin/views/backup.py` | 85 | 1 | 0 | 0 | Tab 7 — Backup & Restore. |
+| `admin/views/backup.py` | 87 | 1 | 0 | 0 | Tab 7 — Backup & Restore. |
 | `admin/views/cells.py` | 151 | 1 | 4 | 0 | Tab 2 — Manage Cells. |
 | `admin/views/cores.py` | 113 | 1 | 3 | 0 | Tab 3 — Manage Core Nodes. |
 | `admin/views/dashboard.py` | 41 | 1 | 0 | 0 | Tab 0 — Admin Dashboard summary. |
-| `admin/views/encryption.py` | 94 | 1 | 0 | 0 | Tab 6 — Encryption Management. |
+| `admin/views/encryption.py` | 95 | 1 | 0 | 0 | Tab 6 — Encryption Management. |
 | `admin/views/special_lines.py` | 108 | 1 | 0 | 0 | Tab 5 — Special Lines Management. |
 | `admin/views/subscribers.py` | 266 | 1 | 4 | 0 | Tab 1 — Manage Subscribers (CRUD). |
 | `radar/__init__.py` | 11 | 0 | 0 | 0 | TELECOM Radar package. |
@@ -260,7 +261,7 @@ hold 2 PB.
 
 ## Testing
 
-**262 tests** collected across 16 files.
+**296 tests** collected across 17 files.
 
 ```bash
 pytest              # fast tests (unit + smoke + db + attack_core)
@@ -270,7 +271,7 @@ pytest --run-slow   # also runs the full simulator end-to-end
 | File | Test functions | Test classes |
 |---|---:|---:|
 | `tests/test_admin_audit.py` | 13 | 3 |
-| `tests/test_admin_auth.py` | 13 | 3 |
+| `tests/test_admin_auth.py` | 14 | 3 |
 | `tests/test_admin_backup.py` | 19 | 3 |
 | `tests/test_admin_rate_limit.py` | 17 | 3 |
 | `tests/test_attack_core.py` | 34 | 4 |
@@ -278,6 +279,7 @@ pytest --run-slow   # also runs the full simulator end-to-end
 | `tests/test_coverage_extra.py` | 24 | 10 |
 | `tests/test_db.py` | 5 | 2 |
 | `tests/test_integration.py` | 1 | 0 |
+| `tests/test_logging.py` | 19 | 5 |
 | `tests/test_make_coverage_badge.py` | 21 | 3 |
 | `tests/test_radar_anomaly.py` | 16 | 7 |
 | `tests/test_radar_pdf.py` | 7 | 3 |
@@ -286,7 +288,7 @@ pytest --run-slow   # also runs the full simulator end-to-end
 | `tests/test_telecom_attack_db.py` | 19 | 6 |
 | `tests/test_unit.py` | 19 | 6 |
 
-_Note: parametrized tests are counted once by the AST scanner but expand to multiple cases at collect time (`pytest --collect-only` reports 262 total)._
+_Note: parametrized tests are counted once by the AST scanner but expand to multiple cases at collect time (`pytest --collect-only` reports 296 total)._
 
 ---
 
@@ -454,6 +456,10 @@ reportlab>=4.0
 streamlit-autorefresh>=1.0
 pytest>=8.0
 pytest-cov>=5.0
+mypy>=1.11
+bandit[toml]>=1.7
+pip-audit>=2.7
+pytest-benchmark>=4.0
 ```
 
 ---
@@ -597,6 +603,28 @@ This makes the core testable in <0.5 s without spinning up SQLite.
   `telecom_sim_output/telecom_sim.db` to exist (or generate one on
   the fly); run `python telecom_net_sim.py --subs 500 --cdrs 2000`
   first if they fail locally.
+
+## Performance Benchmarks
+
+Hot paths are benchmarked with [pytest-benchmark](https://pytest-benchmark.readthedocs.io/).
+They live in `tests/benchmarks/` and are **ignored by default**.
+
+```bash
+# Run all benchmarks
+pytest tests/benchmarks/ --benchmark-only -o addopts=""
+
+# Save a baseline
+pytest tests/benchmarks/ --benchmark-only --benchmark-autosave -o addopts=""
+
+# Compare against the baseline
+pytest tests/benchmarks/ --benchmark-only --benchmark-compare -o addopts=""
+```
+
+Covered functions:
+
+- `attack_core`: `pick_target`, `generate_scenarios`, `expand_events`, `attacks_to_alerts`
+- `radar.services.period`: `split_periods`, `period_stats`, `delta_pct`
+- `radar.services.anomaly`: `detect_anomalies`
 
 ---
 

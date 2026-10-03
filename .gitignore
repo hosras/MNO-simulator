@@ -56,3 +56,5 @@ telecom_sim_output_old/
 # Runtime logs
 logs/
 *.log
+# pytest-benchmark autosave
+.benchmarks/

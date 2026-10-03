@@ -19,3 +19,6 @@ mypy>=1.11
 # Security scanning
 bandit[toml]>=1.7
 pip-audit>=2.7
+
+# Performance benchmarks
+pytest-benchmark>=4.0
