@@ -43,7 +43,9 @@ nav:
   - Getting Started: getting-started.md
   - Architecture: architecture.md
   - Testing: testing.md
+  - Logging: logging.md
   - Security: security.md
+  - Performance Benchmarks: benchmarks.md
   - Contributing: contributing.md
   - API Reference:
     - Overview: api/index.md
