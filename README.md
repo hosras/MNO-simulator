@@ -1,6 +1,8 @@
 # TELECOM-NET-SIM
 
 [![CI](https://github.com/hosras/MNO-simulator/actions/workflows/ci.yml/badge.svg)](https://github.com/hosras/MNO-simulator/actions/workflows/ci.yml)
+[![Docker](https://github.com/hosras/MNO-simulator/actions/workflows/docker.yml/badge.svg)](https://github.com/hosras/MNO-simulator/actions/workflows/docker.yml)
+[![Security](https://github.com/hosras/MNO-simulator/actions/workflows/security.yml/badge.svg)](https://github.com/hosras/MNO-simulator/actions/workflows/security.yml)
 ![Coverage](https://raw.githubusercontent.com/hosras/MNO-simulator/main/.github/coverage.svg)
 
 **Documentation:** [https://docs.sunpannel.ir/](https://docs.sunpannel.ir/)
@@ -96,9 +98,17 @@ MNO-simulator/
                             + PDF export (14 tabs)
 3. `telecom_admin.py`     - CRUD + audit log + backup / restore (9 tabs)
 
-### Quality
-- **CI** on GitHub Actions (Python 3.11 + 3.12 + 3.13, Linux)
-- **~155 unit + smoke + integration tests**, runs in <10 s
+### Quality & Tooling
+- **CI** on GitHub Actions (Python 3.11 / 3.12 / 3.13 / 3.14, Linux)
+- **282 unit + smoke + integration tests**, runs in <15 s
+- **14 performance benchmarks** (pytest-benchmark)
+- **~98% coverage** on core services (views excluded)
+- **mypy** type checking (Success: 0 issues)
+- **ruff** linter + formatter (pre-commit hook)
+- **bandit** static security analysis (0 issues)
+- **pip-audit** dependency vulnerability scan (0 CVEs)
+- **Docker** multi-stage image + docker-compose
+- **Centralized logging** with `--verbose` / `--quiet` / `--log-file`
 - **Hermetic**: seeded RNG, no external calls, no telemetry
 
 ---
@@ -597,8 +607,7 @@ This makes the core testable in <0.5 s without spinning up SQLite.
 - `restore_2pb.py` scales `SUM(bytes)` for display only; the DB does
   **not** physically hold 2 PB.
 - Streamlit dashboards are read-only; all writes go through the admin panel.
-- GitHub Actions currently tests on Python 3.11, 3.12, and 3.13 (Linux).
-  Python 3.14+ may work but is untested in CI.
+- GitHub Actions currently tests on Python 3.11, 3.12, 3.13, and 3.14 (Linux).
 - `test_db.py`, `test_smoke.py` and `test_integration.py` require
   `telecom_sim_output/telecom_sim.db` to exist (or generate one on
   the fly); run `python telecom_net_sim.py --subs 500 --cdrs 2000`

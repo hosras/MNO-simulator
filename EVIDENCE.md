@@ -1,7 +1,7 @@
 # EVIDENCE — Fully Local Operation
 
 **Project:** TELECOM-NET-SIM  
-**Generated:** 2026-10-03 08:28:15  
+**Generated:** 2026-10-03 12:07:12  
 **Purpose:** Prove the simulator runs entirely offline — no network calls, no telemetry, no LAN exposure.
 
 ---
@@ -58,18 +58,19 @@ Tokens searched: `requests`, `urllib`, `http.client`, `aiohttp`, `httpx`, `urlop
 
 ## 5. Source Modules
 
-Total: **71** Python modules (9,377 lines).
+Total: **72** Python modules (9,517 lines).
 
 | Module | Lines |
 |---|---:|
 | `telecom_admin.py` | 22 |
-| `telecom_attack.py` | 716 |
-| `telecom_common.py` | 235 |
+| `telecom_attack.py` | 723 |
+| `telecom_common.py` | 239 |
 | `telecom_dashboard.py` | 22 |
-| `telecom_net_sim.py` | 1,733 |
+| `telecom_logging.py` | 104 |
+| `telecom_net_sim.py` | 1,756 |
 | `telecom_radar.py` | 22 |
 | `telecom_ui_common.py` | 141 |
-| `attack_core.py` | 490 |
+| `attack_core.py` | 489 |
 | `dashboard/__init__.py` | 11 |
 | `dashboard/_config.py` | 13 |
 | `dashboard/main.py` | 164 |
@@ -103,11 +104,11 @@ Total: **71** Python modules (9,377 lines).
 | `admin/views/__init__.py` | 2 |
 | `admin/views/alerts.py` | 105 |
 | `admin/views/audit.py` | 48 |
-| `admin/views/backup.py` | 85 |
+| `admin/views/backup.py` | 87 |
 | `admin/views/cells.py` | 151 |
 | `admin/views/cores.py` | 113 |
 | `admin/views/dashboard.py` | 41 |
-| `admin/views/encryption.py` | 94 |
+| `admin/views/encryption.py` | 95 |
 | `admin/views/special_lines.py` | 108 |
 | `admin/views/subscribers.py` | 266 |
 | `radar/__init__.py` | 11 |
@@ -139,7 +140,7 @@ Total: **71** Python modules (9,377 lines).
 Command:
 
 ```cmd
-python -c "import telecom_admin, telecom_attack, telecom_common, telecom_dashboard, telecom_net_sim, telecom_radar, telecom_ui_common, attack_core, dashboard, admin, radar; print('OK')"
+python -c "import telecom_admin, telecom_attack, telecom_common, telecom_dashboard, telecom_logging, telecom_net_sim, telecom_radar, telecom_ui_common, attack_core, dashboard, admin, radar; print('OK')"
 ```
 
 Result:
@@ -302,7 +303,7 @@ xlsxwriter==3.2.9
 zstandard==0.25.0
 ```
 
-From `requirements-ci.txt` (9 packages, used by CI):
+From `requirements-ci.txt` (13 packages, used by CI):
 
 ```text
 streamlit>=1.30
@@ -314,6 +315,10 @@ reportlab>=4.0
 streamlit-autorefresh>=1.0
 pytest>=8.0
 pytest-cov>=5.0
+mypy>=1.11
+bandit[toml]>=1.7
+pip-audit>=2.7
+pytest-benchmark>=4.0
 ```
 
 ## 8. Artifact Hygiene
@@ -341,4 +346,4 @@ Recommended entries present in `.gitignore`:
 
 ---
 
-*Auto-generated 2026-10-03 08:28:15 by `generate_evidence.py`.*
+*Auto-generated 2026-10-03 12:07:12 by `generate_evidence.py`.*
