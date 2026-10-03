@@ -1,7 +1,7 @@
 # EVIDENCE — Fully Local Operation
 
 **Project:** TELECOM-NET-SIM  
-**Generated:** 2026-10-03 00:04:27  
+**Generated:** 2026-10-03 08:28:15  
 **Purpose:** Prove the simulator runs entirely offline — no network calls, no telemetry, no LAN exposure.
 
 ---
@@ -341,4 +341,4 @@ Recommended entries present in `.gitignore`:
 
 ---
 
-*Auto-generated 2026-10-03 00:04:27 by `generate_evidence.py`.*
+*Auto-generated 2026-10-03 08:28:15 by `generate_evidence.py`.*

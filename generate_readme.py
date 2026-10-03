@@ -32,6 +32,7 @@ COVERAGE_BADGE_URL = (
     f"https://raw.githubusercontent.com/{GITHUB_USER}/{GITHUB_REPO}/" f"main/.github/coverage.svg"
 )
 REPO_URL = f"https://github.com/{GITHUB_USER}/{GITHUB_REPO}"
+DOCS_URL = "https://docs.sunpannel.ir/"
 PACKAGES = ["dashboard", "admin", "radar"]
 
 
@@ -191,6 +192,8 @@ HEADER = "\n".join(
         "",
         f"[![CI]({CI_BADGE_URL})]({CI_LINK_URL})",
         f"![Coverage]({COVERAGE_BADGE_URL})",
+        "",
+        f"📚 **Documentation:** [{DOCS_URL}]({DOCS_URL})",
         "",
         "> Fully local mobile network simulator with OSINT/SIGINT analytics,",
         "> attack scenario generation, and three Streamlit dashboards.",
