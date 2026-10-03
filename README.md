@@ -275,7 +275,7 @@ hold 2 PB.
 
 ## Testing
 
-**282 tests** collected across 17 files.
+**294 tests** collected across 18 files.
 
 ```bash
 pytest              # fast tests (unit + smoke + db + attack_core)
@@ -291,6 +291,7 @@ pytest tests/benchmarks/ --benchmark-only -o addopts=""   # benchmarks
 | `tests/test_admin_rate_limit.py` | 17 | 3 |
 | `tests/test_attack_core.py` | 34 | 4 |
 | `tests/test_common.py` | 31 | 6 |
+| `tests/test_coverage_100.py` | 12 | 9 |
 | `tests/test_coverage_extra.py` | 24 | 10 |
 | `tests/test_db.py` | 5 | 2 |
 | `tests/test_integration.py` | 1 | 0 |
@@ -303,7 +304,7 @@ pytest tests/benchmarks/ --benchmark-only -o addopts=""   # benchmarks
 | `tests/test_telecom_attack_db.py` | 19 | 6 |
 | `tests/test_unit.py` | 19 | 6 |
 
-_Note: parametrized tests are counted once by the AST scanner but expand to multiple cases at collect time (`pytest --collect-only` reports 282 total)._
+_Note: parametrized tests are counted once by the AST scanner but expand to multiple cases at collect time (`pytest --collect-only` reports 294 total)._
 
 ---
 

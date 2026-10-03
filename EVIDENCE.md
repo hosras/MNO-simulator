@@ -1,7 +1,7 @@
 # EVIDENCE — Fully Local Operation
 
 **Project:** TELECOM-NET-SIM  
-**Generated:** 2026-10-03 12:20:32  
+**Generated:** 2026-10-03 12:41:45  
 **Purpose:** Prove the simulator runs entirely offline — no network calls, no telemetry, no LAN exposure.
 
 ---
@@ -137,7 +137,7 @@ Total: **72** Python modules (9,517 lines).
 
 ## 6. Test Files
 
-Total: **18** test files (292 test functions, 3,193 lines).
+Total: **19** test files (304 test functions, 3,554 lines).
 
 | File | Lines | Test functions |
 |---|---:|---:|
@@ -148,6 +148,7 @@ Total: **18** test files (292 test functions, 3,193 lines).
 | `tests/test_admin_rate_limit.py` | 119 | 17 |
 | `tests/test_attack_core.py` | 301 | 34 |
 | `tests/test_common.py` | 244 | 31 |
+| `tests/test_coverage_100.py` | 361 | 12 |
 | `tests/test_coverage_extra.py` | 560 | 24 |
 | `tests/test_db.py` | 66 | 5 |
 | `tests/test_integration.py` | 76 | 1 |
@@ -374,4 +375,4 @@ Recommended entries present in `.gitignore`:
 
 ---
 
-*Auto-generated 2026-10-03 12:20:32 by `generate_evidence.py`.*
+*Auto-generated 2026-10-03 12:41:45 by `generate_evidence.py`.*

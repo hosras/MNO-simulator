@@ -139,6 +139,7 @@ line-ending = "lf"
 source = ["."]
 branch = true
 omit = [
+    "generate_docs.py",
     # Tests
     "*/tests/*",
     "*/__pycache__/*",
