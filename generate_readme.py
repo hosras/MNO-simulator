@@ -31,8 +31,9 @@ CI_LINK_URL = f"https://github.com/{GITHUB_USER}/{GITHUB_REPO}/actions/" f"workf
 COVERAGE_BADGE_URL = (
     f"https://raw.githubusercontent.com/{GITHUB_USER}/{GITHUB_REPO}/" f"main/.github/coverage.svg"
 )
-REPO_URL = f"https://github.com/{GITHUB_USER}/{GITHUB_REPO}"
 DOCS_URL = "https://docs.sunpannel.ir/"
+REPO_URL = f"https://github.com/{GITHUB_USER}/{GITHUB_REPO}"
+
 PACKAGES = ["dashboard", "admin", "radar"]
 
 
@@ -193,7 +194,7 @@ HEADER = "\n".join(
         f"[![CI]({CI_BADGE_URL})]({CI_LINK_URL})",
         f"![Coverage]({COVERAGE_BADGE_URL})",
         "",
-        f"📚 **Documentation:** [{DOCS_URL}]({DOCS_URL})",
+        f"**Documentation:** [{DOCS_URL}]({DOCS_URL})",
         "",
         "> Fully local mobile network simulator with OSINT/SIGINT analytics,",
         "> attack scenario generation, and three Streamlit dashboards.",
@@ -416,6 +417,52 @@ DATA_ARTIFACTS = "\n".join(
 )
 
 
+DOCKER = "\n".join(
+    [
+        "## Docker",
+        "",
+        "Run the project in a container with `docker compose`:",
+        "",
+        "```bash",
+        "# Build the image + generate a small dataset + start all dashboards",
+        "docker compose up --build",
+        "",
+        "# Dashboard: http://localhost:8501",
+        "# Radar:     http://localhost:8502",
+        "# Admin:     http://localhost:8503",
+        "```",
+        "",
+        "### Plain docker (without compose)",
+        "",
+        "```bash",
+        "docker build -t telecom-net-sim .",
+        "",
+        "# Generate the database",
+        "docker run --rm \\",
+        "    -v $(pwd)/telecom_sim_output:/app/telecom_sim_output \\",
+        "    telecom-net-sim python telecom_net_sim.py --subs 500 --cdrs 2000",
+        "",
+        "# Run a dashboard (bound to loopback only)",
+        "docker run --rm -p 127.0.0.1:8501:8501 \\",
+        "    -v $(pwd)/telecom_sim_output:/app/telecom_sim_output \\",
+        "    telecom-net-sim streamlit run telecom_dashboard.py \\",
+        "    --server.address 0.0.0.0",
+        "```",
+        "",
+        "### Notes",
+        "",
+        "- Multi-stage build (builder + slim runtime)",
+        "- Runs as **non-root** (`appuser`)",
+        "- All dashboards bind to **`127.0.0.1`** on the host (not exposed to LAN)",
+        "- A shared volume (`telecom_data`) is used between the simulator",
+        "  and the three dashboards",
+        "- A dedicated Docker workflow runs in CI to verify the image builds",
+        "  and the simulator produces a valid database",
+        "",
+    ]
+)
+
+
 DESIGN_NOTES = "\n".join(
     [
         "## Design Notes",
@@ -486,7 +533,12 @@ def render_architecture(modules):
     for m in modules:
         by_pkg.setdefault(m["package"], []).append(m)
 
-    out = ["### Package Layout", "", "| Package | Files | Lines | Purpose |", "|---|---:|---:|---|"]
+    out = [
+        "### Package Layout",
+        "",
+        "| Package | Files | Lines | Purpose |",
+        "|---|---:|---:|---|",
+    ]
     purpose = {
         "dashboard": "Operations dashboard + OSINT/SIGINT views",
         "admin": "CRUD, audit log, backup / restore",
@@ -555,7 +607,13 @@ def render_tests(test_files, collected):
 
 
 def render_dependencies(deps, ci_deps):
-    out = ["## Dependencies", "", "Version-constrained in `requirements.txt`:", "", "```"]
+    out = [
+        "## Dependencies",
+        "",
+        "Version-constrained in `requirements.txt`:",
+        "",
+        "```",
+    ]
     out.extend(deps)
     out.extend(["```", ""])
     if ci_deps:
@@ -642,6 +700,9 @@ def build_readme():
             "---",
             "",
             DATA_ARTIFACTS,
+            "---",
+            "",
+            DOCKER,
             "---",
             "",
             DESIGN_NOTES,

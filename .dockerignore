@@ -1,0 +1,67 @@
+# ---- Python ----
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+coverage.xml
+.pytest_cache/
+
+# ---- Git ----
+.git/
+.gitignore
+.gitattributes
+.github/
+
+# ---- IDEs ----
+.vscode/
+.idea/
+*.swp
+
+# ---- Project artifacts (generated at runtime) ----
+telecom_sim_output/
+telecom_sim_output_old/
+*.db
+*.db-wal
+*.db-shm
+*.png
+*.pdf
+
+# ---- Docs / CI ----
+docs/
+site/
+mkdocs.yml
+requirements-docs.txt
+
+# ---- Backups ----
+*.bak
+*.v1_backup
+*.v2_backup
+*.v3_backup
+_admin_auth_backup/
+
+# ---- OS ----
+.DS_Store
+Thumbs.db
+
+# ---- Docker itself ----
+Dockerfile
+.dockerignore
+docker-compose.yml
+
+# ---- Tests (not needed in runtime image) ----
+tests/
+
+# ---- Windows launchers ----
+*.bat

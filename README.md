@@ -3,7 +3,7 @@
 [![CI](https://github.com/hosras/MNO-simulator/actions/workflows/ci.yml/badge.svg)](https://github.com/hosras/MNO-simulator/actions/workflows/ci.yml)
 ![Coverage](https://raw.githubusercontent.com/hosras/MNO-simulator/main/.github/coverage.svg)
 
-📚 **Documentation:** [https://docs.sunpannel.ir/](https://docs.sunpannel.ir/)
+**Documentation:** [https://docs.sunpannel.ir/](https://docs.sunpannel.ir/)
 
 > Fully local mobile network simulator with OSINT/SIGINT analytics,
 > attack scenario generation, and three Streamlit dashboards.
@@ -502,6 +502,48 @@ _admin_auth_backup/
 *.pdf
 *.pyc
 ```
+
+---
+
+## Docker
+
+Run the project in a container with `docker compose`:
+
+```bash
+# Build the image + generate a small dataset + start all dashboards
+docker compose up --build
+
+# Dashboard: http://localhost:8501
+# Radar:     http://localhost:8502
+# Admin:     http://localhost:8503
+```
+
+### Plain docker (without compose)
+
+```bash
+docker build -t telecom-net-sim .
+
+# Generate the database
+docker run --rm \
+    -v $(pwd)/telecom_sim_output:/app/telecom_sim_output \
+    telecom-net-sim python telecom_net_sim.py --subs 500 --cdrs 2000
+
+# Run a dashboard (bound to loopback only)
+docker run --rm -p 127.0.0.1:8501:8501 \
+    -v $(pwd)/telecom_sim_output:/app/telecom_sim_output \
+    telecom-net-sim streamlit run telecom_dashboard.py \
+    --server.address 0.0.0.0
+```
+
+### Notes
+
+- Multi-stage build (builder + slim runtime)
+- Runs as **non-root** (`appuser`)
+- All dashboards bind to **`127.0.0.1`** on the host (not exposed to LAN)
+- A shared volume (`telecom_data`) is used between the simulator
+  and the three dashboards
+- A dedicated Docker workflow runs in CI to verify the image builds
+  and the simulator produces a valid database
 
 ---
 

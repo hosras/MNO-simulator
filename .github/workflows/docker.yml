@@ -1,0 +1,52 @@
+name: Docker
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "Dockerfile"
+      - ".dockerignore"
+      - "docker-compose.yml"
+      - "requirements-ci.txt"
+      - ".github/workflows/docker.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "Dockerfile"
+      - "docker-compose.yml"
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build Docker image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: false
+          tags: telecom-net-sim:test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Smoke test - generate a tiny dataset
+        run: |
+          mkdir -p smoke_output
+          docker run --rm \
+            -v ${{ github.workspace }}/smoke_output:/app/telecom_sim_output \
+            telecom-net-sim:test \
+            python telecom_net_sim.py --subs 50 --cdrs 200
+
+      - name: Verify output
+        run: |
+          ls -la smoke_output/
+          test -f smoke_output/telecom_sim.db && echo "DB created OK"

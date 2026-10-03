@@ -1,0 +1,63 @@
+services:
+  simulator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: telecom-net-sim:latest
+    container_name: telecom-simulator
+    command: ["python", "telecom_net_sim.py", "--subs", "2000", "--cdrs", "20000"]
+    volumes:
+      - telecom_data:/app/telecom_sim_output
+    restart: "no"
+
+  dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: telecom-net-sim:latest
+    container_name: telecom-dashboard
+    command: ["streamlit", "run", "telecom_dashboard.py", "--server.address", "0.0.0.0", "--server.port", "8501", "--server.headless", "true", "--browser.gatherUsageStats", "false"]
+    ports:
+      - "127.0.0.1:8501:8501"
+    volumes:
+      - telecom_data:/app/telecom_sim_output
+    depends_on:
+      simulator:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+  radar:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: telecom-net-sim:latest
+    container_name: telecom-radar
+    command: ["streamlit", "run", "telecom_radar.py", "--server.address", "0.0.0.0", "--server.port", "8501", "--server.headless", "true", "--browser.gatherUsageStats", "false"]
+    ports:
+      - "127.0.0.1:8502:8501"
+    volumes:
+      - telecom_data:/app/telecom_sim_output
+    depends_on:
+      simulator:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+  admin:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: telecom-net-sim:latest
+    container_name: telecom-admin
+    command: ["streamlit", "run", "telecom_admin.py", "--server.address", "0.0.0.0", "--server.port", "8501", "--server.headless", "true", "--browser.gatherUsageStats", "false"]
+    ports:
+      - "127.0.0.1:8503:8501"
+    volumes:
+      - telecom_data:/app/telecom_sim_output
+    depends_on:
+      simulator:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+volumes:
+  telecom_data:
+    driver: local
